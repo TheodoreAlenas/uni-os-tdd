@@ -4,11 +4,18 @@ red="\033[0;31m"
 green="\033[0;32m"
 no_color="\033[0m"
 
-printf "${green}Testing $1 ...${no_color}"
+test_file="$1"
+tmp="$(mktemp "/tmp/stderr-of-test-os-hw2-date-$(date)-pid-$$-rand-XXXXX")"
+
+printf "${green}Testing $test_file ...${no_color}"
 chmod +x "$1"
-"$1"
+
+"$test_file" > /dev/null 2> "$tmp"
+
 if [ $? != 0 ]
-then printf "${red}Failed${no_color}\n"
+then printf "${red}Failed${no_color}\n" ; cat "$tmp"
 else printf "${green}Passed${no_color}\n"
 fi
+
+rm "$tmp"
 

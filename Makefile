@@ -1,5 +1,6 @@
 BUILD=build
 SRC=c/src
+TEST=c/tests/main.c
 
 all:
 	make compile
@@ -9,8 +10,8 @@ clean:
 
 compile: listener worker manager
 
-comp-test: ${SRC}/test.c
-	gcc ${SRC}/test.c -o ${BUILD}/test
+test: ${TEST}
+	gcc ${TEST} -o ${BUILD}/test
 
 listener: ${SRC}/listener.c
 	gcc ${SRC}/listener.c -o ${BUILD}/listener
