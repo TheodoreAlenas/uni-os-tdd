@@ -1,0 +1,14 @@
+#! /bin/env sh
+
+red="\033[0;31m"
+green="\033[0;32m"
+no_color="\033[0m"
+
+printf "${green}Testing $1 ...${no_color}"
+chmod +x "$1"
+"$1"
+if [ $? != 0 ]
+then printf "${red}Failed${no_color}\n"
+else printf "${green}Passed${no_color}\n"
+fi
+

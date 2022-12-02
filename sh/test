@@ -1,0 +1,4 @@
+#! /bin/env sh
+
+find sh/tests -type f -exec sh/test-one {} \;
+
