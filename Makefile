@@ -7,16 +7,38 @@ all: listener worker manager
 clean:
 	rm $(BUILD)/*
 
-test: $(TEST)/main.c $(TEST)/stack.c
-	gcc -c $(TEST)/stack.c -o $(BUILD)/stack.o
-	gcc $(TEST)/main.c  -o $(BUILD)/test
+test: test-main.o test-stack.o stack.o
+	gcc $(BUILD)/test-main.o $(BUILD)/test-stack.o $(BUILD)/stack.o -o $(BUILD)/test
 
-listener: $(SRC)/listener.c
-	gcc $(SRC)/listener.c -o $(BUILD)/listener
 
-worker: $(SRC)/worker.c
-	gcc $(SRC)/worker.c -o $(BUILD)/worker
+listener: listener.o
+	gcc $(BUILD)/listener.o -o $(BUILD)/listener
 
-manager: $(SRC)/manager.c
-	gcc $(SRC)/manager.c -o $(BUILD)/manager
+worker: worker.o
+	gcc $(BUILD)/worker.o -o $(BUILD)/worker
+
+manager: manager.o stack.o
+	gcc $(BUILD)/manager.o $(BUILD)/stack.o -o $(BUILD)/manager
+
+
+listener.o: $(SRC)/listener.c
+	gcc -c $(SRC)/listener.c -o $(BUILD)/listener.o
+
+worker.o: $(SRC)/worker.c
+	gcc -c $(SRC)/worker.c -o $(BUILD)/worker.o
+
+manager.o: $(SRC)/manager.c
+	gcc -c $(SRC)/manager.c -o $(BUILD)/manager.o
+
+stack.o: $(SRC)/stack.c
+	gcc -c $(SRC)/stack.c -o $(BUILD)/stack.o
+
+
+test-main.o: $(TEST)/test-main.c
+	gcc -c $(TEST)/test-main.c -o $(BUILD)/test-main.o
+
+test-stack.o: $(TEST)/test-stack.c
+	gcc -c $(TEST)/test-stack.c -o $(BUILD)/test-stack.o
+
+
 

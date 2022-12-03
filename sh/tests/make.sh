@@ -2,6 +2,11 @@
 
 BUILD=build
 
+# takes one argument for what to give to "make",
+# like "all" for "make all", and the other arguments
+# are expected files. Just the filenames,
+# not the whole path.
+
 successful=yes-so-far
 
 is_first=yes

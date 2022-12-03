@@ -1,4 +1,4 @@
-#include "stack.h"
+#include "test-stack.h"
 
 bool test_stack_is_empty() {
   Stack *s;

@@ -4,4 +4,5 @@
 
 sh/test-one sh/tests/make-all
 sh/test-one sh/tests/make-test
+sh/test-one -v sh/tests/unit
 
