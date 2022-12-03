@@ -1,0 +1,5 @@
+#! /bin/env sh
+
+sh/tests/make.sh all manager listener worker
+
+

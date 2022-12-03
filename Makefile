@@ -1,24 +1,22 @@
-BUILD=build
-SRC=c/src
-TEST=c/tests/main.c
+BUILD := build
+SRC := c/src
+TEST := c/tests
 
-all:
-	make compile
+all: listener worker manager
 
 clean:
-	rm ${BUILD}/*
+	rm $(BUILD)/*
 
-compile: listener worker manager
+test: $(TEST)/main.c $(TEST)/stack.c
+	gcc -c $(TEST)/stack.c -o $(BUILD)/stack.o
+	gcc $(TEST)/main.c  -o $(BUILD)/test
 
-test: ${TEST}
-	gcc ${TEST} -o ${BUILD}/test
+listener: $(SRC)/listener.c
+	gcc $(SRC)/listener.c -o $(BUILD)/listener
 
-listener: ${SRC}/listener.c
-	gcc ${SRC}/listener.c -o ${BUILD}/listener
+worker: $(SRC)/worker.c
+	gcc $(SRC)/worker.c -o $(BUILD)/worker
 
-worker: ${SRC}/worker.c
-	gcc ${SRC}/worker.c -o ${BUILD}/worker
-
-manager: ${SRC}/manager.c
-	gcc ${SRC}/manager.c -o ${BUILD}/manager
+manager: $(SRC)/manager.c
+	gcc $(SRC)/manager.c -o $(BUILD)/manager
 

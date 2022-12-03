@@ -1,4 +1,7 @@
 #! /bin/env sh
 
-find sh/tests -type f -exec sh/test-one {} \;
+#find sh/tests -type f '!' -name '*.sh' -exec sh/test-one {} \;
+
+sh/test-one sh/tests/make-all
+sh/test-one sh/tests/make-test
 
