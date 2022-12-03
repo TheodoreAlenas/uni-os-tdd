@@ -12,8 +12,7 @@ dev:
 	$(ECHO_THING)
 
 test: test-main.o test-stack.o test-util.o stack.o
-	#gcc $(BUILD)/test-main.o $(BUILD)/test-stack.o $(BUILD)/test-util.o $(BUILD)/stack.o -o $(BUILD)/test
-	gcc $(addprefix $(BUILD)/test-,main.o stack.o util.o) $(BUILD)/stack.o -o $(BUILD)/test
+	gcc $(BUILD)/test-main.o $(BUILD)/test-stack.o $(BUILD)/test-util.o $(BUILD)/stack.o -o $(BUILD)/test
 
 
 listener: listener.o
