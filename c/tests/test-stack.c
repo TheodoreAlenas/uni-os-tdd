@@ -1,43 +1,52 @@
 #include "test.h"
 
-bool test_empty_stack_is_empty() {
-  Stack *s;
-  stack_init(s, 0);
+/*
+0W"tye/test_stack}Otest_one(t, "t");
+1G/boolma
+'a/boolma
+1G/voido}jdap
 
-  return stack_is_empty(s);
+
+1G/END OF MACROSn/boolma
+0W"tye/test_stack}Otest_one(t, "t");'a/boolma
+G?void test_stack() {o}jdap
+
+@a30@b@c
+
+END OF MACROS
+*/
+
+bool test_zero_stack_is_empty_succeeds() {
+  return stack_is_empty(stack_create(0));
 }
 
-bool test_zero_stack_is_full() {
-  Stack *s;
-  stack_init(s, 0);
-
-  return stack_is_full(s);
+bool test_zero_stack_is_full_succeeds() {
+  return stack_is_full(stack_create(0));
 }
 
-bool test_stack_empty_and_full() {
-  Stack *s1;
-  Stack *s2;
-  stack_init(s1, 0);
-  stack_init(s2, 1);
-  if (!stack_is_full(s1)) return false;
-  if ( stack_is_full(s2)) return false;
-  if (!stack_is_empty(s1)) return false;
-  if (!stack_is_empty(s2)) return false;
-  return true;
+bool test_tiny_stack_is_empty_succeeds() {
+  return stack_is_empty(stack_create(1));
 }
 
-bool test_stack_push() {
-  Stack *s;
-  stack_init(s, 0);
-  if (stack_push(s)) return false;
-  return true;
+bool test_tiny_stack_is_full_fails() {
+  return !stack_is_full(stack_create(1));
+}
+
+bool test_zero_stack_push_fails() {
+  return !stack_push(stack_create(0), NULL);
+}
+
+bool test_tiny_stack_push_succeeds() {
+  return stack_push(stack_create(1), NULL);
 }
 
 void test_stack() {
 
-  test_one(test_empty_stack_is_empty, "test_empty_stack_is_empty");
-  test_one(test_zero_stack_is_full, "test_zero_stack_is_full");
-  test_one(test_stack_empty_and_full, "test_stack_empty_and_full");
-  test_one(test_stack_push, "test_stack_push");
+  test_one(test_zero_stack_is_empty_succeeds, "test_zero_stack_is_empty_succeeds");
+  test_one(test_zero_stack_is_full_succeeds, "test_zero_stack_is_full_succeeds");
+  test_one(test_tiny_stack_is_empty_succeeds, "test_tiny_stack_is_empty_succeeds");
+  test_one(test_tiny_stack_is_full_fails, "test_tiny_stack_is_full_fails");
+  test_one(test_zero_stack_push_fails, "test_zero_stack_push_fails");
+  test_one(test_tiny_stack_push_succeeds, "test_tiny_stack_push_succeeds");
 
 }
