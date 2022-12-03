@@ -1,4 +1,5 @@
 #! /bin/env sh
 
-make test
+make test > /dev/null || exit 1
 build/test
+make clean > /dev/null
