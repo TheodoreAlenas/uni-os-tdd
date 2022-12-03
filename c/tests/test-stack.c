@@ -4,8 +4,9 @@
 1G/END OF MACROSn/boolma
 0W"tyeG?void test_stack() {}Otest_one(t, "t");'a/boolma
 G?void test_stack() {o}jdap
-
 @a15@b@c
+
+4G"aYj"bYj"cYj"dY@d
 
 END OF MACROS
 */
@@ -84,5 +85,6 @@ void test_stack() {
   test_one(test_stack_push_pop_succeeds, "test_stack_push_pop_succeeds");
   test_one(test_stack_push_pop_pop_fails, "test_stack_push_pop_pop_fails");
   test_one(test_stack_push_pop_same_item, "test_stack_push_pop_same_item");
+  test_one(test_stack_double_push_pop_same_item, "test_stack_double_push_pop_same_item");
 
 }
