@@ -21,7 +21,7 @@ Stack *stack_create(int capacity);
 bool stack_is_empty(Stack *s);
 bool stack_is_full(Stack *s);
 bool stack_push(Stack *s, Item *item);
-bool stack_pop(Stack *s, Item *item);
+bool stack_pop(Stack *s, Item **item);
 
 
 #endif

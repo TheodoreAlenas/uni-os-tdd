@@ -24,12 +24,14 @@ bool stack_is_full(Stack *s) {
 bool stack_push(Stack *s, Item *item) {
   if (stack_is_full(s))
     return false;
+  s->size++;
   return true;
 }
 
-bool stack_pop(Stack *s, Item *item) {
+bool stack_pop(Stack *s, Item **item) {
   if (stack_is_empty(s))
     return false;
+  s->size--;
   return true;
 }
 

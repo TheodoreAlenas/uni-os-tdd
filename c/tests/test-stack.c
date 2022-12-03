@@ -1,17 +1,11 @@
 #include "test.h"
 
 /*
-0W"tye/test_stack}Otest_one(t, "t");
-1G/boolma
-'a/boolma
-1G/voido}jdap
-
-
 1G/END OF MACROSn/boolma
-0W"tye/test_stack}Otest_one(t, "t");'a/boolma
+0W"tyeG?void test_stack() {}Otest_one(t, "t");'a/boolma
 G?void test_stack() {o}jdap
 
-@a30@b@c
+@a10@b@c
 
 END OF MACROS
 */
@@ -40,6 +34,21 @@ bool test_tiny_stack_push_succeeds() {
   return stack_push(stack_create(1), NULL);
 }
 
+bool test_stack_push_pop_succeeds() {
+  Stack *s = stack_create(1);
+  Item *r;
+  stack_push(s, NULL);
+  return stack_pop(s, &r);
+}
+
+bool test_stack_push_pop_pop_fails() {
+  Stack *s = stack_create(1);
+  Item *r;
+  stack_push(s, NULL);
+  stack_pop(s, &r);
+  return !stack_pop(s, &r);
+}
+
 void test_stack() {
 
   test_one(test_zero_stack_is_empty_succeeds, "test_zero_stack_is_empty_succeeds");
@@ -48,5 +57,7 @@ void test_stack() {
   test_one(test_tiny_stack_is_full_fails, "test_tiny_stack_is_full_fails");
   test_one(test_zero_stack_push_fails, "test_zero_stack_push_fails");
   test_one(test_tiny_stack_push_succeeds, "test_tiny_stack_push_succeeds");
+  test_one(test_stack_push_pop_succeeds, "test_stack_push_pop_succeeds");
+  test_one(test_stack_push_pop_pop_fails, "test_stack_push_pop_pop_fails");
 
 }
