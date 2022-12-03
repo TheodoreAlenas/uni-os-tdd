@@ -13,11 +13,15 @@ typedef struct item {
 typedef struct stack {
   Item *items;
   int size;
+  int capacity;
 } Stack;
 
 
-void stack_init(Stack *s);
+void stack_init(Stack *s, int capacity);
 bool stack_is_empty(Stack *s);
+bool stack_is_full(Stack *s);
+bool stack_push(Stack *s);
+bool stack_pop(Stack *s);
 
 
 #endif

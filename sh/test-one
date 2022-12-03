@@ -25,7 +25,7 @@ then
   printf "\n${green}${handle} Testing $test_file ${handle}${no_color}\n"
   "$test_file"
   if [ $? != 0 ]
-  then printf "${red}${handle}Test ${test_file} failed${handle}${no_color}\n\n"
+  then printf   "${red}${handle}Test ${test_file} failed${handle}${no_color}\n\n"
   else printf "${green}${handle}Test ${test_file} passed${handle}${no_color}\n\n"
   fi
 else
