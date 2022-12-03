@@ -34,6 +34,10 @@ bool test_tiny_stack_push_succeeds() {
   return stack_push(stack_create(1), NULL);
 }
 
+bool test_zero_stack_pop_fails() {
+  return !stack_pop(stack_create(0), NULL);
+}
+
 bool test_stack_push_pop_succeeds() {
   Stack *s = stack_create(1);
   Item *r;
@@ -76,9 +80,9 @@ void test_stack() {
   test_one(test_tiny_stack_is_full_fails, "test_tiny_stack_is_full_fails");
   test_one(test_zero_stack_push_fails, "test_zero_stack_push_fails");
   test_one(test_tiny_stack_push_succeeds, "test_tiny_stack_push_succeeds");
+  test_one(test_zero_stack_pop_fails, "test_zero_stack_pop_fails");
   test_one(test_stack_push_pop_succeeds, "test_stack_push_pop_succeeds");
   test_one(test_stack_push_pop_pop_fails, "test_stack_push_pop_pop_fails");
   test_one(test_stack_push_pop_same_item, "test_stack_push_pop_same_item");
-  test_one(test_stack_double_push_pop_same_item, "test_stack_double_push_pop_same_item");
 
 }
