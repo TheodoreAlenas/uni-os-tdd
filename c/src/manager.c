@@ -4,6 +4,7 @@
 
 
 int main() {
-  stack_init(NULL, 0);
+  Stack *s;
+  stack_init(s, 0);
   printf("hello\n");
 }
