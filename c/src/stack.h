@@ -11,7 +11,7 @@ typedef struct item {
 } Item;
 
 typedef struct stack {
-  Item *items;
+  Item **items;
   int size;
   int capacity;
 } Stack;

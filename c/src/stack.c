@@ -7,7 +7,7 @@ Stack *stack_create(int capacity) {
   s->capacity = capacity;
   if (capacity < 0)
     s->capacity = 0;
-  s->items = NULL;
+  s->items = malloc(s->capacity * sizeof(Item));
   s->size = 0;
 
   return s;
@@ -24,6 +24,7 @@ bool stack_is_full(Stack *s) {
 bool stack_push(Stack *s, Item *item) {
   if (stack_is_full(s))
     return false;
+  s->items[s->size] = item;
   s->size++;
   return true;
 }
@@ -32,6 +33,7 @@ bool stack_pop(Stack *s, Item **item) {
   if (stack_is_empty(s))
     return false;
   s->size--;
+  *item = s->items[s->size];
   return true;
 }
 
