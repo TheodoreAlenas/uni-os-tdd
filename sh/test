@@ -4,6 +4,6 @@
 
 sh/test-one sh/tests/make-all
 sh/test-one sh/tests/make-test
-sh/test-one -v sh/tests/unit
-sh/test-one -v sh/tests/manager
+sh/test-one sh/tests/unit
+sh/test-one sh/tests/run-help
 

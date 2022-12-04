@@ -14,10 +14,11 @@ void parent_free(Parent *r) {
 }
 
 int parent_loop(Parent *r) {
-  printf("hello\n");
+
 #ifdef DEV
   printf("dev is defined\n");
 #endif
+
   return 0;
 }
 

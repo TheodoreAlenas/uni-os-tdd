@@ -1,5 +1,5 @@
 #! /bin/env sh
 
-sh/tests/make.sh all manager listener worker
+sh/tests/make.sh all rlr listener worker
 
 
