@@ -4,13 +4,13 @@
 #include "child_data.h"
 
 
-typedef struct main_resources {
+typedef struct parent {
   Stack *requests;
   ChildData *children;
-} MainResources;
+} Parent;
 
-MainResources *create_resources_of_main(int num_of_workers);
-int main_loop(MainResources *r);
-void free_resources_of_main(MainResources *r);
+Parent *parent_create(int num_of_workers);
+int parent_loop(Parent *r);
+void parent_free(Parent *r);
 
 

@@ -8,9 +8,9 @@ int main() {
   int num_of_workers = 10;
   int main_ret, free_ret;
 
-  MainResources *r = create_resources_of_main(num_of_workers);
-  main_ret = main_loop(r);
-  free_resources_of_main(r);
+  Parent *r = parent_create(num_of_workers);
+  main_ret = parent_loop(r);
+  parent_free(r);
 
   return main_ret;
 }
