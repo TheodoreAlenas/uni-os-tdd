@@ -20,8 +20,8 @@ listener: listener.o
 worker: worker.o
 	gcc $(BUILD)/worker.o -o $(BUILD)/worker
 
-manager: manager.o stack.o
-	gcc $(BUILD)/manager.o $(BUILD)/stack.o -o $(BUILD)/manager
+manager: manager.o stack.o child_data.o
+	gcc $(BUILD)/manager.o $(BUILD)/stack.o $(BUILD)/child_data.o -o $(BUILD)/manager
 
 
 test-%.o: $(TEST)/test-%.c
