@@ -2,10 +2,10 @@
 #define TEST_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
-#include "../src/stack.h"
-
-void test_one(bool (*f) (void), char *name);
+void announce(char *function_name, bool passed);
 void test_stack();
+void test_arg_parse();
 
 #endif

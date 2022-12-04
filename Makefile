@@ -10,8 +10,8 @@ clean:
 dev:
 	export DEBUG_FLAG="-D DEV"; make all
 
-test: test-main.o test-stack.o test-util.o stack.o
-	gcc $(BUILD)/test-main.o $(BUILD)/test-stack.o $(BUILD)/test-util.o $(BUILD)/stack.o -o $(BUILD)/test
+test: test-main.o test-stack.o test-util.o test-arg-parse.o util_for_main.o stack.o
+	gcc $(BUILD)/test-*.o $(BUILD)/util_for_main.o $(BUILD)/stack.o -o $(BUILD)/test
 
 
 listener: listener.o

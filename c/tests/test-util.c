@@ -10,10 +10,9 @@
 #define RESET   "\x1b[0m"
 #endif
 
-void test_one(bool (*f) (void), char *name) {
-  bool passed;
-  printf("%sTesting function '%s' ... %s", GREEN, name, RESET);
-  passed = f();
+
+void announce(char *function_name, bool passed) {
+  printf("%sTesting function '%s' ... %s", GREEN, function_name, RESET);
 
   if (passed) {
     printf("%sPassed%s\n", GREEN, RESET);
@@ -21,5 +20,4 @@ void test_one(bool (*f) (void), char *name) {
   else {
     printf("%sFailed%s\n", RED, RESET);
   }
-
 }

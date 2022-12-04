@@ -1,102 +1,45 @@
+#include "../src/stack.h"
 #include "test.h"
 
-/*
-1G/END OF MACROSn/boolma
-0W"tyeG?void test_stack() {}Otest_one(t, "t");'a/boolma
-G?void test_stack() {o}jdap
-@a20@b@c
 
-4G"aYj"bYj"cYj"dY@d
+void test_stack() {
 
-END OF MACROS
-*/
+  Stack *s;
+  Item **i, *x, *y, *x1, *y1, *x2, *y2;
 
-bool test_negative_stack_has_size_zero() {
-  return stack_create(-1)->capacity == 0;
-}
+  /* below here */
+  announce("test_negative_stack_has_size_zero", stack_create(-1)->capacity == 0);
+  announce("test_zero_stack_is_empty_succeeds", stack_is_empty(stack_create(0)));
+  announce("test_zero_stack_is_full_succeeds", stack_is_full(stack_create(0)));
+  announce("test_tiny_stack_is_empty_succeeds", stack_is_empty(stack_create(1)));
+  announce("test_tiny_stack_is_full_fails", !stack_is_full(stack_create(1)));
+  announce("test_zero_stack_push_fails", !stack_push(stack_create(0), NULL));
+  announce("test_tiny_stack_push_succeeds", stack_push(stack_create(1), NULL));
+  announce("test_zero_stack_pop_fails", !stack_pop(stack_create(0), NULL));
 
-bool test_zero_stack_is_empty_succeeds() {
-  return stack_is_empty(stack_create(0));
-}
-
-bool test_zero_stack_is_full_succeeds() {
-  return stack_is_full(stack_create(0));
-}
-
-bool test_tiny_stack_is_empty_succeeds() {
-  return stack_is_empty(stack_create(1));
-}
-
-bool test_tiny_stack_is_full_fails() {
-  return !stack_is_full(stack_create(1));
-}
-
-bool test_big_stack_has_all_items_null() {
-  Item **i;
   i = stack_create(3)->items;
-  return i[0] == NULL && i[1] == NULL && i[2] == NULL;
-}
+  announce("test_big_stack_has_all_items_null",
+      i[0] == NULL && i[1] == NULL && i[2] == NULL);
 
-bool test_zero_stack_push_fails() {
-  return !stack_push(stack_create(0), NULL);
-}
-
-bool test_tiny_stack_push_succeeds() {
-  return stack_push(stack_create(1), NULL);
-}
-
-bool test_zero_stack_pop_fails() {
-  return !stack_pop(stack_create(0), NULL);
-}
-
-bool test_stack_push_pop_succeeds() {
-  Stack *s = stack_create(1);
-  Item *r;
+  s = stack_create(1);
   stack_push(s, NULL);
-  return stack_pop(s, &r);
-}
+  announce("test_stack_push_pop_succeeds", stack_pop(s, i));
 
-bool test_stack_push_pop_pop_fails() {
-  Stack *s = stack_create(1);
-  Item *r;
+  s = stack_create(1);
   stack_push(s, NULL);
-  stack_pop(s, &r);
-  return !stack_pop(s, &r);
-}
+  stack_pop(s, i);
+  announce("test_stack_push_pop_pop_fails", !stack_pop(s, i));
 
-bool test_stack_push_pop_same_item() {
-  Stack *s = stack_create(1);
-  Item *x;
-  Item *y;
+  s = stack_create(1);
   stack_push(s, x);
   stack_pop(s, &y);
-  return x == y;
-}
+  announce("test_stack_push_pop_same_item", x == y);
 
-bool test_stack_double_push_pop_same_item() {
-  Stack *s = stack_create(2);
-  Item *x1, *x2, *y1, *y2;
+  s = stack_create(2);
   stack_push(s, x1);
   stack_push(s, x2);
   stack_pop(s, &y2);
   stack_pop(s, &y1);
-  return x1 == y1 && x2 == y2;
+  announce("test_stack_double_push_pop_same_item", x1 == y1 && x2 == y2);
 }
 
-void test_stack() {
-
-  test_one(test_negative_stack_has_size_zero, "test_negative_stack_has_size_zero");
-  test_one(test_zero_stack_is_empty_succeeds, "test_zero_stack_is_empty_succeeds");
-  test_one(test_zero_stack_is_full_succeeds, "test_zero_stack_is_full_succeeds");
-  test_one(test_tiny_stack_is_empty_succeeds, "test_tiny_stack_is_empty_succeeds");
-  test_one(test_tiny_stack_is_full_fails, "test_tiny_stack_is_full_fails");
-  test_one(test_big_stack_has_all_items_null, "test_big_stack_has_all_items_null");
-  test_one(test_zero_stack_push_fails, "test_zero_stack_push_fails");
-  test_one(test_tiny_stack_push_succeeds, "test_tiny_stack_push_succeeds");
-  test_one(test_zero_stack_pop_fails, "test_zero_stack_pop_fails");
-  test_one(test_stack_push_pop_succeeds, "test_stack_push_pop_succeeds");
-  test_one(test_stack_push_pop_pop_fails, "test_stack_push_pop_pop_fails");
-  test_one(test_stack_push_pop_same_item, "test_stack_push_pop_same_item");
-  test_one(test_stack_double_push_pop_same_item, "test_stack_double_push_pop_same_item");
-
-}
