@@ -9,6 +9,7 @@ typedef struct item {
   int line;
 } Item;
 
+/* TODO this is a RequestsStack */
 typedef struct stack {
   Item **items;
   int size;
@@ -21,6 +22,6 @@ bool stack_is_empty(Stack *s);
 bool stack_is_full(Stack *s);
 bool stack_push(Stack *s, Item *item);
 bool stack_pop(Stack *s, Item **item);
-
+void stack_free(Stack *s);
 
 #endif

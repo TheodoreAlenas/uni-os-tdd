@@ -2,7 +2,8 @@
 
 #find sh/tests -type f '!' -name '*.sh' -exec sh/test-one {} \;
 
-#sh/test-one sh/tests/make-all
-#sh/test-one sh/tests/make-test
+sh/test-one sh/tests/make-all
+sh/test-one sh/tests/make-test
 sh/test-one -v sh/tests/unit
+sh/test-one -v sh/tests/manager
 

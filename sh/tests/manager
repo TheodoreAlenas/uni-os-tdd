@@ -1,0 +1,5 @@
+#! /bin/env sh
+
+make all > /dev/null
+build/manager
+make clean > /dev/null
