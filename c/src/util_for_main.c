@@ -17,7 +17,7 @@ Params *parameters_parse(int argc, char **argv) {
   struct parameters *p;
   p = parameters_create();
 
-  for (i = 0; i < argc; i++) {
+  for (i = 1; i < argc; i++) {
 
     if (0) {}
     IF_ITS("--help")
