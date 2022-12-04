@@ -7,6 +7,11 @@ int main() {
   test_stack();
   test_arg_parse();
 
-  return 0;
+  printf("%d/%d passed, %d failed\n",
+      get_total_tests_passed(),
+      get_total_tests(),
+      get_total_tests_failed());
+
+  return get_total_tests_failed();
 }
 

@@ -7,6 +7,7 @@ for arg do
   case "$arg" in
     -v)        verbose=yes      ;;
     --verbose) verbose=yes      ;;
+    '')                         ;;
     *)         test_file="$arg" ;;
   esac
 done

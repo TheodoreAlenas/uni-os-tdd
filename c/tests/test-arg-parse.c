@@ -9,5 +9,5 @@ void test_arg_parse() {
   announce("help_defaults_to_off",
       parameters_parse(0, NULL)->show_help == false);
   announce("help_turns_on",
-      parameters_parse(1, &s)->show_help == false);
+      parameters_parse(1, &s)->show_help == true);
 }
