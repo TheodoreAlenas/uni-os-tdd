@@ -10,7 +10,7 @@ Params *parameters_create() {
   return p;
 }
 
-#define ITS(s) strcmp(argv[i], (s)) == 0
+#define IF_ITS(s) else if (strcmp(argv[i], (s)) == 0)
 
 Params *parameters_parse(int argc, char **argv) {
   int i;
@@ -19,13 +19,16 @@ Params *parameters_parse(int argc, char **argv) {
 
   for (i = 0; i < argc; i++) {
 
-    if (ITS("--help")) {
+    if (0) {}
+    IF_ITS("--help")
       p->show_help = true;
-    }
+    else
+      p->file_name = argv[i];
   }
 
   return p;
 }
+#undef IF_ITS
 
 void parameters_free(Params *p) {
   free(p->file_name);
