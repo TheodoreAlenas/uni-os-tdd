@@ -1,3 +1,6 @@
+#ifndef CHILD_DATA_H
+#define CHILD_DATA_H
+
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -12,3 +15,4 @@ typedef struct child_data {
 ChildData *child_data_create(int num_of_workers);
 void child_data_free(ChildData *c);
 
+#endif
