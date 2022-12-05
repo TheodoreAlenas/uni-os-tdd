@@ -8,14 +8,14 @@
 #include <sys/mman.h>
 
 #define SHMEM_SIZE_PER_LINE 1024
+#define SHMEM_NAME "file_segment"
 
 /* TODO personalize the piece of code */
 void *shmem_create(unsigned long max_lines) {
   unsigned long SIZE = SHMEM_SIZE_PER_LINE * max_lines;
-  char* name = "OS";
   int shm_fd;
   void* ptr;
-  shm_fd = shm_open(name, O_CREAT | O_RDWR, 0666);
+  shm_fd = shm_open(SHMEM_NAME, O_CREAT | O_RDWR, 0666);
 
   /* changing the size of the shared memory segment */
   ftruncate(shm_fd, SIZE);
@@ -25,7 +25,7 @@ void *shmem_create(unsigned long max_lines) {
 }
 
 void shmem_free(void *shmem) {
-  shm_unlink("OS");
+  shm_unlink(SHMEM_NAME);
 }
 
 void shmem_test_fill(void *shmem) {

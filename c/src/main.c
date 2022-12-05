@@ -8,8 +8,11 @@
 #define TRY(n) if ((n)) { perror( #n " failed: " ); parameters_free(p); return -1; }
 
 int main(int argc, char **argv) {
-  Params *p = parameters_parse(argc, argv);
+  Params *p;
+  int err;
   void *shmem;
+
+  p = parameters_parse(argc, argv);
 
   if (p->show_help) {
     printf("well help you won't get\n");
@@ -18,11 +21,11 @@ int main(int argc, char **argv) {
 
   shmem = shmem_create(p->file_segment_length);
 
-  TRY(handle_forks(p, shmem));
+  err = handle_forks(p, shmem);
 
   parameters_free(p);
   shmem_free(shmem);
 
-  return 0;
+  return err;
 }
 
