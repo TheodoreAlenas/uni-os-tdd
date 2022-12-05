@@ -22,15 +22,18 @@ Params *parameters_parse(int argc, char **argv) {
   Params *p;
   p = parameters_create();
 
+  if (argc == 1)
+    return p;
+
   if (strcmp(argv[1], "--help") == 0)
     p->show_help = true;
 
   for (i = 1; i < argc; i++) {
 
     if (0) {}
-    IF_ITS("-c") flag = F_NUM_OF_CHILDREN;
     else if (flag == F_NUM_OF_CHILDREN)
       p->num_of_children = atoi(argv[i]);
+    IF_ITS("-c") flag = F_NUM_OF_CHILDREN;
     else
       p->file_name = argv[i];
   }
