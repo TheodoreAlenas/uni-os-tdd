@@ -2,7 +2,7 @@ BUILD := build
 SRC := c/src
 TEST := c/tests
 
-all: listener worker manager
+all: rlr
 
 clean:
 	rm $(BUILD)/*
@@ -10,18 +10,12 @@ clean:
 dev:
 	export DEBUG_FLAG="-D DEV"; make all
 
-test: test-main.o test-stack.o test-util.o test-arg-parse.o util_for_main.o stack.o
-	gcc $(BUILD)/test-*.o $(BUILD)/util_for_main.o $(BUILD)/stack.o -o $(BUILD)/test
+test: test-main.o test-stack.o test-util.o test-arg-parse.o params.o stack.o
+	gcc $(BUILD)/test-*.o $(BUILD)/params.o $(BUILD)/stack.o -o $(BUILD)/test
 
 
-listener: listener.o
-	gcc $(BUILD)/listener.o -o $(BUILD)/listener
-
-worker: worker.o
-	gcc $(BUILD)/worker.o -o $(BUILD)/worker
-
-manager: manager.o stack.o child_data.o parent.o util_for_main.o
-	gcc $(BUILD)/manager.o $(BUILD)/stack.o $(BUILD)/child_data.o $(BUILD)/parent.o $(BUILD)/util_for_main.o -o $(BUILD)/rlr
+rlr: main.o stack.o child_data.o parent.o params.o
+	gcc $(BUILD)/main.o $(BUILD)/stack.o $(BUILD)/child_data.o $(BUILD)/parent.o $(BUILD)/params.o -o $(BUILD)/rlr
 
 
 test-%.o: $(TEST)/test-%.c

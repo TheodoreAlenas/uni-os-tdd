@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "../src/util_for_main.h"
+#include "../src/params.h"
 #include "test.h"
 
 void test_arg_parse() {
