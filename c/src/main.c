@@ -17,7 +17,6 @@ int main(int argc, char **argv) {
     return 0;
   }
 
-  printf("file segment length is %lu\n", p->parent_params->file_segment_length);
   shmem = shmem_create(p->parent_params->file_segment_length);
 
   err = handle_forks(p, shmem);

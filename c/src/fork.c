@@ -36,11 +36,9 @@ int be_parent(Params *p, void *shmem) {
   int err;
   Parent *r;
 
-  printf("before test_fill\n"); /************/
   shmem_test_fill(shmem);
-  printf("before usleep\n"); /************/
   usleep(1 * SEC);
-  r = parent_create(p->parent_params->num_of_children, p->parent_params->file_name, p->parent_params->file_segment_length);
+  r = parent_create(p->parent_params);
   err = parent_loop(r);
   parent_free(r);
   printf("[parent] Done\n");
