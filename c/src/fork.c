@@ -31,16 +31,17 @@ int handle_forks(Params *p) {
 
 int be_parent(int num_of_children) {
   int err;
-  Parent *r = parent_create(num_of_children);
+  Parent *r;
   usleep(1 * SEC);
+  r = parent_create(num_of_children);
   err = parent_loop(r);
   parent_free(r);
-  printf("[parent] Hi!\n");
+  printf("[parent] Done\n");
   return err;
 }
 
 int be_child(int id) {
   usleep(0.2 * SEC);
-  printf("[child %d] Hi!\n", id);
+  printf("[child %d] Done\n", id);
   return 0;
 }
