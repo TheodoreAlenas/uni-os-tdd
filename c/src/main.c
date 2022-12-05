@@ -11,6 +11,7 @@ int main(int argc, char **argv) {
 
   if (p->show_help) {
     printf("well help you won't get\n");
+    return 0;
   }
 
   TRY(handle_forks(p));

@@ -8,4 +8,5 @@ sh/test-one sh/tests/make-all
 sh/test-one sh/tests/make-test
 sh/test-one sh/tests/unit "$perhaps_verbose"
 sh/test-one sh/tests/run-help
+sh/test-one sh/tests/default-run
 
