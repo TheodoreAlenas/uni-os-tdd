@@ -12,7 +12,7 @@ typedef struct child_data {
   int current_file_segment;
 } ChildData;
 
-ChildData *child_data_create(int num_of_workers);
+ChildData *child_data_create(int num_of_children);
 void child_data_free(ChildData *c);
 
 #endif

@@ -1,9 +1,9 @@
 #include "parent.h"
 
-Parent *parent_create(int num_of_workers) {
+Parent *parent_create(int num_of_children) {
   Parent *r = malloc(sizeof(Parent));
-  r->children = child_data_create(num_of_workers);
-  r->requests = stack_create(num_of_workers);
+  r->children = child_data_create(num_of_children);
+  r->requests = stack_create(num_of_children);
   return r;
 }
 

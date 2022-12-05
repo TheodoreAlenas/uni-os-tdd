@@ -12,7 +12,7 @@ typedef struct parent {
   ChildData *children;
 } Parent;
 
-Parent *parent_create(int num_of_workers);
+Parent *parent_create(int num_of_children);
 int parent_loop(Parent *r);
 void parent_free(Parent *r);
 

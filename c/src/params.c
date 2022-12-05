@@ -6,7 +6,7 @@ Params *parameters_create() {
   Params *p = malloc(sizeof(Params));
   p->file_name = malloc(sizeof(char) * MAX_FILE_NAME_LEN);
   p->file_segment_length = 128;
-  p->num_of_workers = 16;
+  p->num_of_children = 16;
   p->operations_of_each_worker = 1024;
   p->show_help = false;
   return p;
@@ -25,7 +25,7 @@ Params *parameters_parse(int argc, char **argv) {
     IF_ITS("--help")
       p->show_help = true;
     IF_ITS("-c")
-      p->num_of_workers = atoi(argv[i+1]);
+      p->num_of_children = atoi(argv[i+1]);
     else
       p->file_name = argv[i];
   }

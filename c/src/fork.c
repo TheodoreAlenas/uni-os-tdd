@@ -6,13 +6,13 @@
 
 #define SEC 1000000
 
-int be_parent(int num_of_workers);
+int be_parent(int num_of_children);
 int be_child(int id);
 
 int handle_forks(Params *p) {
   int is_parent, child_id;
 
-  for (child_id = 0; child_id < p->num_of_workers; child_id++) {
+  for (child_id = 0; child_id < p->num_of_children; child_id++) {
 
     is_parent = fork();
 
@@ -26,12 +26,12 @@ int handle_forks(Params *p) {
     else
       return be_child(child_id);
   }
-  return be_parent(p->num_of_workers);
+  return be_parent(p->num_of_children);
 }
 
-int be_parent(int num_of_workers) {
+int be_parent(int num_of_children) {
   int err;
-  Parent *r = parent_create(num_of_workers);
+  Parent *r = parent_create(num_of_children);
   usleep(1 * SEC);
   err = parent_loop(r);
   parent_free(r);
@@ -40,7 +40,7 @@ int be_parent(int num_of_workers) {
 }
 
 int be_child(int id) {
-  usleep(0.9 * SEC);
+  usleep(0.2 * SEC);
   printf("[child %d] Hi!\n", id);
   return 0;
 }

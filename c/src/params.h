@@ -10,7 +10,7 @@
 typedef struct parameters {
   bool show_help;
   unsigned file_segment_length;
-  unsigned num_of_workers;
+  unsigned num_of_children;
   unsigned operations_of_each_worker;
   char *file_name;
 } Params;
