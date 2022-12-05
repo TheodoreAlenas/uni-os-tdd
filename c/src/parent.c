@@ -5,6 +5,7 @@
 #include "parent.h"
 
 char *read_segment_from_open_file(Parent *parent, FILE *file, unsigned long segment);
+int skip_to_segment(FILE *file, unsigned long segment, unsigned long segment_length);
 void append_to_final(char **to_return, FILE *file);
 
 Parent *parent_create(int num_of_children, char *file_name, unsigned long file_segment_length) {
@@ -29,8 +30,9 @@ void parent_free(Parent *r) {
 
 int parent_loop(Parent *r) {
 
-
-  fprintf(fopen("/dev/null", "w"), "%s\n", parent_read_file_segment(r, 1));
+  char *segment = parent_read_file_segment(r, 1);
+  /* printf("%s\n", segment); */
+  free(segment);
 
 #ifdef DEV
   printf("dev is defined\n");
@@ -52,10 +54,8 @@ char *parent_read_file_segment(Parent *parent, unsigned long segment) {
 }
 
 char *read_segment_from_open_file(Parent *parent, FILE *file, unsigned long segment) {
-  int i;
-  size_t length;
-  unsigned long starting_point;
-  char *line = NULL, *to_return;
+  int i, err;
+  char *to_return;
 
   to_return = malloc(1024 * sizeof(char));
   if (to_return == NULL) {
@@ -63,18 +63,34 @@ char *read_segment_from_open_file(Parent *parent, FILE *file, unsigned long segm
     return NULL;
   }
 
-  starting_point = segment * parent->file_segment_length;
-
-  for (i = 0; i < starting_point; i++)
-    getline(&line, &length, file);
+  err = skip_to_segment(file, segment, parent->file_segment_length);
+  if (err)
+    return NULL;
 
   for (i = 0; i < parent->file_segment_length; i++)
     append_to_final(&to_return, file);
 
+  return to_return;
+}
+
+int skip_to_segment(FILE *file, unsigned long segment, unsigned long segment_length) {
+  int i;
+  unsigned long starting_point;
+  size_t length;
+  ssize_t length_of_read;
+  char *line = NULL;
+
+  starting_point = segment * segment_length;
+
+  for (i = 0; i < starting_point; i++)
+    length_of_read = getline(&line, &length, file);
+
   if (line)
     free(line);
 
-  return to_return;
+  if (length_of_read == -1)
+    return -1;
+  return 0;
 }
 
 void append_to_final(char **to_return, FILE *file) {
