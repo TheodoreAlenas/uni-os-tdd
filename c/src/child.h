@@ -11,7 +11,9 @@ typedef struct child_responce {
   char *line_contents;
 } ChildRes;
 
+ChildRes *child_res_create();
+void child_res_free(ChildRes *res);
 int child_res_to_ostream(ChildRes *res, FILE *file);
-int append_to_file(ChildRes *res, char *filename);  /* TODO test at all */
+int child_res_to_file(ChildRes *res, char *filename);  /* TODO test at all */
 
 #endif

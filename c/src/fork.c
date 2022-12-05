@@ -3,6 +3,7 @@
 
 #include "fork.h"
 #include "parent.h"
+#include "child.h"
 
 #define SEC 1000000
 
@@ -42,6 +43,7 @@ int be_parent(int num_of_children) {
 
 int be_child(int id) {
   usleep(0.2 * SEC);
+  child_res_to_file(child_res_create(), "/tmp/rlr_out");  /* TODO not final */
   printf("[child %d] Done\n", id);
   return 0;
 }
