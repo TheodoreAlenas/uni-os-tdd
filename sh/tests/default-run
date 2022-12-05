@@ -6,5 +6,5 @@ nope () {
 }
 
 make > /dev/null
-build/rlr || nope
+build/rlr -c 2 || nope
 make clean > /dev/null

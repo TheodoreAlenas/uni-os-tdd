@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "params.h"
 
 Params *parameters_create() {
@@ -22,6 +24,8 @@ Params *parameters_parse(int argc, char **argv) {
     if (0) {}
     IF_ITS("--help")
       p->show_help = true;
+    IF_ITS("-c")
+      p->num_of_workers = atoi(argv[i+1]);
     else
       p->file_name = argv[i];
   }
