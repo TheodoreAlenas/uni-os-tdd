@@ -12,11 +12,8 @@
 int be_parent(Params *p, void *shmem);
 int be_child(int id, void *shmem);
 
-int handle_forks(Params *p) {
+int handle_forks(Params *p, void *shmem) {
   int is_parent, child_id;
-  void *shmem;
-
-  shmem = shmem_create(p->file_segment_length);
 
   for (child_id = 0; child_id < p->num_of_children; child_id++) {
 

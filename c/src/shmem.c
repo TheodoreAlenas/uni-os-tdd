@@ -24,6 +24,10 @@ void *shmem_create(unsigned long max_lines) {
   return ptr;
 }
 
+void shmem_free(void *shmem) {
+  shm_unlink("OS");
+}
+
 void shmem_test_fill(void *shmem) {
   char* message_0 = "Hello";
   char* message_1 = "World!";
