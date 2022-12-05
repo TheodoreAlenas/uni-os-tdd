@@ -19,7 +19,7 @@ void test_arg_parse() {
   announce("help_turns_on",
       parameters_parse(2, help_b)->show_help == true);
   announce("filename_gets_passed",
-      0 == strcmp(file_str, parameters_parse(2, file_b)->file_name));
+      0 == strcmp(file_str, parameters_parse(2, file_b)->parent_params->file_name));
   announce("num_of_children_gets_passed",
-      parameters_parse(3, chil_b)->num_of_children == 2);
+      parameters_parse(3, chil_b)->parent_params->num_of_children == 2);
 }

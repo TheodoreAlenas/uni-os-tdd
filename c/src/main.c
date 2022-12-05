@@ -5,8 +5,6 @@
 #include "shmem.h"
 
 
-#define TRY(n) if ((n)) { perror( #n " failed: " ); parameters_free(p); return -1; }
-
 int main(int argc, char **argv) {
   Params *p;
   int err;
@@ -19,7 +17,8 @@ int main(int argc, char **argv) {
     return 0;
   }
 
-  shmem = shmem_create(p->file_segment_length);
+  printf("file segment length is %lu\n", p->parent_params->file_segment_length);
+  shmem = shmem_create(p->parent_params->file_segment_length);
 
   err = handle_forks(p, shmem);
 

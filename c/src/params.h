@@ -5,15 +5,15 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "parent_params.h"
+
 #define MAX_FILE_NAME_LEN 256
 
 typedef struct parameters {
   bool show_help;
-  unsigned file_segment_length;
-  unsigned num_of_children;
   unsigned operations_of_each_worker;
-  char *file_name;
   char *output_dir;
+  ParentParams *parent_params;
 } Params;
 
 Params *parameters_parse(int argc, char **argv);

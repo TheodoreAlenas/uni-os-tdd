@@ -15,7 +15,7 @@ int be_child(int id, void *shmem);
 int handle_forks(Params *p, void *shmem) {
   int is_parent, child_id;
 
-  for (child_id = 0; child_id < p->num_of_children; child_id++) {
+  for (child_id = 0; child_id < p->parent_params->num_of_children; child_id++) {
 
     is_parent = fork();
 
@@ -36,9 +36,11 @@ int be_parent(Params *p, void *shmem) {
   int err;
   Parent *r;
 
+  printf("before test_fill\n"); /************/
   shmem_test_fill(shmem);
+  printf("before usleep\n"); /************/
   usleep(1 * SEC);
-  r = parent_create(p->num_of_children, p->file_name, p->file_segment_length);
+  r = parent_create(p->parent_params->num_of_children, p->parent_params->file_name, p->parent_params->file_segment_length);
   err = parent_loop(r);
   parent_free(r);
   printf("[parent] Done\n");

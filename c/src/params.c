@@ -2,22 +2,33 @@
 #include <string.h>
 
 #include "params.h"
+#include "parent_params.h"
 
 Params *parameters_create() {
   Params *p = malloc(sizeof(Params));
 
-  p->file_name = malloc(sizeof(char) * MAX_FILE_NAME_LEN);
-  strcpy(p->file_name, "data/1001-line-numbers.dat");
+  p->parent_params = parent_params_create();
 
   p->output_dir = malloc(sizeof(char) * MAX_FILE_NAME_LEN);
   strcpy(p->output_dir, "rlr-output");
 
-  p->file_segment_length = 128;
-  p->num_of_children = 16;
   p->operations_of_each_worker = 1024;
   p->show_help = false;
 
   return p;
+}
+
+void parameters_free(Params *p) {
+  if (p == NULL)
+    return;
+
+  if (p->parent_params)
+    parent_params_free(p->parent_params);
+
+  if (p->output_dir)
+    free(p->output_dir);
+
+  free(p);
 }
 
 enum FlagType { F_NONE, F_NUM_OF_CHILDREN };
@@ -40,17 +51,13 @@ Params *parameters_parse(int argc, char **argv) {
 
     if (0) {}
     else if (flag == F_NUM_OF_CHILDREN)
-      p->num_of_children = atoi(argv[i]);
+      p->parent_params->num_of_children = atoi(argv[i]);
     IF_ITS("-c") flag = F_NUM_OF_CHILDREN;
     else
-      p->file_name = argv[i];
+      p->parent_params->file_name = argv[i];
   }
 
   return p;
 }
 #undef IF_ITS
 
-void parameters_free(Params *p) {
-  free(p->file_name);
-  free(p);
-}
