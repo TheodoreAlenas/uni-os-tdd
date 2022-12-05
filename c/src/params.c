@@ -12,20 +12,25 @@ Params *parameters_create() {
   return p;
 }
 
+enum FlagType { F_NONE, F_NUM_OF_CHILDREN };
+
 #define IF_ITS(s) else if (strcmp(argv[i], (s)) == 0)
 
 Params *parameters_parse(int argc, char **argv) {
   int i;
-  struct parameters *p;
+  enum FlagType flag = F_NONE;
+  Params *p;
   p = parameters_create();
+
+  if (strcmp(argv[1], "--help") == 0)
+    p->show_help = true;
 
   for (i = 1; i < argc; i++) {
 
     if (0) {}
-    IF_ITS("--help")
-      p->show_help = true;
-    IF_ITS("-c")
-      p->num_of_children = atoi(argv[i+1]);
+    IF_ITS("-c") flag = F_NUM_OF_CHILDREN;
+    else if (flag == F_NUM_OF_CHILDREN)
+      p->num_of_children = atoi(argv[i]);
     else
       p->file_name = argv[i];
   }
