@@ -5,7 +5,7 @@
 #include "parent.h"
 #include "parent_params.h"
 
-char *read_segment_from_open_file(Parent *parent, FILE *file, unsigned long segment);
+char *read_segment_from_open_file(ParentParams *pp, FILE *file, unsigned long segment);
 int skip_to_segment(FILE *file, unsigned long segment, unsigned long segment_length);
 void append_to_final(char **to_return, FILE *file);
 
@@ -46,13 +46,13 @@ char *parent_read_file_segment(Parent *parent, unsigned long segment) {
   char *res;
 
   file = fopen(parent->pp->file_name, "r");
-  res = read_segment_from_open_file(parent, file, segment);
+  res = read_segment_from_open_file(parent->pp, file, segment);
   fclose(file);
 
   return res;
 }
 
-char *read_segment_from_open_file(Parent *parent, FILE *file, unsigned long segment) {
+char *read_segment_from_open_file(ParentParams *pp, FILE *file, unsigned long segment) {
   int i, err;
   char *to_return;
 
@@ -62,11 +62,11 @@ char *read_segment_from_open_file(Parent *parent, FILE *file, unsigned long segm
     return NULL;
   }
 
-  err = skip_to_segment(file, segment, parent->pp->file_segment_length);
+  err = skip_to_segment(file, segment, pp->file_segment_length);
   if (err)
     return NULL;
 
-  for (i = 0; i < parent->pp->file_segment_length; i++)
+  for (i = 0; i < pp->file_segment_length; i++)
     append_to_final(&to_return, file);
 
   return to_return;
@@ -74,18 +74,18 @@ char *read_segment_from_open_file(Parent *parent, FILE *file, unsigned long segm
 
 int skip_to_segment(FILE *file, unsigned long segment, unsigned long segment_length) {
   int i;
-  unsigned long starting_point;
+  unsigned long start_of_segment;
   size_t length;
   ssize_t length_of_read;
-  char *line = NULL;
+  char *garbage_line = NULL;
 
-  starting_point = segment * segment_length;
+  start_of_segment = segment * segment_length;
 
-  for (i = 0; i < starting_point; i++)
-    length_of_read = getline(&line, &length, file);
+  for (i = 0; i < start_of_segment; i++)
+    length_of_read = getline(&garbage_line, &length, file);
 
-  if (line)
-    free(line);
+  if (garbage_line)
+    free(garbage_line);
 
   if (length_of_read == -1)
     return -1;
