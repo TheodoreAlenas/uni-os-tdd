@@ -7,7 +7,7 @@ Params *parameters_create() {
   Params *p = malloc(sizeof(Params));
 
   p->file_name = malloc(sizeof(char) * MAX_FILE_NAME_LEN);
-  strcpy(p->file_name, "input.txt");
+  strcpy(p->file_name, "data/1001-line-numbers.dat");
 
   p->output_dir = malloc(sizeof(char) * MAX_FILE_NAME_LEN);
   strcpy(p->output_dir, "rlr-output");

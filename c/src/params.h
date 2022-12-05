@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define MAX_FILE_NAME_LEN 1024
+#define MAX_FILE_NAME_LEN 256
 
 typedef struct parameters {
   bool show_help;

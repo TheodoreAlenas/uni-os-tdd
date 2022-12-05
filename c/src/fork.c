@@ -7,7 +7,7 @@
 
 #define SEC 1000000
 
-int be_parent(int num_of_children);
+int be_parent(Params *p);
 int be_child(int id);
 
 int handle_forks(Params *p) {
@@ -27,14 +27,14 @@ int handle_forks(Params *p) {
     else
       return be_child(child_id);
   }
-  return be_parent(p->num_of_children);
+  return be_parent(p);
 }
 
-int be_parent(int num_of_children) {
+int be_parent(Params *p) {
   int err;
   Parent *r;
   usleep(1 * SEC);
-  r = parent_create(num_of_children);
+  r = parent_create(p->num_of_children, p->file_name, p->file_segment_length);
   err = parent_loop(r);
   parent_free(r);
   printf("[parent] Done\n");
