@@ -1,0 +1,5 @@
+#! /bin/env sh
+BUILD=build
+
+files="$(find "$BUILD" -type f '!' -name 'test-*' -printf "$BUILD/%f ")"
+gcc $files -o "$BUILD/rlr"

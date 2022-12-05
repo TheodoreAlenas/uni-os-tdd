@@ -1,5 +1,5 @@
-#ifndef UTIL_FOR_MAIN_H
-#define UTIL_FOR_MAIN_H
+#ifndef PARAMS_H
+#define PARAMS_H
 
 #include <stdbool.h>
 #include <string.h>
