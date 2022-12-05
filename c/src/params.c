@@ -1,14 +1,22 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "params.h"
 
 Params *parameters_create() {
   Params *p = malloc(sizeof(Params));
+
   p->file_name = malloc(sizeof(char) * MAX_FILE_NAME_LEN);
+  strcpy(p->file_name, "input.txt");
+
+  p->output_dir = malloc(sizeof(char) * MAX_FILE_NAME_LEN);
+  strcpy(p->output_dir, "rlr-output");
+
   p->file_segment_length = 128;
   p->num_of_children = 16;
   p->operations_of_each_worker = 1024;
   p->show_help = false;
+
   return p;
 }
 

@@ -13,6 +13,7 @@ typedef struct parameters {
   unsigned num_of_children;
   unsigned operations_of_each_worker;
   char *file_name;
+  char *output_dir;
 } Params;
 
 Params *parameters_parse(int argc, char **argv);
