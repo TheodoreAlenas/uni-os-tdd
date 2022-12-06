@@ -4,6 +4,7 @@
 typedef struct {
 
 } RouterBackend;
-/*RouterBackend *router_backend_create(num_of_children, request_size);*/
+
+RouterBackend *router_backend_create(unsigned num_of_children, unsigned long request_size);
 
 #endif
