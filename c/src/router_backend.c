@@ -13,7 +13,7 @@ RouterBackend *router_backend_create(
   rb->buf = NULL;
 
   rb->num_of_children = num_of_children;
-  rb->mapped_children = malloc(sizeof(pid_t) * rb->num_of_children);
+  rb->mapped_children = malloc(sizeof(RouterKey) * rb->num_of_children);
   rb->remaining_pids_to_map = rb->num_of_children;
 
   rb->request_size = request_size;
@@ -35,7 +35,7 @@ void router_backend_write_req(RouterBackend *rb, char *msg) {
   strcpy((char *) rb->buf, msg);
 }
 
-int router_backend_map_another_pid(RouterBackend *rb, pid_t pid) {
+int router_backend_map_another_pid(RouterBackend *rb, RouterKey pid) {
   -- rb->remaining_pids_to_map;
   return 0;
 }
@@ -51,6 +51,9 @@ void router_backend_read_req(RouterBackend *rb, char **msg) {
   strcpy(*msg, (char *) rb->buf);
 }
 
-sem_t get_semaphore_of_child_with_pid(pid_t pid) {
-  return *((sem_t *) malloc(sizeof(sem_t)));
+void router_backend_set_semaphore(RouterBackend *rb, RouterKey pid, RouterValue *sem) {
+  memcpy(rb->buf, &sem, sizeof(RouterValue));
+}
+RouterValue *get_semaphore_of_child_with_pid(RouterKey pid) {
+  return (RouterValue *) malloc(sizeof(RouterValue));
 }

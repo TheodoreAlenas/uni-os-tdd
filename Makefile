@@ -10,7 +10,10 @@ clean:
 dev:
 	export DEBUG_FLAG="-D DEV"; make all
 
-test: test-main.o test-stack.o test-util.o test-arg-parse.o test-router-backend.o params.o parent_params.o stack.o router_backend.o
+test:
+	export DEBUG_FLAG="-D TEST"; make test-phase-2
+
+test-phase-2: test-main.o test-stack.o test-util.o test-arg-parse.o test-router-backend.o params.o parent_params.o stack.o router_backend.o
 	gcc $(BUILD)/test-*.o $(BUILD)/params.o $(BUILD)/parent_params.o $(BUILD)/stack.o $(BUILD)/router_backend.o -o $(BUILD)/test
 
 
