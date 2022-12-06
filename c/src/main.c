@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
   int err;
   void *shmem;
 
-  I_AM("main"); WERE_IN("main");
+  I_AM("main");
   WELL("parsing parameters");
   p = parameters_parse(argc, argv);
 
@@ -20,14 +20,16 @@ int main(int argc, char **argv) {
     return 0;
   }
 
-  WELLL(printf("creating %d shmem", 1));
+  WELL("creating shmem");
   shmem = shmem_create(p->parent_params->file_segment_length);
 
   err = handle_forks(p, shmem);
 
+  WELL("freeing main");
   parameters_free(p);
   shmem_free(shmem);
 
+  WELL("DONE");
   return err;
 }
 
