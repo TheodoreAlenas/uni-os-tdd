@@ -10,3 +10,10 @@ RouterBackend *router_backend_create(
 
   return rb;
 }
+
+void router_backend_free(RouterBackend *rb) {
+  if (rb == NULL)
+    return;
+
+  free(rb);
+}

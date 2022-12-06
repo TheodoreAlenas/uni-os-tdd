@@ -9,6 +9,9 @@ void test_router_backend() {
 
   rb = router_backend_create(num_of_children, request_size);
   announce("router_backend_create", rb);
-/*
-  router_backend_free(rb);*/
+
+  announce("router_backend_free_null_doesnt_crash", true);
+  router_backend_free(NULL);
+  announce("router_backend_free_legit_doesnt_crash", true);
+  router_backend_free(rb);
 }
