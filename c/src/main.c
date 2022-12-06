@@ -11,7 +11,6 @@ int main(int argc, char **argv) {
   int err;
   void *shmem;
 
-  I_AM("main");
   WELL("parsing parameters");
   p = parameters_parse(argc, argv);
 
@@ -25,7 +24,6 @@ int main(int argc, char **argv) {
 
   err = handle_forks(p, shmem);
 
-  WELL("freeing main");
   parameters_free(p);
   shmem_free(shmem);
 

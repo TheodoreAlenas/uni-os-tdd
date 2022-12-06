@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "params.h"
 #include "parent.h"
+#include "dev_mode.h"
+#include "params.h"
 #include "parent_params.h"
 
 char *read_segment_from_open_file(ParentParams *pp, FILE *file, unsigned long segment);
@@ -12,6 +13,7 @@ void append_to_final(char **to_return, FILE *file);
 Parent *parent_create(ParentParams *pp) {
   Parent *r = malloc(sizeof(Parent));
 
+  WELL("");
   r->pp = pp;
 
   r->children = child_data_create(r->pp->num_of_children);
@@ -21,6 +23,7 @@ Parent *parent_create(ParentParams *pp) {
 }
 
 void parent_free(Parent *r) {
+  WELL("(not freeing ParentParams)");
   stack_free(r->requests);
   child_data_free(r->children);
   /* ATTENTION the ParentParams should be freed elsewhere */
@@ -29,13 +32,10 @@ void parent_free(Parent *r) {
 
 int parent_loop(Parent *r) {
 
+  WELL("");
   char *segment = parent_read_file_segment(r, 1);
   /* printf("%s\n", segment); */
   free(segment);
-
-#ifdef DEV
-  printf("dev is defined\n");
-#endif
 
   return 0;
 }
@@ -45,6 +45,7 @@ char *parent_read_file_segment(Parent *parent, unsigned long segment) {
   FILE *file;
   char *res;
 
+  WELLL(printf("%lu", segment));
   file = fopen(parent->pp->file_name, "r");
   res = read_segment_from_open_file(parent->pp, file, segment);
   fclose(file);
@@ -56,6 +57,7 @@ char *read_segment_from_open_file(ParentParams *pp, FILE *file, unsigned long se
   int i, err;
   char *to_return;
 
+  WELL("");
   to_return = malloc(1024 * sizeof(char));
   if (to_return == NULL) {
     perror("malloc failed on reading string: ");
@@ -69,6 +71,7 @@ char *read_segment_from_open_file(ParentParams *pp, FILE *file, unsigned long se
   for (i = 0; i < pp->file_segment_length; i++)
     append_to_final(&to_return, file);
 
+  WELL("Done");
   return to_return;
 }
 

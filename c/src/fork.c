@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "fork.h"
+#include "dev_mode.h"
 #include "shmem.h"
 #include "parent.h"
 #include "child.h"
@@ -29,6 +30,7 @@ int handle_forks(Params *p, void *shmem) {
     else
       return be_child(child_id, shmem);
   }
+  WELL("forks done");
   return be_parent(p, shmem);
 }
 
@@ -40,15 +42,15 @@ int be_parent(Params *p, void *shmem) {
   usleep(1 * SEC);
   r = parent_create(p->parent_params);
   err = parent_loop(r);
+  WELL("freeing after parent_loop");
   parent_free(r);
-  printf("[parent] Done\n");
   return err;
 }
 
 int be_child(int id, void *shmem) {
   usleep(0.2 * SEC);
-  printf("[child %d] %s\n", id, (char *) shmem);
+  WELLL(printf("shmem contains '%s'", (char *) shmem));
   child_res_to_file(child_res_create(), "/tmp/rlr_out");  /* TODO not final */
-  printf("[child %d] Done\n", id);
+  WELL("Done");
   return 0;
 }

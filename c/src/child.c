@@ -3,10 +3,12 @@
 #include <stdio.h>
 
 #include "child.h"
+#include "dev_mode.h"
 
 ChildRes *child_res_create() {
   ChildRes *res = malloc(sizeof(ChildRes));
 
+  WELL("");
   res->application_time_in_ns = -1;
   res->responce_time_in_ns = -1;
   res->file_segment = -1;
@@ -17,6 +19,7 @@ ChildRes *child_res_create() {
 }
 
 void child_res_free(ChildRes *res) {
+  WELL("");
   if (res->line_contents != NULL)
     free(res->line_contents);
   free(res);
@@ -24,6 +27,7 @@ void child_res_free(ChildRes *res) {
 
 int child_res_to_ostream(ChildRes *res, FILE *file) {
 
+  WELL("");
   return fprintf(file, "%d %d <%d,%d> %s\n",
       res->application_time_in_ns,
       res->responce_time_in_ns,
@@ -37,6 +41,7 @@ int child_res_to_file(ChildRes *res, char *filename) {
   int err;
   FILE *file = fopen(filename, "a");
 
+  WELL(filename);
   if (file == NULL) {
     perror("Child opening file for appending: ");
     return -1;

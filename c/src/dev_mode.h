@@ -4,21 +4,19 @@
 #ifdef DEV
 
 #include <stdio.h>
-char *WHO;
-#define GREEN   "\x1b[32m"
-#define RESET   "\x1b[0m"
+#include <unistd.h>
+static char *WHO;
 
-#define PRINT_DEV_STATUS() printf("%s[%s]%s ", GREEN, WHO, RESET)
+#define PRINT_DEV_STATUS() printf("\x1b[%dm[pid %d %s > %s]\x1b[0m ", \
+    getpid() % 7 + 32, getpid(), __FILE__, __FUNCTION__)
 #define WELL(str) PRINT_DEV_STATUS(); printf("%s\n", str)
 #define WELLL(printf_expr) PRINT_DEV_STATUS(); printf_expr; printf("\n");
-#define I_AM(who) WHO = who
 
 #else
 
 #define PRINT_DEV_STATUS()
 #define WELL(str)
 #define WELLL(printf_args)
-#define I_AM(who)
 
 #endif
 
