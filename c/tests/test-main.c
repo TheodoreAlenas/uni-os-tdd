@@ -24,7 +24,6 @@ int main(int argc, char **argv) {
 void call_all() {
   test_stack();
   test_arg_parse();
-  test_router_backend();
 }
 
 #define CONSIDER(n) else if (strcmp(name, #n) == 0) test_##n()
@@ -33,7 +32,6 @@ void call_individual_with_same_name(char *name) {
   if (0) return;
   CONSIDER(stack);
   CONSIDER(arg_parse);
-  CONSIDER(router_backend);
 }
 #undef CONSIDER
 

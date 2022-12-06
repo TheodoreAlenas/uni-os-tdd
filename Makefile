@@ -13,11 +13,11 @@ dev:
 test:
 	export DEBUG_FLAG="-D TEST"; make test-phase-2
 
-test-phase-2: test-main.o test-stack.o test-util.o test-arg-parse.o test-router-backend.o params.o parent_params.o stack.o router_backend.o
-	gcc $(BUILD)/test-*.o $(BUILD)/params.o $(BUILD)/parent_params.o $(BUILD)/stack.o $(BUILD)/router_backend.o -o $(BUILD)/test
+test-phase-2: test-main.o test-stack.o test-util.o test-arg-parse.o params.o parent_params.o stack.o
+	gcc $(BUILD)/test-*.o $(BUILD)/params.o $(BUILD)/parent_params.o $(BUILD)/stack.o -o $(BUILD)/test
 
 
-rlr: main.o stack.o child_data.o parent.o child.o params.o parent_params.o fork.o shmem.o router_backend.o
+rlr: main.o stack.o child_data.o parent.o child.o params.o parent_params.o fork.o shmem.o
 	sh/link-files
 
 
