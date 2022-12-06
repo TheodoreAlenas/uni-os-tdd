@@ -23,7 +23,7 @@ Parent *parent_create(ParentParams *pp) {
 void parent_free(Parent *r) {
   stack_free(r->requests);
   child_data_free(r->children);
-  /* ATTENTION the ParentParams might be freed from elsewhere */
+  /* ATTENTION the ParentParams should be freed elsewhere */
   free(r);
 }
 
