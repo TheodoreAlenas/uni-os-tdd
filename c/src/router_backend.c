@@ -17,3 +17,7 @@ void router_backend_free(RouterBackend *rb) {
 
   free(rb);
 }
+
+void router_backend_write_req(RouterBackend *rb, char *msg) {
+
+}
