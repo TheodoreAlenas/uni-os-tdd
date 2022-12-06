@@ -15,9 +15,13 @@ void router_backend_free(RouterBackend *rb) {
 }
 
 void router_backend_write_req(RouterBackend *rb, char *msg) {
-  strcpy((char *) rb->shmem, msg);
+  strcpy((char *) rb->buf, msg);
 }
 
 void router_backend_read_req(RouterBackend *rb, char **msg) {
-  strcpy(*msg, (char *) rb->shmem);
+  strcpy(*msg, (char *) rb->buf);
+}
+
+sem_t get_semaphore_of_child_with_pid(pid_t pid) {
+  return *((sem_t *) malloc(sizeof(sem_t)));
 }
