@@ -1,0 +1,15 @@
+#! /bin/env sh
+
+#find sh/tests -type f '!' -name '*.sh' -exec sh/test-one {} \;
+
+. sh/tests/wrap.sh
+
+cd build || exit 1
+
+wrap test './test' -v
+wrap all './rlr'
+wrap dev './rlr --help'
+wrap dev './rlr -c 1'
+wrap dev './rlr -c 2'
+wrap dev './rlr'
+

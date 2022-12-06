@@ -39,7 +39,7 @@ int be_parent(Params *p, void *shmem) {
   Parent *r;
 
   shmem_test_fill(shmem);
-  usleep(1 * SEC);
+  usleep(0.3 * SEC);
   r = parent_create(p->parent_params);
   err = parent_loop(r);
   WELL("freeing after parent_loop");
@@ -48,7 +48,7 @@ int be_parent(Params *p, void *shmem) {
 }
 
 int be_child(int id, void *shmem) {
-  usleep(0.2 * SEC);
+  usleep(0.1 * SEC);
   WELLL(printf("shmem contains '%s'", (char *) shmem));
   child_res_to_file(child_res_create(), "/tmp/rlr_out");  /* TODO not final */
   WELL("Done");

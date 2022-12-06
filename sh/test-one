@@ -1,42 +1,43 @@
 #! /bin/env sh
 
-verbose=no
-test_file=test-file-not-set
+test_one () {
 
-for arg do
-  case "$arg" in
-    -v)        verbose=yes      ;;
-    --verbose) verbose=yes      ;;
-    '')                         ;;
-    *)         test_file="$arg" ;;
-  esac
-done
+  verbose=no
+  command="echo 'test command not set properly' >&2; exit 1"
 
-red="\033[0;31m"
-green="\033[0;32m"
-no_color="\033[0m"
+  for arg do
+    case "$arg" in
+      -v)        verbose=yes      ;;
+      --verbose) verbose=yes      ;;
+      '')                         ;;
+      *)         command="$arg"   ;;
+    esac
+  done
 
-tmp="$(mktemp "/tmp/stderr-of-test-os-hw2-date-$(date)-pid-$$-rand-XXXXX")"
+  red="\033[0;31m"
+  green="\033[0;32m"
+  no_color="\033[0m"
 
-chmod +x "$test_file"
+  tmp="$(mktemp "/tmp/stderr-of-test-os-hw2-date-$(date)-pid-$$-rand-XXXXX")"
 
-if [ "$verbose" = yes ]
-then
-  handle="========"
-  printf "\n${green}${handle} Testing $test_file ${handle}${no_color}\n"
-  "$test_file"
-  if [ $? != 0 ]
-  then printf   "${red}${handle}Test ${test_file} failed${handle}${no_color}\n\n"
-  else printf "${green}${handle}Test ${test_file} passed${handle}${no_color}\n\n"
+  if [ "$verbose" = yes ]
+  then
+    handle="========"
+    printf "\n${green}${handle} Testing '$command' ${handle}${no_color}\n"
+    sh -c "$command"
+    if [ $? != 0 ]
+    then printf   "${red}${handle}Test '${command}' failed${handle}${no_color}\n\n"
+    else printf "${green}${handle}Test '${command}' passed${handle}${no_color}\n\n"
+    fi
+  else
+    printf "${green}Testing '$command' ... ${no_color}"
+    sh -c "$command" > /dev/null 2> "$tmp"
+    if [ $? != 0 ]
+    then printf "${red}Failed${no_color}\n" ; cat "$tmp"
+    else printf "${green}Passed${no_color}\n"
+    fi
   fi
-else
-  printf "${green}Testing $test_file ... ${no_color}"
-  "$test_file" > /dev/null 2> "$tmp"
-  if [ $? != 0 ]
-  then printf "${red}Failed${no_color}\n" ; cat "$tmp"
-  else printf "${green}Passed${no_color}\n"
-  fi
-fi
 
-rm "$tmp"
+  rm "$tmp"
 
+}
