@@ -2,6 +2,8 @@
 #define TEST_H
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 
 void announce(char *function_name, bool passed);

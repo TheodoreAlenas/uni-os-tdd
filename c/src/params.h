@@ -7,9 +7,6 @@
 
 #include "parent_params.h"
 
-#define MAX_FILE_NAME_LEN 256
-#define MAX_REQUEST_LEN 256
-
 typedef struct parameters {
   bool show_help;
   unsigned operations_of_each_worker;

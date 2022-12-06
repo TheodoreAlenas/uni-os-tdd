@@ -1,3 +1,5 @@
+#include "constants.h"
+#include "defaults.h"
 #include "parent_params.h"
 #include "params.h"
 
@@ -6,10 +8,10 @@ ParentParams *parent_params_create() {
 
   pp = malloc(sizeof(ParentParams));
   pp->file_name = malloc(MAX_FILE_NAME_LEN * sizeof(char));
-  strcpy(pp->file_name, "data/1001-line-numbers.dat");
+  strcpy(pp->file_name, DEFAULT_INPUT_FILE);
 
-  pp->file_segment_length = 128;
-  pp->num_of_children = 16;
+  pp->file_segment_length = DEFAULT_SEGMENT_LENGTH;
+  pp->num_of_children = DEFAULT_NUM_OF_CHILDREN;
 
   return pp;
 }

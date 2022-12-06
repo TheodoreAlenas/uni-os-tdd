@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "constants.h"
 #include "params.h"
 #include "parent_params.h"
 
