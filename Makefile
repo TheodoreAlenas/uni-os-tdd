@@ -13,8 +13,12 @@ dev:
 test:
 	export DEBUG_FLAG="-D TEST"; make test-phase-2
 
-test-phase-2: test-main.o test-stack.o test-util.o test-arg-parse.o params.o parent_params.o stack.o
+test-phase-2: test-named test-related
 	gcc $(BUILD)/test-*.o $(BUILD)/params.o $(BUILD)/parent_params.o $(BUILD)/stack.o -o $(BUILD)/test
+
+test-named: test-main.o test-stack.o test-util.o test-arg-parse.o
+
+test-related: params.o parent_params.o stack.o
 
 
 rlr: main.o stack.o child_data.o parent.o child.o params.o parent_params.o fork.o shmem.o
