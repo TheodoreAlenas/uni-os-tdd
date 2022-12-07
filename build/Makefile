@@ -12,6 +12,7 @@ all: rlr
 
 clean:
 	find . -type f '!' -name 'Makefile' -exec rm {} ';'
+	rm ../output/*
 
 dev:
 	export DEBUG_FLAG="-D DEV"; make all
