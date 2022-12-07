@@ -9,14 +9,19 @@
 
 /* nanoseconds per second, for the usleep function */
 #define SEC 1000000
+#define SEM_THANK_YOU "sem_thank_you"
+#define SHM_THANK_YOU "shm_thank_you"
+#define SHM_I_WANT "shm_i_want"
+
 
 int be_parent(Params *p, void *shmem);
-int be_child(int id, void *shmem);
+int be_child(int child_index);
 
 int handle_forks(Params *p, void *shmem) {
-  int is_parent, child_id;
+  int is_parent, child_index, num_of_children;
 
-  for (child_id = 0; child_id < p->parent_params->num_of_children; child_id++) {
+  num_of_children = p->parent_params->num_of_children;  /* alias */
+  for (child_index = 0; child_index < num_of_children; child_index++) {
 
     is_parent = fork();
 
@@ -28,7 +33,7 @@ int handle_forks(Params *p, void *shmem) {
     if (is_parent)
       continue;
     else
-      return be_child(child_id, shmem);
+      return be_child(child_index);
   }
   WELL("forks done");
   return be_parent(p, shmem);
@@ -47,11 +52,22 @@ int be_parent(Params *p, void *shmem) {
   return err;
 }
 
-int be_child(int id, void *shmem) {
+int be_child(int child_index) {
+  Child *child;
+  ChildArgs args;
+
+  WELL("");
   usleep(0.1 * SEC);
-  WELLL(printf("shmem contains '%s'", (char *) shmem));
+
+  args.sem_name_i_want = get_semaphore_name(child_index);
+  args.sem_name_thank_you = SEM_THANK_YOU;
+  args.shmem_name_i_want = SHM_I_WANT;
+  args.shmem_name_thank_you = SHM_THANK_YOU;
+
+  child = child_create(args);
+  child_free(child);
+
   child_res_to_file(child_res_create(), "/tmp/rlr_out");  /* TODO not final */
-  WELL("Done");
   return 0;
 }
 
