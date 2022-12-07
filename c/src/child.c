@@ -18,6 +18,13 @@ Child *child_create(ChildArgs args) {
   child->sem_i_want = sem_open(args.sem_name_i_want, O_WRONLY, 0666, 0);
   child->sem_thank_you = sem_open(args.sem_name_thank_you, O_RDONLY, 0666, 0);
 
+  WELL("about to post the semaphore");
+  sem_post(child->sem_i_want);
+  WELL("posted");
+  WELL("about to wait the semaphore");
+  sem_wait(child->sem_thank_you);
+  WELL("somehow it's done");
+
   child->names = malloc(sizeof(ChildArgs));
   memcpy(child->names, &args, sizeof(ChildArgs));
 
@@ -34,7 +41,6 @@ void child_free(Child *child) {
   if (child->names)
     free(child->names);
 
-  sem_unlink(child->names->sem_name_i_want);
   sem_unlink(child->names->sem_name_thank_you);
 
   free(child);
