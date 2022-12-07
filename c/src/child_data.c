@@ -1,4 +1,9 @@
+#include <semaphore.h>
+#include <fcntl.h>
+#include <stdio.h>
+
 #include "child_data.h"
+#include "get_names.h"
 
 
 ChildData *child_data_create(int num_of_workers) {
@@ -6,8 +11,12 @@ ChildData *child_data_create(int num_of_workers) {
   ChildData * c = malloc(num_of_workers * sizeof(ChildData));
   for (int i = 0; i < num_of_workers; i++) {
     c[i].is_working = false;
-    c[i].semaphore = 0;
-    c[i].shmem = NULL;  /* TODO create segment */
+    c[i].semaphore = sem_open(get_semaphore_name(i), O_CREAT | O_WRONLY, 0666, 0);
+    if (c[i].semaphore == NULL) {
+      perror("chld_data_create sem_open");
+      child_data_free(c);
+      return NULL;
+    }
     c[i].current_file_segment = 0;
   }
   return c;

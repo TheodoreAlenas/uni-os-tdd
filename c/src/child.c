@@ -19,6 +19,8 @@ Child *child_create(ChildArgs args) {
   memcpy(child->names, &args, sizeof(ChildArgs));
 
   /* TODO shmem */
+  WELL(args.sem_name_i_want);
+  WELL(args.sem_name_thank_you);
   child->sem_i_want = sem_open(args.sem_name_i_want, O_WRONLY, 0666, 0);
   child->sem_thank_you = sem_open(args.sem_name_thank_you, O_CREAT | O_RDONLY, 0666, 0);
   if (child->sem_i_want == NULL || child->sem_thank_you == NULL) {

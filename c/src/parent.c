@@ -38,23 +38,17 @@ int parent_loop(Parent *r) {
   int i;
 
   WELL("waiting");
-
+/*
   r->children[0].semaphore = sem_open("sem0", O_CREAT | O_RDONLY, 0666, 0);
   r->children[1].semaphore = sem_open("sem1", O_CREAT | O_RDONLY, 0666, 0);
-
-  wait_me = r->children[0].semaphore;
-  if (wait_me == NULL) {
-    perror("wait_me");
-    return -1;
-  }
-
-  sem_wait(wait_me);
-
-  WELL("waited, posting");
+  */
 
   send_me = sem_open(SEM_THANK_YOU, O_WRONLY, 0666, 0);
-  sem_post(send_me);
-  sem_post(send_me);
+
+  for (i = 0; i < r->pp->num_of_children; i++) {
+    sem_wait(r->children[i].semaphore);
+    sem_post(send_me);
+  }
 
   WELL("posted");
 
