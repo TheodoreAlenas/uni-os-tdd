@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <semaphore.h>
+#include <fcntl.h>
 
 #include "parent.h"
 #include "dev_mode.h"
@@ -31,8 +33,20 @@ void parent_free(Parent *r) {
 }
 
 int parent_loop(Parent *r) {
+  sem_t *send_me, *wait_me;
 
-  WELL("");
+  WELL("waiting");
+
+  wait_me = sem_open("sem0", O_RDONLY, 0666, 0);
+  if (wait_me == NULL) {
+    perror("wait_me");
+    return -1;
+  }
+
+  sem_wait(wait_me);
+
+  WELL("waited");
+
   char *segment = parent_read_file_segment(r, 1);
   /* printf("%s\n", segment); */
   free(segment);
