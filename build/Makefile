@@ -1,11 +1,12 @@
 SRC := ../c/src
 TEST := ../c/tests
-TEST_FILES := test-main.o test-stack.o test-util.o test-arg-parse.o
-TEST_RELATED := params.o parent_params.o stack.o
-PRIMARY_FILES := main.o parent.o child.o
+PRIMARY_FILES := parent.o child.o
 SECONDARY_FILES := stack.o child_data.o params.o parent_params.o
 TRICKY_FILES := fork.o shmem.o
-RLR_FILES := $(PRIMARY_FILES) $(SECONDARY_FILES) $(TRICKY_FILES)
+TEST_NAMED_FILES := test-stack.o test-util.o test-arg-parse.o test-parent.o
+NORMAL_FILES := $(PRIMARY_FILES) $(SECONDARY_FILES) $(TRICKY_FILES)
+RLR_FILES := main.o $(NORMAL_FILES)
+TEST_FILES := test-main.o $(TEST_NAMED_FILES) $(NORMAL_FILES)
 
 all: rlr
 
@@ -18,8 +19,8 @@ dev:
 test:
 	export DEBUG_FLAG="-D TEST"; make test-phase-2
 
-test-phase-2: $(TEST_FILES) $(TEST_RELATED)
-	gcc $(TEST_FILES) $(TEST_RELATED) -o test
+test-phase-2: $(TEST_FILES)
+	gcc $(TEST_FILES) -o test
 
 rlr: $(RLR_FILES)
 	gcc $(RLR_FILES) -o rlr

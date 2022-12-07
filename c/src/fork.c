@@ -54,3 +54,10 @@ int be_child(int id, void *shmem) {
   WELL("Done");
   return 0;
 }
+
+char *get_semaphore_name(unsigned child_index) {
+  char *ans;
+  ans = malloc(256);
+  sprintf(ans, "sem%u", child_index);
+  return ans;
+}

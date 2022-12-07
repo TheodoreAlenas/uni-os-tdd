@@ -12,6 +12,6 @@ int get_total_tests_passed();
 int get_total_tests_failed();
 void test_stack();
 void test_arg_parse();
-void test_router_backend();
+void test_semaphores();
 
 #endif
