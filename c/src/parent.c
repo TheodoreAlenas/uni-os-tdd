@@ -4,6 +4,7 @@
 #include <fcntl.h>
 
 #include "parent.h"
+#include "defaults.h"
 #include "dev_mode.h"
 #include "params.h"
 #include "parent_params.h"
@@ -37,7 +38,7 @@ int parent_loop(Parent *r) {
 
   WELL("waiting");
 
-  wait_me = sem_open("sem0", O_RDONLY, 0666, 0);
+  wait_me = sem_open("sem0", O_CREAT | O_RDONLY, 0666, 0);
   if (wait_me == NULL) {
     perror("wait_me");
     return -1;
@@ -45,7 +46,13 @@ int parent_loop(Parent *r) {
 
   sem_wait(wait_me);
 
-  WELL("waited");
+  WELL("waited, posting");
+
+  send_me = sem_open(SEM_THANK_YOU, O_WRONLY, 0666, 0);
+  sem_post(send_me);
+  sem_post(send_me);
+
+  WELL("posted");
 
   char *segment = parent_read_file_segment(r, 1);
   /* printf("%s\n", segment); */

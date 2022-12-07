@@ -7,4 +7,8 @@
 #define DEFAULT_INPUT_FILE "../data/1001-line-numbers.dat"
 #define DEFAULT_SEGMENT_LENGTH 128;
 
+#define SEM_THANK_YOU "sem_thank_you"
+#define SHM_THANK_YOU "shm_thank_you"
+#define SHM_I_WANT "shm_i_want"
+
 #endif

@@ -3,6 +3,7 @@
 
 #include "fork.h"
 #include "constants.h"
+#include "defaults.h"
 #include "dev_mode.h"
 #include "shmem.h"
 #include "parent.h"
@@ -10,9 +11,6 @@
 
 /* nanoseconds per second, for the usleep function */
 #define SEC 1000000
-#define SEM_THANK_YOU "sem_thank_you"
-#define SHM_THANK_YOU "shm_thank_you"
-#define SHM_I_WANT "shm_i_want"
 
 
 int be_parent(Params *p, void *shmem);
