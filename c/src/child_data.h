@@ -3,10 +3,11 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <semaphore.h>
 
 
 typedef struct child_data {
-  int semaphore;
+  sem_t *semaphore;
   void *shmem;
   bool is_working;
   int current_file_segment;

@@ -1,4 +1,4 @@
-#include "../src/fork.h"
+#include "../src/get_names.h"
 
 #include "test.h"
 

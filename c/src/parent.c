@@ -35,10 +35,14 @@ void parent_free(Parent *r) {
 
 int parent_loop(Parent *r) {
   sem_t *send_me, *wait_me;
+  int i;
 
   WELL("waiting");
 
-  wait_me = sem_open("sem0", O_CREAT | O_RDONLY, 0666, 0);
+  r->children[0].semaphore = sem_open("sem0", O_CREAT | O_RDONLY, 0666, 0);
+  r->children[1].semaphore = sem_open("sem1", O_CREAT | O_RDONLY, 0666, 0);
+
+  wait_me = r->children[0].semaphore;
   if (wait_me == NULL) {
     perror("wait_me");
     return -1;

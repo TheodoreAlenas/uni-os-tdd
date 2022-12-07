@@ -5,6 +5,7 @@
 #include "constants.h"
 #include "defaults.h"
 #include "dev_mode.h"
+#include "get_names.h"
 #include "shmem.h"
 #include "parent.h"
 #include "child.h"
@@ -74,18 +75,4 @@ int be_child(int child_index, char *output_file) {
   child_free(child);
 
   return 0;
-}
-
-char *get_semaphore_name(unsigned child_index) {
-  char *ans;
-  ans = malloc(256);
-  sprintf(ans, "sem%u", child_index);
-  return ans;
-}
-
-char *get_output_file_name(char *output_dir, unsigned child_index) {
-  char *ans;
-  ans = malloc(2 * MAX_FILE_NAME_LEN);
-  sprintf(ans, "%s/index-%u-pid-%u", output_dir, child_index, getpid());
-  return ans;
 }
