@@ -29,6 +29,7 @@ typedef struct child {
 
 Child *child_create(ChildArgs args);
 void child_free(Child *child);
+int child_loop(Child *child);
 
 ChildRes *child_res_create();
 void child_res_free(ChildRes *res);

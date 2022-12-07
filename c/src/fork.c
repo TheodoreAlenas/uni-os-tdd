@@ -65,9 +65,9 @@ int be_child(int child_index) {
   args.shmem_name_thank_you = SHM_THANK_YOU;
 
   child = child_create(args);
+  child_loop(child);
   child_free(child);
 
-  child_res_to_file(child_res_create(), "/tmp/rlr_out");  /* TODO not final */
   return 0;
 }
 

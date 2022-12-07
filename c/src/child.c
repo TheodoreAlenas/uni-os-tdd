@@ -19,6 +19,13 @@ void child_free(Child *child) {
   free(child);
 }
 
+int child_loop(Child *child) {
+  WELL("");
+
+  child_res_to_file(child_res_create(), "/tmp/rlr_out");  /* TODO not final */
+  return 0;
+}
+
 ChildRes *child_res_create() {
   ChildRes *res = malloc(sizeof(ChildRes));
 
