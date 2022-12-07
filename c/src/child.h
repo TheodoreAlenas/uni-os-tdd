@@ -10,6 +10,7 @@ typedef struct child_arguments {
   char *sem_name_thank_you;
   char *shmem_name_i_want;
   char *shmem_name_thank_you;
+  char *file_name;
 } ChildArgs;
 
 typedef struct child {
@@ -17,6 +18,7 @@ typedef struct child {
   sem_t sem_thank_you;
   void *shmem_i_want;
   void *shmem_thank_you;
+  char *file_name;
 } Child;
 
 Child *child_create(ChildArgs args);
