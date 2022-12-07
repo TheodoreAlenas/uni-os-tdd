@@ -48,7 +48,7 @@ int be_parent(Params *p, void *shmem) {
   Parent *r;
 
   shmem_test_fill(shmem);
-  usleep(0.3 * SEC);
+  usleep(0.5 * SEC);
   r = parent_create(p->parent_params);
   err = parent_loop(r);
   WELL("freeing after parent_loop");
@@ -68,6 +68,8 @@ int be_child(int child_index, char *output_file) {
   args.shmem_name_i_want = SHM_I_WANT;
   args.shmem_name_thank_you = SHM_THANK_YOU;
   args.file_name = output_file;
+
+  WELL(args.file_name);
 
   child = child_create(args);
   child_loop(child);

@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "constants.h"
+#include "defaults.h"
 #include "params.h"
 #include "parent_params.h"
 
@@ -11,7 +12,7 @@ Params *parameters_create() {
   p->parent_params = parent_params_create();
 
   p->output_dir = malloc(sizeof(char) * MAX_FILE_NAME_LEN);
-  strcpy(p->output_dir, "rlr-output");
+  strcpy(p->output_dir, DEFAULT_OUTPUT_DIR);
 
   p->operations_of_each_worker = 1024;
   p->show_help = false;
