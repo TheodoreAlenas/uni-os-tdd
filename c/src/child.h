@@ -14,11 +14,12 @@ typedef struct child_arguments {
 } ChildArgs;
 
 typedef struct child {
-  sem_t sem_i_want;
-  sem_t sem_thank_you;
+  sem_t *sem_i_want;
+  sem_t *sem_thank_you;
   void *shmem_i_want;
   void *shmem_thank_you;
   char *file_name;
+  ChildArgs *names;
 } Child;
 
 Child *child_create(ChildArgs args);

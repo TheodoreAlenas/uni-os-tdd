@@ -1,6 +1,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <semaphore.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "child.h"
 #include "dev_mode.h"
@@ -11,6 +14,13 @@ Child *child_create(ChildArgs args) {
   child = malloc(sizeof(Child));
   child->file_name = args.file_name;
 
+  /* TODO shmem */
+  child->sem_i_want = sem_open(args.sem_name_i_want, O_WRONLY, 0666, 0);
+  child->sem_thank_you = sem_open(args.sem_name_thank_you, O_RDONLY, 0666, 0);
+
+  child->names = malloc(sizeof(ChildArgs));
+  memcpy(child->names, &args, sizeof(ChildArgs));
+
   return child;
 }
 
@@ -20,6 +30,12 @@ void child_free(Child *child) {
 
   if (child->file_name)
     free(child->file_name);
+
+  if (child->names)
+    free(child->names);
+
+  sem_unlink(child->names->sem_name_i_want);
+  sem_unlink(child->names->sem_name_thank_you);
 
   free(child);
 }
