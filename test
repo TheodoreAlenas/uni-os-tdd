@@ -6,7 +6,6 @@
 
 cd build || exit 1
 
-wrap test './test' -v
 wrap all './rlr'
 wrap dev './rlr --help'
 wrap dev './rlr -c 1'
