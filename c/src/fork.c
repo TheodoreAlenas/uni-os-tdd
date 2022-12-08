@@ -47,11 +47,9 @@ int be_parent(Params *p, void *shmem) {
   Parent *r;
 
   shmem_test_fill(shmem);
-  usleep(0.5 * SEC);
   r = parent_create(p->parent_params);
   err = parent_loop(r);
   WELL("freeing after parent_loop");
-  usleep(200000);
   /* TODO waitpid */
   parent_free(r);
   return err;
@@ -62,7 +60,6 @@ int be_child(int child_index, char *output_file) {
   ChildArgs args;
 
   WELL("");
-  usleep(0.1 * SEC);
 
   args.sem_name_i_want = SEM_I_WANT;
   args.sem_name_thank_you = get_semaphore_name(child_index);

@@ -58,27 +58,34 @@ void child_free(Child *child) {
 
 int child_loop(Child *child) {
   ChildRes *res;
+  int j;
 
-  WELL("about to post the semaphore");
-  WELL(child->names->sem_name_i_want);
-  sem_post(child->sem_i_want);
-  WELL("posted");
+  for (j = 0; j < 3; j++) {
 
-  WELL("about to wait the semaphore");
-  sem_wait(child->sem_thank_you);
-  WELL("somehow it's done");
+    WELL("asking to read, using semaphore");
+    WELL(child->names->sem_name_i_want);
+    sem_post(child->sem_i_want);
+    WELL("waiting for the file segment to come");
 
-  res = child_res_create();
-  WELL("responce created, putting into file");
-  res->file_segment = 1;
-  res->line_in_segment = 2;
-  res->application_time_in_ns = 3;
-  res->responce_time_in_ns = 4;
-  res->line_contents = "hello there";
-  child_res_to_file(res, child->file_name);
-  WELL("responce put in file");
-  child_res_free(res);
+    sem_wait(child->sem_thank_you);
+    WELL("parent says I can read");
 
+    res = child_res_create();
+    WELL("responce created, putting into file");
+    res->file_segment = 1;
+    res->line_in_segment = 2;
+    res->application_time_in_ns = 3;
+    res->responce_time_in_ns = 4;
+    res->line_contents = "hello there";
+    child_res_to_file(res, child->file_name);
+    WELL("responce put in file");
+    child_res_free(res);
+
+    WELL("faking a time wasteful process");
+    usleep(1000000);
+  }
+
+  WELL("loop done");
   return 0;
 }
 

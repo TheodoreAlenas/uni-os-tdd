@@ -10,7 +10,7 @@ static char *WHO;
 #define PRINT_DEV_STATUS() printf("\x1b[%dm[pid %d %s > %s]\x1b[0m ", \
     getpid() % 6 + 32, getpid(), __FILE__, __FUNCTION__)
 #define WELL(str) PRINT_DEV_STATUS(); printf("%s\n", str)
-#define WELLL(printf_expr) PRINT_DEV_STATUS(); printf_expr; printf("\n");
+#define WELLL(printf_expr) PRINT_DEV_STATUS(); printf_expr; printf("\n"); fflush(stdout)
 
 #else
 

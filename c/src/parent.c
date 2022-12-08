@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <semaphore.h>
+#include <unistd.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 
 #include "parent.h"
 #include "defaults.h"
@@ -52,25 +54,27 @@ void parent_free(Parent *r) {
 
 int parent_loop(Parent *r) {
   sem_t *send_me, *wait_me;
-  int i;
+  int i, j;
 
-  WELL("waiting");
-/*
-  r->children[0].semaphore = sem_open("sem0", O_CREAT | O_RDONLY, 0666, 0);
-  r->children[1].semaphore = sem_open("sem1", O_CREAT | O_RDONLY, 0666, 0);
-  */
+  for (j = 0; j < 3; j++) {
+    for (i = 0; i < r->pp->num_of_children; i++) {
+      sem_wait(r->sem_yes_please);
+
+      char *segment = parent_read_file_segment(r, 1);
+      /* printf("%s\n", segment); */
+      /* TODO shmem */
+      free(segment);
+
+      WELLL(printf("telling child #%d that its file segment is ready", i));
+      sem_post(r->children[i].semaphore);
+    }
+  }
+  WELL("loop done");
 
   for (i = 0; i < r->pp->num_of_children; i++) {
-    WELLL(printf("child #%d", i));
-    sem_wait(r->sem_yes_please);
-    sem_post(r->children[i].semaphore);
+    /* TODO waitpid */
   }
-
-  WELL("posted");
-
-  char *segment = parent_read_file_segment(r, 1);
-  /* printf("%s\n", segment); */
-  free(segment);
+  usleep(3500000);
 
   return 0;
 }
