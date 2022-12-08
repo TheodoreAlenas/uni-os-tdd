@@ -36,15 +36,6 @@ Child *child_create(ChildArgs args) {
   }
   WELL("created child's own semaphore");
 
-
-  WELL("about to post the semaphore");
-  WELL(child->names->sem_name_i_want);
-  sem_post(child->sem_i_want);
-  WELL("posted");
-  WELL("about to wait the semaphore");
-  sem_wait(child->sem_thank_you);
-  WELL("somehow it's done");
-
   return child;
 }
 
@@ -59,6 +50,8 @@ void child_free(Child *child) {
     free(child->names);
 
   sem_unlink(child->names->sem_name_thank_you);
+  sem_close(child->sem_i_want);
+  sem_close(child->sem_thank_you);
 
   free(child);
 }
@@ -66,7 +59,15 @@ void child_free(Child *child) {
 int child_loop(Child *child) {
   ChildRes *res;
 
-  WELL("");
+  WELL("about to post the semaphore");
+  WELL(child->names->sem_name_i_want);
+  sem_post(child->sem_i_want);
+  WELL("posted");
+
+  WELL("about to wait the semaphore");
+  sem_wait(child->sem_thank_you);
+  WELL("somehow it's done");
+
   res = child_res_create();
   WELL("responce created, putting into file");
   res->file_segment = 1;
