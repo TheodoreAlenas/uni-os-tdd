@@ -64,8 +64,8 @@ int be_child(int child_index, char *output_file) {
   WELL("");
   usleep(0.1 * SEC);
 
-  args.sem_name_i_want = get_semaphore_name(child_index);
-  args.sem_name_thank_you = SEM_THANK_YOU;
+  args.sem_name_i_want = SEM_I_WANT;
+  args.sem_name_thank_you = get_semaphore_name(child_index);
   args.shmem_name_i_want = SHM_I_WANT;
   args.shmem_name_thank_you = SHM_THANK_YOU;
   args.file_name = output_file;

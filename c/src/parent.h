@@ -2,6 +2,7 @@
 #define PARENT_H
 
 #include <stdio.h>
+#include <semaphore.h>
 
 #include "parent_params.h"
 #include "stack.h"
@@ -12,6 +13,7 @@ typedef struct parent {
   Stack *requests;
   ChildData *children;
   ParentParams *pp;
+  sem_t *sem_yes_please;
 } Parent;
 
 Parent *parent_create(ParentParams *pp);

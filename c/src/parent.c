@@ -14,6 +14,7 @@ int skip_to_segment(FILE *file, unsigned long segment, unsigned long segment_len
 void append_to_final(char **to_return, FILE *file);
 
 Parent *parent_create(ParentParams *pp) {
+  int i;
   Parent *r = malloc(sizeof(Parent));
 
   WELL("");
@@ -22,6 +23,18 @@ Parent *parent_create(ParentParams *pp) {
   r->children = child_data_create(r->pp->num_of_children);
   r->requests = stack_create(r->pp->num_of_children);
 
+  r->sem_yes_please = sem_open(SEM_I_WANT, O_CREAT | O_WRONLY, 0666, 0);
+  if (r->sem_yes_please == NULL) {
+    perror("parent's 'tell_me' semaphore");
+    return NULL;
+  }
+
+  /* signal that the semaphore is ready */
+  WELL("signaling that the semaphore is ready");
+  for (i = 0; i < r->pp->num_of_children; i++) {
+    sem_post(r->children[i].semaphore);
+  }
+
   return r;
 }
 
@@ -29,6 +42,10 @@ void parent_free(Parent *r) {
   WELL("(not freeing ParentParams)");
   stack_free(r->requests);
   child_data_free(r->children);
+  if (r->sem_yes_please) {
+    sem_unlink(r->pp->sem_name_yes_please);
+    sem_close(r->sem_yes_please);
+  }
   /* ATTENTION the ParentParams should be freed elsewhere */
   free(r);
 }
@@ -43,11 +60,10 @@ int parent_loop(Parent *r) {
   r->children[1].semaphore = sem_open("sem1", O_CREAT | O_RDONLY, 0666, 0);
   */
 
-  send_me = sem_open(SEM_THANK_YOU, O_WRONLY, 0666, 0);
-
   for (i = 0; i < r->pp->num_of_children; i++) {
-    sem_wait(r->children[i].semaphore);
-    sem_post(send_me);
+    WELLL(printf("child #%d", i));
+    sem_wait(r->sem_yes_please);
+    sem_post(r->children[i].semaphore);
   }
 
   WELL("posted");

@@ -23,6 +23,13 @@ ChildData *child_data_create(int num_of_workers) {
 }
 
 void child_data_free(ChildData *c) {
+  int i;
+  for (i = 0; i < c->num_of_children; i++) {
+    if (c[i].semaphore) {
+      sem_unlink(get_semaphore_name(i));
+      sem_close(c[i].semaphore);
+    }
+  }
   free(c);  /* TODO clear memory */
 }
 
