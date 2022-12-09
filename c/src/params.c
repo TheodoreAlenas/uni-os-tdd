@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "dev_mode.h"
 #include "constants.h"
 #include "defaults.h"
 #include "params.h"
@@ -21,6 +22,8 @@ Params *parameters_create() {
 }
 
 void parameters_free(Params *p) {
+
+  WELL("");
   if (p == NULL)
     return;
 

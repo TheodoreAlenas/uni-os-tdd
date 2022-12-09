@@ -46,9 +46,9 @@ void parent_params_free(ParentParams *pp) {
   if (pp->children)
     child_data_free_all(pp->children, pp->num_of_children);
 
-  WELL("done");
-
   free(pp);
+
+  WELL("done");
 }
 #undef CONSIDER_FREEING
 

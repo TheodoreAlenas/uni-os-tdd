@@ -7,8 +7,10 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
+#include "dev_mode.h"
 #include "constants.h"
 #define SHMEM_NAME "file_segment"
+/* TODO the fuck? */
 
 /* TODO personalize the piece of code */
 void *shmem_create(unsigned long max_lines) {
@@ -25,6 +27,7 @@ void *shmem_create(unsigned long max_lines) {
 }
 
 void shmem_free(void *shmem) {
+  WELL("");
   shm_unlink(SHMEM_NAME);
 }
 

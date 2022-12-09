@@ -20,11 +20,15 @@ int be_child(int child_index, pid_t *set_me, pid_t to_this);
 int handle_forks(Params *p, void *shmem) {
   pid_t pid, is_parent;
   int child_index, num_of_children;
-  char *output_file_name;
+  char *output_file_name, *childs_sem_name;
+  ChildData *children;
 
   num_of_children = p->parent_params->num_of_children;  /* alias */
 
-  ChildData *children = child_data_create_all(num_of_children);
+  children = child_data_malloc(num_of_children);
+  if (children == NULL)
+    return -1;
+
   for (child_index = 0; child_index < num_of_children; child_index++) {
     output_file_name = get_output_file_name(p->output_dir, child_index);
 
@@ -36,7 +40,7 @@ int handle_forks(Params *p, void *shmem) {
     }
 
     if (is_parent)
-      continue;
+      child_data_create(children + child_index, get_semaphore_name(child_index));
     else
       return be_child(child_index, &children[child_index].pid, pid);
     /* TODO free the output_file name */
