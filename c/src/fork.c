@@ -106,7 +106,7 @@ int be_child(Params *p, unsigned child_index, char *sem_name) {
 
   WELL(args.file_name);
 
-  child = child_create(args);
+  child = child_create(&args);
   child_loop(child);  /* TODO returns err */
   child_free(child);
 

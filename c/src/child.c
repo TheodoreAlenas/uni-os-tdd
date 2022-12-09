@@ -14,17 +14,15 @@
 Child *try_opening_sem_i_want(Child *child, const ChildArgs *args);
 void do_a_cycle(const Child *c);
 
-Child *child_create(const ChildArgs args) {
+Child *child_create(const ChildArgs *args) {
   Child *child;
 
   child = malloc(sizeof(Child));
 
-  child->names = &args;
+  child->names = args;
+  WELLL(printf("file name: %s", child->names->file_name));
 
-  WELL(args.sem_name_i_want);
-  WELL(args.sem_name_thank_you);
-
-  child->sem_thank_you = sem_open(args.sem_name_thank_you, O_CREAT | O_RDONLY, 0666, 0);
+  child->sem_thank_you = sem_open(args->sem_name_thank_you, O_CREAT | O_RDONLY, 0666, 0);
   if (child->sem_thank_you == NULL) {
     perror("child's thank you semaphore");
     return NULL;
@@ -34,13 +32,11 @@ Child *child_create(const ChildArgs args) {
   sem_wait(child->sem_thank_you);
 
   /* TODO look at the output, there's an odd coorelation here. */
-  child->shmem_i_want    = shmem_open_read_only(args.shmem_name_i_want, 1);
-  child->shmem_thank_you = shmem_open_read_only(args.shmem_name_thank_you, 1);
-  WELLL(printf("names: %s, %s", child->names->shmem_name_i_want, child->names->shmem_name_thank_you));
-  WELLL(printf("ptrs:  %p, %p", child->shmem_i_want, child->shmem_thank_you));
-  exit(0);
+  child->shmem_i_want    = shmem_open_read_only(args->shmem_name_i_want, 1);
+  child->shmem_thank_you = shmem_open_write_only(args->shmem_name_thank_you, 1);
+  //void *another = shmem_open_write_only(args.shmem_name_i_want, 1);
 
-  child = try_opening_sem_i_want(child, &args);
+  child = try_opening_sem_i_want(child, args);
 
   return child;
 }
@@ -74,6 +70,8 @@ Child *try_opening_sem_i_want(Child *child, const ChildArgs *args) {
 void child_loop(const Child *child) {
   int i;
 
+  WELLL(printf("%s", child->names->file_name));
+
   for (i = 0; i < 3; i++)
     do_a_cycle(child);
 
@@ -88,12 +86,14 @@ void do_a_cycle(const Child *child) {
   sem_wait(child->sem_thank_you);
 
   WELL("asking, with details");
+  WELLL(printf("names: %s, %s", child->names->shmem_name_i_want, child->names->shmem_name_thank_you));
   //sprintf(child->shmem_i_want, "deez nuts");
   //WELL("the detaile came...");
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
 
   WELL("parent says I can read");
+  WELL(child->names->file_name);
 
   res = child_res_create();
   res->file_segment = 1;
@@ -101,8 +101,7 @@ void do_a_cycle(const Child *child) {
   res->application_time_in_ns = 3;
   res->responce_time_in_ns = 4;
   res->line_contents = malloc(MAX_LINE_LEN);
-  strcpy(res->line_contents, "hello there");
-  //strcpy(res->line_contents, child->shmem_thank_you);
+  strcpy(res->line_contents, child->shmem_thank_you);
   child_res_to_file(res, child->names->file_name);
   child_res_free(res);
 
