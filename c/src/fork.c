@@ -14,8 +14,10 @@
 
 
 int give_birth(Params *p, unsigned child_index, ChildData *children);
+void case_parent(ChildData *specific_child, char *childs_sem_name);
+int case_child(Params *p, unsigned child_index, char *sem_name, ChildData *children, pid_t pid);
 int be_parent(Params *p, void *shmem);
-int be_child(Params *p, unsigned child_index);
+int be_child(Params *p, unsigned child_index, char *sem_name);
 
 int handle_forks(Params *p, void *shmem) {
   unsigned child_index, num_of_children;
@@ -39,22 +41,42 @@ int handle_forks(Params *p, void *shmem) {
 int give_birth(Params *p, unsigned child_index, ChildData *children) {
 
   pid_t pid, is_parent;
+  char *sem_name;
 
+  sem_name = get_semaphore_name(child_index);
   pid = is_parent = fork();
 
-  if (pid == -1) {
+  if (pid > 0)
+    case_parent(children + child_index, sem_name);
+
+  else if (pid == 0)
+    return case_child(p, child_index, sem_name, children, pid);
+
+  else {
     perror("Fork failed: ");
     return 1;
   }
 
-  if (is_parent)
-    child_data_create(children + child_index, get_semaphore_name(child_index));
-  else {
-    children[child_index].pid = pid;
-    return be_child(p, child_index);
-  }
+  if (sem_name)
+    free(sem_name);
 
   return 0;
+}
+
+void case_parent(ChildData *specific_child, char *childs_sem_name) {
+  child_data_create(specific_child, childs_sem_name);
+}
+
+int case_child(Params *p, unsigned child_index, char *sem_name, ChildData *children, pid_t pid) {
+  int err;
+
+  children[child_index].pid = pid;
+  err = be_child(p, child_index, sem_name);
+
+  if (sem_name)
+    free(sem_name);
+
+  return err;
 }
 
 int be_parent(Params *p, void *shmem) {
@@ -70,14 +92,14 @@ int be_parent(Params *p, void *shmem) {
   return err;
 }
 
-int be_child(Params *p, unsigned child_index) {
+int be_child(Params *p, unsigned child_index, char *sem_name) {
   Child *child;
   ChildArgs args;
 
   WELL("");
 
   args.sem_name_i_want = p->parent_params->sem_name_yes_please;
-  args.sem_name_thank_you = get_semaphore_name(child_index);
+  args.sem_name_thank_you = sem_name;
   args.shmem_name_i_want = p->parent_params->shmem_name_yes_please;
   args.shmem_name_thank_you = p->parent_params->shmem_name_youre_ready;
   args.file_name = get_output_file_name(p->output_dir, child_index);
