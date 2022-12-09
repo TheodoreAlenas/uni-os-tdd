@@ -72,7 +72,7 @@ void child_loop(const Child *child) {
 
   WELLL(printf("%s", child->names->file_name));
 
-  for (i = 0; i < 3; i++)
+  for (i = 0; i < 2; i++)
     do_a_cycle(child);
 
   WELL("loop done");
