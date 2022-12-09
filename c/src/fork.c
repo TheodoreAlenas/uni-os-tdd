@@ -13,14 +13,14 @@
 #define SEC 1000000
 
 
-int give_birth(Params *p, unsigned child_index, ChildData *children);
+int give_birth(Params *p, void *shmem, ChildData *children);
 void case_parent(ChildData *specific_child, char *childs_sem_name, pid_t pid);
 int case_child(Params *p, unsigned child_index, char *sem_name);
 int be_parent(Params *p, void *shmem);
 int be_child(Params *p, unsigned child_index, char *sem_name);
 
 int handle_forks(Params *p, void *shmem) {
-  unsigned child_index, num_of_children;
+  unsigned num_of_children;
   ChildData *children;
   int err;
 
@@ -30,40 +30,38 @@ int handle_forks(Params *p, void *shmem) {
   if (children == NULL)
     return -1;
 
-  for (child_index = 0; child_index < num_of_children; child_index++)
-    if (0 != give_birth(p, child_index, children))
-      return -1;
+  err = give_birth(p, shmem, children);
 
-  WELL("forks done");
-  p->parent_params->children = children;
-  err = be_parent(p, shmem);
   child_data_free_all(children, num_of_children);
   return err;
 }
 
-int give_birth(Params *p, unsigned child_index, ChildData *children) {
-
+int give_birth(Params *p, void *shmem, ChildData *children) {
+  unsigned child_index;
   pid_t pid, is_parent;
   char *sem_name;
 
-  sem_name = get_semaphore_name(child_index);
-  pid = is_parent = fork();
+  for (child_index = 0; child_index < p->parent_params->num_of_children; child_index++) {
+    sem_name = get_semaphore_name(child_index);
+    pid = is_parent = fork();
 
-  if (pid > 0)
-    case_parent(children + child_index, sem_name, pid);
+    if (pid > 0)
+      case_parent(children + child_index, sem_name, pid);
 
-  else if (pid == 0)
-    return case_child(p, child_index, sem_name);
+    else if (pid == 0)
+      return case_child(p, child_index, sem_name);
 
-  else {
-    perror("fork failed");
-    return 1;
+    else {
+      perror("fork failed");
+      return 1;
+    }
+
+    if (sem_name)
+      free(sem_name);
   }
-
-  if (sem_name)
-    free(sem_name);
-
-  return 0;
+  WELL("forks done");
+  p->parent_params->children = children;
+  return be_parent(p, shmem);
 }
 
 void case_parent(ChildData *specific_child, char *childs_sem_name, pid_t pid) {
