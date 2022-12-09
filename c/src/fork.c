@@ -14,7 +14,7 @@
 
 
 int give_birth(Params *p, void *shmem, ChildData *children);
-void case_parent(ChildData *specific_child, char *childs_sem_name, pid_t pid);
+void store_child_for_parent(ChildData *child, char *sem_name, pid_t pid);
 int case_child(Params *p, unsigned child_index, char *sem_name);
 int be_parent(Params *p, void *shmem);
 int be_child(Params *p, unsigned child_index, char *sem_name);
@@ -46,7 +46,7 @@ int give_birth(Params *p, void *shmem, ChildData *children) {
     pid = is_parent = fork();
 
     if (pid > 0)
-      case_parent(children + child_index, sem_name, pid);
+      store_child_for_parent(children + child_index, sem_name, pid);
 
     else if (pid == 0)
       return case_child(p, child_index, sem_name);
@@ -64,9 +64,9 @@ int give_birth(Params *p, void *shmem, ChildData *children) {
   return be_parent(p, shmem);
 }
 
-void case_parent(ChildData *specific_child, char *childs_sem_name, pid_t pid) {
-  specific_child->pid = pid;  /* the other attributes are initialized */
-  child_data_create(specific_child, childs_sem_name);
+void store_child_for_parent(ChildData *child, char *sem_name, pid_t pid) {
+  child_data_create(child, sem_name);
+  child->pid = pid;  /* the other attributes are initialized */
 }
 
 int case_child(Params *p, unsigned child_index, char *sem_name) {
