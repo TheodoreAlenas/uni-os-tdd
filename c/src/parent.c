@@ -10,11 +10,11 @@
 #include "params.h"
 #include "parent_params.h"
 
-char *read_segment_from_open_file(ParentParams *pp, FILE *file, unsigned long segment);
+char *read_segment_from_open_file(const ParentParams *pp, FILE *file, unsigned long segment);
 int skip_to_segment(FILE *file, unsigned long segment, unsigned long segment_length);
 void append_to_final(char **to_return, FILE *file);
 
-Parent *parent_create(ParentParams *pp) {
+Parent *parent_create(const ParentParams *pp) {
   int i;
   Parent *r = malloc(sizeof(Parent));
 
@@ -72,7 +72,7 @@ int parent_loop(Parent *r) {
   return 0;
 }
 
-char *parent_read_file_segment(Parent *parent, unsigned long segment) {
+char *parent_read_file_segment(const Parent *parent, unsigned long segment) {
 
   FILE *file;
   char *res;
@@ -85,7 +85,7 @@ char *parent_read_file_segment(Parent *parent, unsigned long segment) {
   return res;
 }
 
-char *read_segment_from_open_file(ParentParams *pp, FILE *file, unsigned long segment) {
+char *read_segment_from_open_file(const ParentParams *pp, FILE *file, unsigned long segment) {
   int i, err;
   char *to_return;
 
@@ -143,7 +143,7 @@ void append_to_final(char **to_return, FILE *file) {
     free(line);
 }
 
-int parent_waitpid(Parent *r) {
+int parent_waitpid(const Parent *r) {
   int i, status;
 
   for (i = 0; i < r->pp->num_of_children; i++) {

@@ -11,14 +11,14 @@
 
 typedef struct parent {
   Stack *requests;
-  ParentParams *pp;
+  const ParentParams *pp;
   sem_t *sem_yes_please;
 } Parent;
 
-Parent *parent_create(ParentParams *pp);
+Parent *parent_create(const ParentParams *pp);
 void parent_free(Parent *r);
 int parent_loop(Parent *r);
-char *parent_read_file_segment(Parent *parent, unsigned long segment);
-int parent_waitpid(Parent *r);
+char *parent_read_file_segment(const Parent *parent, unsigned long segment);
+int parent_waitpid(const Parent *r);
 
 #endif

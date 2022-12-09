@@ -10,10 +10,10 @@
 #include "dev_mode.h"
 #include "child_res.h"
 
-Child *try_opening_sem_i_want(Child *child, ChildArgs *args);
-void do_a_cycle(Child *c);
+Child *try_opening_sem_i_want(Child *child, const ChildArgs *args);
+void do_a_cycle(const Child *c);
 
-Child *child_create(ChildArgs args) {
+Child *child_create(const ChildArgs args) {
   Child *child;
 
   child = malloc(sizeof(Child));
@@ -50,7 +50,7 @@ void child_free(Child *child) {
   free(child);
 }
 
-Child *try_opening_sem_i_want(Child *child, ChildArgs *args) {
+Child *try_opening_sem_i_want(Child *child, const ChildArgs *args) {
 
   child->sem_i_want = sem_open(args->sem_name_i_want, O_WRONLY, 0666, 0);
   if (child->sem_i_want == NULL) {
@@ -63,7 +63,7 @@ Child *try_opening_sem_i_want(Child *child, ChildArgs *args) {
   return child;
 }
 
-int child_loop(Child *child) {
+int child_loop(const Child *child) {
   int j;
 
   for (j = 0; j < 3; j++)
@@ -73,7 +73,7 @@ int child_loop(Child *child) {
   return 0;
 }
 
-void do_a_cycle(Child *child) {
+void do_a_cycle(const Child *child) {
   ChildRes *res;
 
   WELL("asking to read, using semaphore");
