@@ -72,7 +72,7 @@ int parent_loop(Parent *r) {
     for (i = 0; i < r->pp->num_of_children; i++) {
       WELL("waiting for anyone to ask something");
       sem_wait(r->sem_yes_please);
-      //WELL(r->shmem_yes_please);
+      WELLL(printf("request says '%s'", r->shmem_yes_please));
       sem_post(r->pp->children[i].semaphore);
       sem_wait(r->sem_yes_please);
 

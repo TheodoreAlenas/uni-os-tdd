@@ -18,12 +18,11 @@ ChildRes *child_res_create() {
 }
 
 void child_res_free(ChildRes *res) {
-  WELL(res->line_contents);
+
   if (res->line_contents)
     free(res->line_contents);
-  WELL("done with the line contents");
+
   free(res);
-  WELL("done with everything else too");
 }
 
 int child_res_to_ostream(ChildRes *res, FILE *file) {
