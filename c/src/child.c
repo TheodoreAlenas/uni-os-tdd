@@ -18,8 +18,7 @@ Child *child_create(ChildArgs args) {
 
   child = malloc(sizeof(Child));
 
-  child->names = malloc(sizeof(ChildArgs));
-  memcpy(child->names, &args, sizeof(ChildArgs));
+  child->names = &args;
 
   /* TODO shmem */
 
@@ -43,9 +42,6 @@ Child *child_create(ChildArgs args) {
 void child_free(Child *child) {
   if (child == NULL)
     return;
-
-  if (child->names)
-    free(child->names);
 
   sem_unlink(child->names->sem_name_thank_you);
   sem_close(child->sem_i_want);
