@@ -11,7 +11,6 @@
 
 typedef struct parent {
   Stack *requests;
-  ChildData *children;
   ParentParams *pp;
   sem_t *sem_yes_please;
 } Parent;

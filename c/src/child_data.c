@@ -14,7 +14,7 @@ ChildData *child_data_create_all(int num_of_workers) {
     c[i].semaphore = sem_open(get_semaphore_name(i), O_CREAT | O_WRONLY, 0666, 0);
     if (c[i].semaphore == NULL) {
       perror("chld_data_create sem_open");
-      child_data_free(c);
+      child_data_free_one(c + i);
       return NULL;
     }
     c[i].current_file_segment = 0;
@@ -22,15 +22,24 @@ ChildData *child_data_create_all(int num_of_workers) {
   return c;
 }
 
-void child_data_free(ChildData *c) {
+void child_data_free_one(ChildData *c) {
   int i;
-  for (i = 0; i < c->num_of_children; i++) {
-    if (c[i].semaphore) {
-      sem_unlink(get_semaphore_name(i));
-      sem_close(c[i].semaphore);
-    }
+
+  if (c == NULL)
+    return;
+
+  if (c[i].semaphore) {
+    sem_unlink(get_semaphore_name(i));
+    sem_close(c[i].semaphore);
   }
-  free(c);  /* TODO clear memory */
 }
 
 
+void child_data_free_all(ChildData *c, unsigned num_of_children) {
+  int i;
+
+  for (i = 0; i < num_of_children; i++)
+    child_data_free_one(c + i);
+
+  free(c);
+}

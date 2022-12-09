@@ -82,7 +82,7 @@ int child_loop(Child *child) {
     child_res_free(res);
 
     WELL("faking a time wasteful process");
-    usleep(1000000);
+    usleep(200000);
   }
 
   WELL("loop done");

@@ -44,7 +44,7 @@ void parent_params_free(ParentParams *pp) {
   CONSIDER_FREEING(sem_name_youre_ready);
 
   if (pp->children)
-    child_data_free(pp->children);
+    child_data_free_all(pp->children, pp->num_of_children);
 
   WELL("done");
 

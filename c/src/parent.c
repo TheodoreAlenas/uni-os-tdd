@@ -22,8 +22,6 @@ Parent *parent_create(ParentParams *pp) {
   WELL("");
   r->pp = pp;
 
-  /* TODO remove */
-  r->children = child_data_create_all(r->pp->num_of_children);
   r->requests = stack_create(r->pp->num_of_children);
 
   r->sem_yes_please = sem_open(SEM_I_WANT, O_CREAT | O_WRONLY, 0666, 0);
@@ -35,7 +33,7 @@ Parent *parent_create(ParentParams *pp) {
   /* signal that the semaphore is ready */
   WELL("signaling that the semaphore is ready");
   for (i = 0; i < r->pp->num_of_children; i++) {
-    sem_post(r->children[i].semaphore);
+    sem_post(r->pp->children[i].semaphore);
   }
 
   return r;
@@ -44,7 +42,6 @@ Parent *parent_create(ParentParams *pp) {
 void parent_free(Parent *r) {
   WELL("(not freeing ParentParams)");
   stack_free(r->requests);
-  child_data_free(r->children);
   if (r->sem_yes_please) {
     sem_unlink(r->pp->sem_name_yes_please);
     sem_close(r->sem_yes_please);
@@ -67,7 +64,7 @@ int parent_loop(Parent *r) {
       free(segment);
 
       WELLL(printf("telling child #%d that its file segment is ready", i));
-      sem_post(r->children[i].semaphore);
+      sem_post(r->pp->children[i].semaphore);
     }
   }
   WELL("loop done");
