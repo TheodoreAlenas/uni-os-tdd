@@ -22,11 +22,23 @@ Parent *parent_create(const ParentParams *pp) {
   WELL("");
   r->pp = pp;
   r->requests = stack_create(r->pp->num_of_children);
+  /* TODO shmem here */
   r->sem_yes_please = init_sem_and_broadcast(r);
   if (r->sem_yes_please == NULL)
     return NULL;
 
   return r;
+}
+
+void parent_free(Parent *r) {
+  WELL("(not freeing ParentParams)");
+  stack_free(r->requests);
+  if (r->sem_yes_please) {
+    sem_unlink(r->pp->sem_name_yes_please);
+    sem_close(r->sem_yes_please);
+  }
+
+  free(r);
 }
 
 sem_t *init_sem_and_broadcast(const Parent *r) {
@@ -45,17 +57,6 @@ sem_t *init_sem_and_broadcast(const Parent *r) {
   }
 
   return s;
-}
-
-void parent_free(Parent *r) {
-  WELL("(not freeing ParentParams)");
-  stack_free(r->requests);
-  if (r->sem_yes_please) {
-    sem_unlink(r->pp->sem_name_yes_please);
-    sem_close(r->sem_yes_please);
-  }
-  /* ATTENTION the ParentParams should be freed elsewhere */
-  free(r);
 }
 
 int parent_loop(Parent *r) {
