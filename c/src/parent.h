@@ -13,6 +13,8 @@ typedef struct parent {
   Stack *requests;
   const ParentParams *pp;
   sem_t *sem_yes_please;
+  void *shmem_yes_please;
+  void *shmem_youre_ready;
 } Parent;
 
 Parent *parent_create(const ParentParams *pp);

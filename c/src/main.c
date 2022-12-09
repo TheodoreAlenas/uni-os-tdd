@@ -9,7 +9,6 @@
 int main(int argc, char **argv) {
   Params *p;
   int err;
-  void *shmem_i_want, *shmem_thank_you;
 
   WELL("parsing parameters");
   p = parameters_parse(argc, argv);
@@ -20,16 +19,10 @@ int main(int argc, char **argv) {
   }
 
   WELL("creating shmem");
-#include "defaults.h"
-  shmem_i_want = shmem_create_write_only(DEFAULT_SHM_I_WANT, p->parent_params->file_segment_length);
-  shmem_thank_you = shmem_create_read_only(DEFAULT_SHM_THANK_YOU, p->parent_params->file_segment_length);
-  shmem_test_fill(shmem_i_want);
 
-  err = handle_forks(p, shmem_i_want, shmem_thank_you);
+  err = handle_forks(p);
 
   parameters_free(p);
-  shmem_free(DEFAULT_SHM_I_WANT);
-  shmem_free(DEFAULT_SHM_THANK_YOU);
 
   WELL("DONE");
   return err;

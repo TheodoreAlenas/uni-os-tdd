@@ -9,6 +9,7 @@
 #include "dev_mode.h"
 #include "params.h"
 #include "parent_params.h"
+#include "shmem.h"
 
 sem_t *init_sem_and_broadcast(const Parent *r);
 char *read_segment_from_open_file(const ParentParams *pp, FILE *file, unsigned long segment);
@@ -22,7 +23,8 @@ Parent *parent_create(const ParentParams *pp) {
   WELL("");
   r->pp = pp;
   r->requests = stack_create(r->pp->num_of_children);
-  /* TODO shmem here */
+  r->shmem_yes_please = shmem_create_read_only(r->pp->shmem_name_yes_please, 1);
+  r->shmem_youre_ready = shmem_create_write_only(r->pp->shmem_name_youre_ready, 1);
   r->sem_yes_please = init_sem_and_broadcast(r);
   if (r->sem_yes_please == NULL)
     return NULL;
@@ -37,6 +39,8 @@ void parent_free(Parent *r) {
     sem_unlink(r->pp->sem_name_yes_please);
     sem_close(r->sem_yes_please);
   }
+  shmem_free(r->pp->shmem_name_yes_please);
+  shmem_free(r->pp->shmem_name_youre_ready);
 
   free(r);
 }

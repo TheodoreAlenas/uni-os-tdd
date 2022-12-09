@@ -36,7 +36,7 @@ void parameters_free(Params *p) {
   free(p);
 }
 
-enum FlagType { F_NONE, F_NUM_OF_CHILDREN };
+enum FlagType { F_NONE, F_NUM_OF_CHILDREN, F_SHMEM_I_WANT, F_SHMEM_THANK_YOU };
 
 #define IF_ITS(s) else if (strcmp(argv[i], (s)) == 0)
 
@@ -55,9 +55,19 @@ Params *parameters_parse(int argc, char **argv) {
   for (i = 1; i < argc; i++) {
 
     if (0) {}
+
     else if (flag == F_NUM_OF_CHILDREN)
       p->parent_params->num_of_children = atoi(argv[i]);
+
+    else if (flag == F_SHMEM_I_WANT)
+      strcpy(p->parent_params->shmem_name_yes_please, argv[i]);
+
+    else if (flag == F_SHMEM_THANK_YOU)
+      strcpy(p->parent_params->shmem_name_youre_ready, argv[i]);
+
     IF_ITS("-c") flag = F_NUM_OF_CHILDREN;
+    IF_ITS("--shm-i-want") flag = F_SHMEM_I_WANT;
+    IF_ITS("--shm-thank-you") flag = F_SHMEM_THANK_YOU;
     else
       p->parent_params->file_name = argv[i];
   }

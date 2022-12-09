@@ -13,13 +13,13 @@
 #define SEC 1000000
 
 
-int give_birth(Params *p, void *shmem_i_want, void *shmem_thank_you, ChildData *children);
+int give_birth(Params *p, ChildData *children);
 void store_child_for_parent(ChildData *child, char *sem_name, pid_t pid);
 int case_child(Params *p, unsigned child_index, char *sem_name);
-int be_parent(Params *p, void *shmem_i_want, void *shmem_thank_you, ChildData *children);
+int be_parent(Params *p, ChildData *children);
 int be_child(Params *p, unsigned child_index, char *sem_name);
 
-int handle_forks(Params *p, void *shmem_i_want, void *shmem_thank_you) {
+int handle_forks(Params *p) {
   unsigned n;
   ChildData *children;
   int err;
@@ -30,13 +30,13 @@ int handle_forks(Params *p, void *shmem_i_want, void *shmem_thank_you) {
   if (children == NULL)
     return -1;
 
-  err = give_birth(p, shmem_i_want, shmem_thank_you, children);
+  err = give_birth(p, children);
 
   child_data_free_all(children, n);
   return err;
 }
 
-int give_birth(Params *p, void *shmem_i_want, void *shmem_thank_you, ChildData *children) {
+int give_birth(Params *p, ChildData *children) {
   unsigned child_index;
   pid_t pid, is_parent;
   char *sem_name;
@@ -60,7 +60,7 @@ int give_birth(Params *p, void *shmem_i_want, void *shmem_thank_you, ChildData *
       free(sem_name);
   }
   WELL("forks done");
-  return be_parent(p, shmem_i_want, shmem_thank_you, children);
+  return be_parent(p, children);
 }
 
 void store_child_for_parent(ChildData *child, char *sem_name, pid_t pid) {
@@ -79,11 +79,10 @@ int case_child(Params *p, unsigned child_index, char *sem_name) {
   return err;
 }
 
-int be_parent(Params *p, void *shmem_i_want, void *shmem_thank_you, ChildData *children) {
+int be_parent(Params *p, ChildData *children) {
   int err;
   Parent *r;
 
-  //shmem_test_fill(shmem_i_want);
   p->parent_params->children = children;
   r = parent_create(p->parent_params);
   err = parent_loop(r);
