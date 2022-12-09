@@ -71,7 +71,6 @@ int parent_loop(Parent *r) {
     }
   }
   WELL("loop done");
-  usleep(3500000);
 
   return 0;
 }

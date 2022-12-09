@@ -54,7 +54,7 @@ int be_parent(Params *p, void *shmem) {
   r = parent_create(p->parent_params);
   err = parent_loop(r);
   WELL("freeing after parent_loop");
-  /* TODO waitpid */
+  parent_waitpid(r);
   parent_free(r);
   return err;
 }
