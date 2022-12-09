@@ -10,6 +10,8 @@
 #include "dev_mode.h"
 #include "child_res.h"
 
+void single_cycle(Child *c);
+
 Child *child_create(ChildArgs args) {
   Child *child;
 
@@ -63,36 +65,38 @@ void child_free(Child *child) {
 }
 
 int child_loop(Child *child) {
-  ChildRes *res;
   int j;
 
-  for (j = 0; j < 3; j++) {
-
-    WELL("asking to read, using semaphore");
-    WELL(child->names->sem_name_i_want);
-    sem_post(child->sem_i_want);
-    WELL("waiting for the file segment to come");
-
-    sem_wait(child->sem_thank_you);
-    WELL("parent says I can read");
-
-    res = child_res_create();
-    WELL("responce created, putting into file");
-    res->file_segment = 1;
-    res->line_in_segment = 2;
-    res->application_time_in_ns = 3;
-    res->responce_time_in_ns = 4;
-    res->line_contents = malloc(MAX_LINE_LEN);
-    strcpy(res->line_contents, "hello there");
-    child_res_to_file(res, child->file_name);
-    WELL("responce put in file");
-    child_res_free(res);
-
-    WELL("faking a time wasteful process");
-    usleep(200000);
-  }
+  for (j = 0; j < 3; j++)
+    single_cycle(child);
 
   WELL("loop done");
   return 0;
 }
 
+void single_cycle(Child *child) {
+  ChildRes *res;
+
+  WELL("asking to read, using semaphore");
+  WELL(child->names->sem_name_i_want);
+  sem_post(child->sem_i_want);
+  WELL("waiting for the file segment to come");
+
+  sem_wait(child->sem_thank_you);
+  WELL("parent says I can read");
+
+  res = child_res_create();
+  WELL("responce created, putting into file");
+  res->file_segment = 1;
+  res->line_in_segment = 2;
+  res->application_time_in_ns = 3;
+  res->responce_time_in_ns = 4;
+  res->line_contents = malloc(MAX_LINE_LEN);
+  strcpy(res->line_contents, "hello there");
+  child_res_to_file(res, child->file_name);
+  WELL("responce put in file");
+  child_res_free(res);
+
+  WELL("faking a time wasteful process");
+  usleep(200000);
+}
