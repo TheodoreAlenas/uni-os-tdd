@@ -3,7 +3,6 @@
 
 #include "fork.h"
 #include "constants.h"
-#include "defaults.h"
 #include "dev_mode.h"
 #include "get_names.h"
 #include "shmem.h"
@@ -40,9 +39,6 @@ int handle_forks(Params *p, void *shmem) {
 int give_birth(Params *p, unsigned child_index, ChildData *children) {
 
   pid_t pid, is_parent;
-  char *output_file_name, *childs_sem_name;
-
-  output_file_name = get_output_file_name(p->output_dir, child_index);
 
   pid = is_parent = fork();
 
@@ -57,7 +53,6 @@ int give_birth(Params *p, unsigned child_index, ChildData *children) {
     children[child_index].pid = pid;
     return be_child(p, child_index);
   }
-  /* TODO free the output_file name */
 
   return 0;
 }
