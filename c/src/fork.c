@@ -14,7 +14,7 @@
 #define SEC 1000000
 
 
-int be_parent(Params *p, ChildData *children, void *shmem);
+int be_parent(Params *p, void *shmem);
 int be_child(int child_index, pid_t *set_me, pid_t to_this);
 
 int handle_forks(Params *p, void *shmem) {
@@ -42,14 +42,14 @@ int handle_forks(Params *p, void *shmem) {
     /* TODO free the output_file name */
   }
   WELL("forks done");
-  return be_parent(p, children, shmem);
+  p->parent_params->children = children;
+  return be_parent(p, shmem);
 }
 
-int be_parent(Params *p, ChildData *children, void *shmem) {
+int be_parent(Params *p, void *shmem) {
   int err;
   Parent *r;
 
-  /* TODO use children */
   shmem_test_fill(shmem);
   r = parent_create(p->parent_params);
   err = parent_loop(r);

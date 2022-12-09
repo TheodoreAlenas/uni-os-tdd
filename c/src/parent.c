@@ -71,10 +71,6 @@ int parent_loop(Parent *r) {
     }
   }
   WELL("loop done");
-
-  for (i = 0; i < r->pp->num_of_children; i++) {
-    /* TODO waitpid */
-  }
   usleep(3500000);
 
   return 0;
@@ -149,4 +145,16 @@ void append_to_final(char **to_return, FILE *file) {
 
   if (line)
     free(line);
+}
+
+int parent_waitpid(Parent *r) {
+  int i, status;
+
+  for (i = 0; i < r->pp->num_of_children; i++) {
+    waitpid(r->pp->children[i].pid, &status, 0);
+  }
+
+  if (WEXITSTATUS(status))
+    return 0;
+  return -1;
 }
