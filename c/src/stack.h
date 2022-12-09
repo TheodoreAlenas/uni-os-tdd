@@ -9,7 +9,6 @@ typedef struct item {
   int line;
 } Item;
 
-/* TODO this is a RequestsStack */
 typedef struct stack {
   Item **items;
   int size;

@@ -10,7 +10,6 @@
 #include "dev_mode.h"
 #include "constants.h"
 #define SHMEM_NAME "file_segment"
-/* TODO the fuck? */
 
 /* TODO personalize the piece of code */
 void *shmem_create(unsigned long max_lines) {
