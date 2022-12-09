@@ -15,8 +15,7 @@ ParentParams *parent_params_create() {
   pp->num_of_children = DEFAULT_NUM_OF_CHILDREN;
 
   pp->sem_name_yes_please = malloc(MAX_FILE_NAME_LEN);
-  /* TODO strcpy(pp->sem_name_yes_please, DEFAULT_ */
-  pp->sem_name_youre_ready = malloc(pp->num_of_children * sizeof(char *));
+  strcpy(pp->sem_name_yes_please, SEM_I_WANT);
   pp->shmem_name_yes_please = malloc(MAX_FILE_NAME_LEN);
   pp->shmem_name_youre_ready = malloc(MAX_FILE_NAME_LEN);
 
@@ -36,12 +35,6 @@ void parent_params_free(ParentParams *pp) {
   CONSIDER_FREEING(sem_name_yes_please);
   CONSIDER_FREEING(shmem_name_yes_please);
   CONSIDER_FREEING(shmem_name_youre_ready);
-
-  if (pp->sem_name_youre_ready)
-    for (i = 0; i < pp->num_of_children; i++)
-      CONSIDER_FREEING(sem_name_youre_ready[i]);
-
-  CONSIDER_FREEING(sem_name_youre_ready);
 
   if (pp->children)
     child_data_free_all(pp->children, pp->num_of_children);

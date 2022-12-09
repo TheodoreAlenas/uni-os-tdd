@@ -23,7 +23,6 @@ Parent *parent_create(ParentParams *pp) {
 
   r->requests = stack_create(r->pp->num_of_children);
 
-  WELL(r->pp->sem_name_yes_please);
   r->sem_yes_please = sem_open(r->pp->sem_name_yes_please,
       O_CREAT | O_WRONLY, 0666, 0);
   if (r->sem_yes_please == NULL) {
