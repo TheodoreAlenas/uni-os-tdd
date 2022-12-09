@@ -5,7 +5,6 @@
 #include "constants.h"
 #include "dev_mode.h"
 #include "child_data.h"
-#include "get_names.h"
 
 
 ChildData *child_data_malloc(int num_of_workers) {

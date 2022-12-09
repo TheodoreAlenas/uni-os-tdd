@@ -6,7 +6,6 @@
 #include <sys/wait.h>
 
 #include "parent.h"
-#include "defaults.h"
 #include "dev_mode.h"
 #include "params.h"
 #include "parent_params.h"
@@ -24,9 +23,11 @@ Parent *parent_create(ParentParams *pp) {
 
   r->requests = stack_create(r->pp->num_of_children);
 
-  r->sem_yes_please = sem_open(SEM_I_WANT, O_CREAT | O_WRONLY, 0666, 0);
+  WELL(r->pp->sem_name_yes_please);
+  r->sem_yes_please = sem_open(r->pp->sem_name_yes_please,
+      O_CREAT | O_WRONLY, 0666, 0);
   if (r->sem_yes_please == NULL) {
-    perror("parent's 'tell_me' semaphore");
+    perror("parent's 'yes please' semaphore");
     return NULL;
   }
 

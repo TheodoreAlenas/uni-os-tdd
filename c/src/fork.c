@@ -47,6 +47,8 @@ int handle_forks(Params *p, void *shmem) {
   }
   WELL("forks done");
   p->parent_params->children = children;
+  p->parent_params->sem_name_yes_please = malloc(256);
+  strcpy(p->parent_params->sem_name_yes_please, SEM_I_WANT);
   return be_parent(p, shmem);
 }
 
