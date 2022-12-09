@@ -33,8 +33,12 @@ Child *child_create(const ChildArgs args) {
   WELL("waiting for parent to create his semaphore");
   sem_wait(child->sem_thank_you);
 
-  child->shmem_i_want = shmem_open_write_only(args.shmem_name_i_want, 1);
+  /* TODO look at the output, there's an odd coorelation here. */
+  child->shmem_i_want    = shmem_open_read_only(args.shmem_name_i_want, 1);
   child->shmem_thank_you = shmem_open_read_only(args.shmem_name_thank_you, 1);
+  WELLL(printf("names: %s, %s", child->names->shmem_name_i_want, child->names->shmem_name_thank_you));
+  WELLL(printf("ptrs:  %p, %p", child->shmem_i_want, child->shmem_thank_you));
+  exit(0);
 
   child = try_opening_sem_i_want(child, &args);
 
