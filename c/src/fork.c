@@ -14,14 +14,15 @@
 
 
 int give_birth(Params *p, unsigned child_index, ChildData *children);
-void case_parent(ChildData *specific_child, char *childs_sem_name);
-int case_child(Params *p, unsigned child_index, char *sem_name, ChildData *children, pid_t pid);
+void case_parent(ChildData *specific_child, char *childs_sem_name, pid_t pid);
+int case_child(Params *p, unsigned child_index, char *sem_name);
 int be_parent(Params *p, void *shmem);
 int be_child(Params *p, unsigned child_index, char *sem_name);
 
 int handle_forks(Params *p, void *shmem) {
   unsigned child_index, num_of_children;
   ChildData *children;
+  int err;
 
   num_of_children = p->parent_params->num_of_children;  /* alias */
 
@@ -30,12 +31,14 @@ int handle_forks(Params *p, void *shmem) {
     return -1;
 
   for (child_index = 0; child_index < num_of_children; child_index++)
-    if (give_birth(p, child_index, children) != 0)
+    if (0 != give_birth(p, child_index, children))
       return -1;
 
   WELL("forks done");
   p->parent_params->children = children;
-  return be_parent(p, shmem);
+  err = be_parent(p, shmem);
+  child_data_free_all(children, num_of_children);
+  return err;
 }
 
 int give_birth(Params *p, unsigned child_index, ChildData *children) {
@@ -47,13 +50,13 @@ int give_birth(Params *p, unsigned child_index, ChildData *children) {
   pid = is_parent = fork();
 
   if (pid > 0)
-    case_parent(children + child_index, sem_name);
+    case_parent(children + child_index, sem_name, pid);
 
   else if (pid == 0)
-    return case_child(p, child_index, sem_name, children, pid);
+    return case_child(p, child_index, sem_name);
 
   else {
-    perror("Fork failed: ");
+    perror("fork failed");
     return 1;
   }
 
@@ -63,14 +66,14 @@ int give_birth(Params *p, unsigned child_index, ChildData *children) {
   return 0;
 }
 
-void case_parent(ChildData *specific_child, char *childs_sem_name) {
+void case_parent(ChildData *specific_child, char *childs_sem_name, pid_t pid) {
+  specific_child->pid = pid;  /* the other attributes are initialized */
   child_data_create(specific_child, childs_sem_name);
 }
 
-int case_child(Params *p, unsigned child_index, char *sem_name, ChildData *children, pid_t pid) {
+int case_child(Params *p, unsigned child_index, char *sem_name) {
   int err;
 
-  children[child_index].pid = pid;
   err = be_child(p, child_index, sem_name);
 
   if (sem_name)

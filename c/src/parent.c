@@ -147,6 +147,7 @@ int parent_waitpid(Parent *r) {
   int i, status;
 
   for (i = 0; i < r->pp->num_of_children; i++) {
+    WELLL(printf("waiting pid %d", r->pp->children[i].pid));
     waitpid(r->pp->children[i].pid, &status, 0);
   }
 

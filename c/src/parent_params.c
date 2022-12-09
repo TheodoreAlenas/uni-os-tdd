@@ -36,9 +36,6 @@ void parent_params_free(ParentParams *pp) {
   CONSIDER_FREEING(shmem_name_yes_please);
   CONSIDER_FREEING(shmem_name_youre_ready);
 
-  if (pp->children)
-    child_data_free_all(pp->children, pp->num_of_children);
-
   free(pp);
 
   WELL("done");
