@@ -10,6 +10,7 @@
 #include "params.h"
 #include "parent_params.h"
 
+sem_t *init_sem_and_broadcast(const Parent *r);
 char *read_segment_from_open_file(const ParentParams *pp, FILE *file, unsigned long segment);
 int skip_to_segment(FILE *file, unsigned long segment, unsigned long segment_length);
 void append_to_final(char **to_return, FILE *file);
@@ -20,23 +21,30 @@ Parent *parent_create(const ParentParams *pp) {
 
   WELL("");
   r->pp = pp;
-
   r->requests = stack_create(r->pp->num_of_children);
+  r->sem_yes_please = init_sem_and_broadcast(r);
+  if (r->sem_yes_please == NULL)
+    return NULL;
 
-  r->sem_yes_please = sem_open(r->pp->sem_name_yes_please,
-      O_CREAT | O_WRONLY, 0666, 0);
-  if (r->sem_yes_please == NULL) {
+  return r;
+}
+
+sem_t *init_sem_and_broadcast(const Parent *r) {
+  sem_t *s;
+  unsigned i;
+
+  s = sem_open(r->pp->sem_name_yes_please, O_CREAT | O_WRONLY, 0666, 0);
+  if (s == NULL) {
     perror("parent's 'yes please' semaphore");
     return NULL;
   }
 
-  /* signal that the semaphore is ready */
   WELL("signaling that the semaphore is ready");
   for (i = 0; i < r->pp->num_of_children; i++) {
     sem_post(r->pp->children[i].semaphore);
   }
 
-  return r;
+  return s;
 }
 
 void parent_free(Parent *r) {
