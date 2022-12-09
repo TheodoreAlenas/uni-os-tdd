@@ -18,7 +18,6 @@ typedef struct child {
   sem_t *sem_thank_you;
   void *shmem_i_want;
   void *shmem_thank_you;
-  char *file_name;
   ChildArgs *names;
 } Child;
 

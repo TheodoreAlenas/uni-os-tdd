@@ -17,7 +17,6 @@ Child *child_create(ChildArgs args) {
   Child *child;
 
   child = malloc(sizeof(Child));
-  child->file_name = args.file_name;
 
   child->names = malloc(sizeof(ChildArgs));
   memcpy(child->names, &args, sizeof(ChildArgs));
@@ -44,9 +43,6 @@ Child *child_create(ChildArgs args) {
 void child_free(Child *child) {
   if (child == NULL)
     return;
-
-  if (child->file_name)
-    free(child->file_name);
 
   if (child->names)
     free(child->names);
@@ -100,7 +96,7 @@ void do_a_cycle(Child *child) {
   res->responce_time_in_ns = 4;
   res->line_contents = malloc(MAX_LINE_LEN);
   strcpy(res->line_contents, "hello there");
-  child_res_to_file(res, child->file_name);
+  child_res_to_file(res, child->names->file_name);
   WELL("responce put in file");
   child_res_free(res);
 
