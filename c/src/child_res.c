@@ -19,9 +19,7 @@ ChildRes *child_res_create() {
 
 void child_res_free(ChildRes *res) {
   WELL(res->line_contents);
-  WELL("screw it");  /* TODO */
-  return;
-  if (res->line_contents != NULL)
+  if (res->line_contents)
     free(res->line_contents);
   WELL("done with the line contents");
   free(res);

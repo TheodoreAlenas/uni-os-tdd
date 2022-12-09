@@ -6,6 +6,7 @@
 #include <fcntl.h>
 
 #include "child.h"
+#include "constants.h"
 #include "dev_mode.h"
 #include "child_res.h"
 
@@ -76,7 +77,8 @@ int child_loop(Child *child) {
     res->line_in_segment = 2;
     res->application_time_in_ns = 3;
     res->responce_time_in_ns = 4;
-    res->line_contents = "hello there";
+    res->line_contents = malloc(MAX_LINE_LEN);
+    strcpy(res->line_contents, "hello there");
     child_res_to_file(res, child->file_name);
     WELL("responce put in file");
     child_res_free(res);
