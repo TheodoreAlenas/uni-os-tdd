@@ -86,7 +86,7 @@ void do_a_cycle(const Child *child) {
   sem_wait(child->sem_thank_you);
 
   WELL("asking, with details");
-  sprintf(child->shmem_i_want, "deez nuts");
+  sprintf(child->shmem_i_want, "yo mum");
   //WELL("the detaile came...");
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);

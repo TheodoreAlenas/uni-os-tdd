@@ -7,6 +7,7 @@
 
 #include "parent.h"
 #include "dev_mode.h"
+#include "constants.h"
 #include "params.h"
 #include "parent_params.h"
 #include "shmem.h"
@@ -68,6 +69,13 @@ int parent_loop(Parent *r) {
   sem_t *send_me, *wait_me;
   int i, j;
 
+  char *req;
+  req = malloc(MAX_LINE_LEN);
+  if (req == NULL) {
+    perror("parent's malloc for req");
+    return -1;
+  }
+
   for (j = 0; j < 2; j++) {
     for (i = 0; i < r->pp->num_of_children; i++) {
       WELL("waiting for anyone to ask something");
@@ -81,7 +89,7 @@ int parent_loop(Parent *r) {
       /* printf("%s\n", segment); */
       /* TODO shmem */
       free(segment);
-      sprintf(r->shmem_youre_ready, "okay then! Take deez nuts");
+      sprintf(r->shmem_youre_ready, "okay then! Take %s", (char *) r->shmem_yes_please);
 
       WELLL(printf("telling child #%d that its file segment is ready", i));
       sem_post(r->pp->children[i].semaphore);
