@@ -13,19 +13,19 @@
 Child *try_opening_sem_i_want(Child *child, ChildArgs *args);
 void do_a_cycle(Child *c);
 
-Child *child_create(ChildArgs args) {
+Child *child_create(ChildArgs *args) {
   Child *child;
 
   child = malloc(sizeof(Child));
 
-  child->names = &args;
+  child->names = args;
 
   /* TODO shmem */
 
-  WELL(args.sem_name_i_want);
-  WELL(args.sem_name_thank_you);
+  WELL(args->sem_name_i_want);
+  WELL(args->sem_name_thank_you);
 
-  child->sem_thank_you = sem_open(args.sem_name_thank_you, O_CREAT | O_RDONLY, 0666, 0);
+  child->sem_thank_you = sem_open(args->sem_name_thank_you, O_CREAT | O_RDONLY, 0666, 0);
   if (child->sem_thank_you == NULL) {
     perror("child's thank you semaphore");
     return NULL;
@@ -34,7 +34,7 @@ Child *child_create(ChildArgs args) {
   WELL("waiting for parent to create his semaphore");
   sem_wait(child->sem_thank_you);
 
-  child = try_opening_sem_i_want(child, &args);
+  child = try_opening_sem_i_want(child, args);
 
   return child;
 }

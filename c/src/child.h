@@ -21,7 +21,7 @@ typedef struct child {
   ChildArgs *names;
 } Child;
 
-Child *child_create(ChildArgs args);
+Child *child_create(ChildArgs *args);
 void child_free(Child *child);
 int child_loop(Child *child);
 
