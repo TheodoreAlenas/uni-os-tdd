@@ -24,10 +24,10 @@ void *shmem_create(const char *name, unsigned long max_lines, int oflag, int pro
 }
 
 void *shmem_create_read_only(const char *name, unsigned long max_lines) {
-  return shmem_create(name, max_lines, O_CREAT | O_RDONLY, PROT_READ);
+  return shmem_create(name, max_lines, O_CREAT | O_RDWR, PROT_READ);
 }
 void *shmem_create_write_only(const char *name, unsigned long max_lines) {
-  return shmem_create(name, max_lines, O_CREAT | O_WRONLY, PROT_WRITE);
+  return shmem_create(name, max_lines, O_CREAT | O_RDWR, PROT_WRITE);
 }
 void *shmem_open_read_only(const char *name, unsigned long max_lines) {
   return shmem_create(name, max_lines, O_RDONLY, PROT_READ);
@@ -36,7 +36,7 @@ void *shmem_open_write_only(const char *name, unsigned long max_lines) {
   return shmem_create(name, max_lines, O_WRONLY, PROT_WRITE);
 }
 
-void shmem_free(const char *name, void *shmem) {
+void shmem_free(const char *name) {
   WELL("");
   shm_unlink(name);
 }
