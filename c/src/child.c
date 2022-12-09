@@ -32,8 +32,8 @@ Child *child_create(const ChildArgs *args) {
   sem_wait(child->sem_thank_you);
 
   /* TODO look at the output, there's an odd coorelation here. */
-  child->shmem_i_want    = shmem_open_read_only(args->shmem_name_i_want, 1);
-  child->shmem_thank_you = shmem_open_write_only(args->shmem_name_thank_you, 1);
+  child->shmem_i_want    = shmem_open_write_only(args->shmem_name_i_want, 1);
+  child->shmem_thank_you = shmem_open_read_only(args->shmem_name_thank_you, 1);
   //void *another = shmem_open_write_only(args.shmem_name_i_want, 1);
 
   child = try_opening_sem_i_want(child, args);
@@ -86,7 +86,7 @@ void do_a_cycle(const Child *child) {
   sem_wait(child->sem_thank_you);
 
   WELL("asking, with details");
-  //sprintf(child->shmem_i_want, "deez nuts");
+  sprintf(child->shmem_i_want, "deez nuts");
   //WELL("the detaile came...");
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
