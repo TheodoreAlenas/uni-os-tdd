@@ -9,6 +9,7 @@
 #include "constants.h"
 #include "dev_mode.h"
 #include "child_res.h"
+#include "shmem.h"
 
 Child *try_opening_sem_i_want(Child *child, const ChildArgs *args);
 void do_a_cycle(const Child *c);
@@ -19,8 +20,6 @@ Child *child_create(const ChildArgs args) {
   child = malloc(sizeof(Child));
 
   child->names = &args;
-
-  /* TODO shmem */
 
   WELL(args.sem_name_i_want);
   WELL(args.sem_name_thank_you);
@@ -34,6 +33,9 @@ Child *child_create(const ChildArgs args) {
   WELL("waiting for parent to create his semaphore");
   sem_wait(child->sem_thank_you);
 
+  child->shmem_i_want = shmem_open_write_only(args.shmem_name_i_want, 1);
+  child->shmem_thank_you = shmem_open_read_only(args.shmem_name_thank_you, 1);
+
   child = try_opening_sem_i_want(child, &args);
 
   return child;
@@ -46,6 +48,8 @@ void child_free(Child *child) {
   sem_unlink(child->names->sem_name_thank_you);
   sem_close(child->sem_i_want);
   sem_close(child->sem_thank_you);
+  shmem_free(child->names->shmem_name_i_want);
+  shmem_free(child->names->shmem_name_thank_you);
 
   free(child);
 }
@@ -80,6 +84,8 @@ void do_a_cycle(const Child *child) {
   sem_wait(child->sem_thank_you);
 
   WELL("asking, with details");
+  //sprintf(child->shmem_i_want, "deez nuts");
+  //WELL("the detaile came...");
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
 
@@ -92,6 +98,7 @@ void do_a_cycle(const Child *child) {
   res->responce_time_in_ns = 4;
   res->line_contents = malloc(MAX_LINE_LEN);
   strcpy(res->line_contents, "hello there");
+  //strcpy(res->line_contents, child->shmem_thank_you);
   child_res_to_file(res, child->names->file_name);
   child_res_free(res);
 

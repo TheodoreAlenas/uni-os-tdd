@@ -23,6 +23,7 @@ Parent *parent_create(const ParentParams *pp) {
   WELL("");
   r->pp = pp;
   r->requests = stack_create(r->pp->num_of_children);
+  WELLL(printf("%s, %s", r->pp->shmem_name_yes_please, r->pp->shmem_name_youre_ready));
   r->shmem_yes_please = shmem_create_read_only(r->pp->shmem_name_yes_please, 1);
   r->shmem_youre_ready = shmem_create_write_only(r->pp->shmem_name_youre_ready, 1);
   r->sem_yes_please = init_sem_and_broadcast(r);
@@ -71,6 +72,7 @@ int parent_loop(Parent *r) {
     for (i = 0; i < r->pp->num_of_children; i++) {
       WELL("waiting for anyone to ask something");
       sem_wait(r->sem_yes_please);
+      //WELL(r->shmem_yes_please);
       sem_post(r->pp->children[i].semaphore);
       sem_wait(r->sem_yes_please);
 
@@ -78,6 +80,7 @@ int parent_loop(Parent *r) {
       /* printf("%s\n", segment); */
       /* TODO shmem */
       free(segment);
+      sprintf(r->shmem_youre_ready, "okay then! Take deez nuts");
 
       WELLL(printf("telling child #%d that its file segment is ready", i));
       sem_post(r->pp->children[i].semaphore);

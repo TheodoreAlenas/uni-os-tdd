@@ -16,8 +16,12 @@ ParentParams *parent_params_create() {
 
   pp->sem_name_yes_please = malloc(MAX_FILE_NAME_LEN);
   strcpy(pp->sem_name_yes_please, DEFAULT_SEM_I_WANT);
+
   pp->shmem_name_yes_please = malloc(MAX_FILE_NAME_LEN);
+  strcpy(pp->shmem_name_yes_please, DEFAULT_SHM_I_WANT);
+
   pp->shmem_name_youre_ready = malloc(MAX_FILE_NAME_LEN);
+  strcpy(pp->shmem_name_youre_ready, DEFAULT_SHM_THANK_YOU);
 
   pp->children = NULL;
 
