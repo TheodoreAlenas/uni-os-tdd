@@ -20,19 +20,16 @@ int be_parent(Params *p, void *shmem);
 int be_child(Params *p, unsigned child_index, char *sem_name);
 
 int handle_forks(Params *p, void *shmem) {
-  unsigned num_of_children;
   ChildData *children;
   int err;
 
-  num_of_children = p->parent_params->num_of_children;  /* alias */
-
-  children = child_data_malloc(num_of_children);
+  children = child_data_malloc(p->parent_params->num_of_children);
   if (children == NULL)
     return -1;
 
   err = give_birth(p, shmem, children);
 
-  child_data_free_all(children, num_of_children);
+  child_data_free_all(children, p->parent_params->num_of_children);
   return err;
 }
 
