@@ -10,18 +10,30 @@
 #include "dev_mode.h"
 #include "constants.h"
 
-/* TODO personalize the piece of code */
-void *shmem_create(const char *name, unsigned long max_lines) {
+void *shmem_create(const char *name, unsigned long max_lines, int oflag, int prot) {
   const unsigned long SIZE = MAX_LINE_LEN * max_lines;
   int shm_fd;
   void* ptr;
-  shm_fd = shm_open(name, O_CREAT | O_RDWR, 0666);
+  shm_fd = shm_open(name, oflag, 0666);
 
   /* changing the size of the shared memory segment */
   ftruncate(shm_fd, SIZE);
-  ptr = mmap(0, SIZE, PROT_WRITE, MAP_SHARED, shm_fd, 0);
+  ptr = mmap(0, SIZE, prot, MAP_SHARED, shm_fd, 0);
 
   return ptr;
+}
+
+void *shmem_create_read_only(const char *name, unsigned long max_lines) {
+  return shmem_create(name, max_lines, O_CREAT | O_RDONLY, PROT_READ);
+}
+void *shmem_create_write_only(const char *name, unsigned long max_lines) {
+  return shmem_create(name, max_lines, O_CREAT | O_WRONLY, PROT_WRITE);
+}
+void *shmem_open_read_only(const char *name, unsigned long max_lines) {
+  return shmem_create(name, max_lines, O_RDONLY, PROT_READ);
+}
+void *shmem_open_write_only(const char *name, unsigned long max_lines) {
+  return shmem_create(name, max_lines, O_WRONLY, PROT_WRITE);
 }
 
 void shmem_free(const char *name, void *shmem) {

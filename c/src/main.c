@@ -21,8 +21,8 @@ int main(int argc, char **argv) {
 
   WELL("creating shmem");
 #include "defaults.h"
-  shmem_i_want = shmem_create(DEFAULT_SHM_I_WANT, p->parent_params->file_segment_length);
-  shmem_thank_you = shmem_create(DEFAULT_SHM_THANK_YOU, p->parent_params->file_segment_length);
+  shmem_i_want = shmem_create_write_only(DEFAULT_SHM_I_WANT, p->parent_params->file_segment_length);
+  shmem_thank_you = shmem_create_read_only(DEFAULT_SHM_THANK_YOU, p->parent_params->file_segment_length);
 
   err = handle_forks(p, shmem_i_want, shmem_thank_you);
 

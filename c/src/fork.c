@@ -83,7 +83,7 @@ int be_parent(Params *p, void *shmem_i_want, void *shmem_thank_you, ChildData *c
   int err;
   Parent *r;
 
-  shmem_test_fill(shmem_i_want);
+  //shmem_test_fill(shmem_i_want);
   p->parent_params->children = children;
   r = parent_create(p->parent_params);
   err = parent_loop(r);
