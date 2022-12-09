@@ -6,11 +6,11 @@
 #include <unistd.h>
 
 typedef struct child_arguments {
-  const char *sem_name_i_want;
-  const char *sem_name_thank_you;
-  const char *shmem_name_i_want;
-  const char *shmem_name_thank_you;
-  const char *file_name;
+  char *sem_name_i_want;
+  char *sem_name_thank_you;
+  char *shmem_name_i_want;
+  char *shmem_name_thank_you;
+  char *file_name;
 } ChildArgs;
 
 typedef struct child {
@@ -23,6 +23,6 @@ typedef struct child {
 
 Child *child_create(const ChildArgs args);
 void child_free(Child *child);
-int child_loop(const Child *child);
+void child_loop(const Child *child);
 
 #endif

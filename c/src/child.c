@@ -63,14 +63,13 @@ Child *try_opening_sem_i_want(Child *child, const ChildArgs *args) {
   return child;
 }
 
-int child_loop(const Child *child) {
-  int j;
+void child_loop(const Child *child) {
+  int i;
 
-  for (j = 0; j < 3; j++)
+  for (i = 0; i < 3; i++)
     do_a_cycle(child);
 
   WELL("loop done");
-  return 0;
 }
 
 void do_a_cycle(const Child *child) {
