@@ -75,16 +75,17 @@ void child_loop(const Child *child) {
 void do_a_cycle(const Child *child) {
   ChildRes *res;
 
-  WELL("asking to read, using semaphore");
-  WELL(child->names->sem_name_i_want);
+  WELL("asking to ask");
   sem_post(child->sem_i_want);
-  WELL("waiting for the file segment to come");
-
   sem_wait(child->sem_thank_you);
+
+  WELL("asking, with details");
+  sem_post(child->sem_i_want);
+  sem_wait(child->sem_thank_you);
+
   WELL("parent says I can read");
 
   res = child_res_create();
-  WELL("responce created, putting into file");
   res->file_segment = 1;
   res->line_in_segment = 2;
   res->application_time_in_ns = 3;
@@ -92,9 +93,9 @@ void do_a_cycle(const Child *child) {
   res->line_contents = malloc(MAX_LINE_LEN);
   strcpy(res->line_contents, "hello there");
   child_res_to_file(res, child->names->file_name);
-  WELL("responce put in file");
   child_res_free(res);
 
-  WELL("faking a time wasteful process");
+  WELL("responce put in file");
   usleep(200000);
+  WELL("done");
 }

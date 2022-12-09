@@ -56,6 +56,9 @@ int parent_loop(Parent *r) {
 
   for (j = 0; j < 3; j++) {
     for (i = 0; i < r->pp->num_of_children; i++) {
+      WELL("waiting for anyone to ask something");
+      sem_wait(r->sem_yes_please);
+      sem_post(r->pp->children[i].semaphore);
       sem_wait(r->sem_yes_please);
 
       char *segment = parent_read_file_segment(r, 1);
