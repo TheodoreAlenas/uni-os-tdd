@@ -10,10 +10,12 @@
 #include "dev_mode.h"
 #include "child_res.h"
 
-void single_cycle(Child *c);
+Child *try_opening_sem_i_want(Child *child, ChildArgs *args);
+void do_a_cycle(Child *c);
 
 Child *child_create(ChildArgs args) {
   Child *child;
+  int err;
 
   child = malloc(sizeof(Child));
   child->file_name = args.file_name;
@@ -35,15 +37,21 @@ Child *child_create(ChildArgs args) {
   WELL("waiting for parent to create his semaphore");
   sem_wait(child->sem_thank_you);
 
-  child->sem_i_want = sem_open(args.sem_name_i_want, O_WRONLY, 0666, 0);
+  child = try_opening_sem_i_want(child, &args);
+
+  return child;
+}
+
+Child *try_opening_sem_i_want(Child *child, ChildArgs *args) {
+
+  child->sem_i_want = sem_open(args->sem_name_i_want, O_WRONLY, 0666, 0);
   if (child->sem_i_want == NULL) {
     perror("child's 'I want' semaphore");
-    sem_unlink(args.sem_name_thank_you);
+    sem_unlink(args->sem_name_thank_you);
     sem_close(child->sem_thank_you);
     return NULL;
   }
   WELL("created child's own semaphore");
-
   return child;
 }
 
@@ -68,13 +76,13 @@ int child_loop(Child *child) {
   int j;
 
   for (j = 0; j < 3; j++)
-    single_cycle(child);
+    do_a_cycle(child);
 
   WELL("loop done");
   return 0;
 }
 
-void single_cycle(Child *child) {
+void do_a_cycle(Child *child) {
   ChildRes *res;
 
   WELL("asking to read, using semaphore");
