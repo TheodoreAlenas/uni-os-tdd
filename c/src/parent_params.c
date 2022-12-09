@@ -20,6 +20,8 @@ ParentParams *parent_params_create() {
   pp->shmem_name_yes_please = malloc(MAX_FILE_NAME_LEN);
   pp->shmem_name_youre_ready = malloc(MAX_FILE_NAME_LEN);
 
+  pp->children = NULL;
+
   return pp;
 }
 
@@ -40,6 +42,9 @@ void parent_params_free(ParentParams *pp) {
       CONSIDER_FREEING(sem_name_youre_ready[i]);
 
   CONSIDER_FREEING(sem_name_youre_ready);
+
+  if (pp->children)
+    child_data_free(pp->children);
 
   WELL("done");
 

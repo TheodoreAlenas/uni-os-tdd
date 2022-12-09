@@ -14,18 +14,21 @@
 #define SEC 1000000
 
 
-int be_parent(Params *p, void *shmem);
-int be_child(int child_index, char *output_file);
+int be_parent(Params *p, ChildData *children, void *shmem);
+int be_child(int child_index, pid_t *set_me, pid_t to_this);
 
 int handle_forks(Params *p, void *shmem) {
-  int is_parent, child_index, num_of_children;
+  pid_t pid, is_parent;
+  int child_index, num_of_children;
   char *output_file_name;
 
   num_of_children = p->parent_params->num_of_children;  /* alias */
+
+  ChildData *children = child_data_create_all(num_of_children);
   for (child_index = 0; child_index < num_of_children; child_index++) {
     output_file_name = get_output_file_name(p->output_dir, child_index);
 
-    is_parent = fork();
+    pid = is_parent = fork();
 
     if (is_parent == -1) {
       perror("Fork failed: ");
@@ -35,17 +38,18 @@ int handle_forks(Params *p, void *shmem) {
     if (is_parent)
       continue;
     else
-      return be_child(child_index, output_file_name);
+      return be_child(child_index, &children[child_index].pid, pid);
     /* TODO free the output_file name */
   }
   WELL("forks done");
-  return be_parent(p, shmem);
+  return be_parent(p, children, shmem);
 }
 
-int be_parent(Params *p, void *shmem) {
+int be_parent(Params *p, ChildData *children, void *shmem) {
   int err;
   Parent *r;
 
+  /* TODO use children */
   shmem_test_fill(shmem);
   r = parent_create(p->parent_params);
   err = parent_loop(r);
@@ -55,7 +59,7 @@ int be_parent(Params *p, void *shmem) {
   return err;
 }
 
-int be_child(int child_index, char *output_file) {
+int be_child(int child_index, pid_t *set_me, pid_t to_this) {
   Child *child;
   ChildArgs args;
 
@@ -65,7 +69,9 @@ int be_child(int child_index, char *output_file) {
   args.sem_name_thank_you = get_semaphore_name(child_index);
   args.shmem_name_i_want = SHM_I_WANT;
   args.shmem_name_thank_you = SHM_THANK_YOU;
-  args.file_name = output_file;
+  args.file_name = get_output_file_name(DEFAULT_OUTPUT_DIR, child_index);
+
+  *set_me = to_this;
 
   WELL(args.file_name);
 

@@ -22,7 +22,8 @@ Parent *parent_create(ParentParams *pp) {
   WELL("");
   r->pp = pp;
 
-  r->children = child_data_create(r->pp->num_of_children);
+  /* TODO remove */
+  r->children = child_data_create_all(r->pp->num_of_children);
   r->requests = stack_create(r->pp->num_of_children);
 
   r->sem_yes_please = sem_open(SEM_I_WANT, O_CREAT | O_WRONLY, 0666, 0);
