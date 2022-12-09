@@ -15,7 +15,6 @@ void do_a_cycle(Child *c);
 
 Child *child_create(ChildArgs args) {
   Child *child;
-  int err;
 
   child = malloc(sizeof(Child));
   child->file_name = args.file_name;
@@ -42,19 +41,6 @@ Child *child_create(ChildArgs args) {
   return child;
 }
 
-Child *try_opening_sem_i_want(Child *child, ChildArgs *args) {
-
-  child->sem_i_want = sem_open(args->sem_name_i_want, O_WRONLY, 0666, 0);
-  if (child->sem_i_want == NULL) {
-    perror("child's 'I want' semaphore");
-    sem_unlink(args->sem_name_thank_you);
-    sem_close(child->sem_thank_you);
-    return NULL;
-  }
-  WELL("created child's own semaphore");
-  return child;
-}
-
 void child_free(Child *child) {
   if (child == NULL)
     return;
@@ -70,6 +56,19 @@ void child_free(Child *child) {
   sem_close(child->sem_thank_you);
 
   free(child);
+}
+
+Child *try_opening_sem_i_want(Child *child, ChildArgs *args) {
+
+  child->sem_i_want = sem_open(args->sem_name_i_want, O_WRONLY, 0666, 0);
+  if (child->sem_i_want == NULL) {
+    perror("child's 'I want' semaphore");
+    sem_unlink(args->sem_name_thank_you);
+    sem_close(child->sem_thank_you);
+    return NULL;
+  }
+  WELL("created child's own semaphore");
+  return child;
 }
 
 int child_loop(Child *child) {
