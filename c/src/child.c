@@ -20,19 +20,24 @@ Child *child_create(ChildArgs args) {
   memcpy(child->names, &args, sizeof(ChildArgs));
 
   /* TODO shmem */
+
   WELL(args.sem_name_i_want);
   WELL(args.sem_name_thank_you);
+
   child->sem_thank_you = sem_open(args.sem_name_thank_you, O_CREAT | O_RDONLY, 0666, 0);
-  /* waiting for signal that the other semaphore was created (by the parent) */
   if (child->sem_thank_you == NULL) {
     perror("child's thank you semaphore");
     return NULL;
   }
+
   WELL("waiting for parent to create his semaphore");
   sem_wait(child->sem_thank_you);
+
   child->sem_i_want = sem_open(args.sem_name_i_want, O_WRONLY, 0666, 0);
   if (child->sem_i_want == NULL) {
     perror("child's 'I want' semaphore");
+    sem_unlink(args.sem_name_thank_you);
+    sem_close(child->sem_thank_you);
     return NULL;
   }
   WELL("created child's own semaphore");
