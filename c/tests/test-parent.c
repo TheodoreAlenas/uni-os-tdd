@@ -12,6 +12,25 @@ Msg check_one_msg(MsgCycler *msg_cycler) { Msg msg; return msg; }
 void clean_msg(const MsgCycler *msg_cycler) {}
 int store(Parent *r, int segment) { return 0; }  /* doesn't necessarily add to the stack */
 int count_down_for_changing_segment(Parent *r) { return 0; }
+int one_cycle_idea(Parent *r, MsgCycler *msg_cycler) {
+  Msg msg;
+
+  notification(r);
+  msg = check_one_msg(msg_cycler);
+  clean_msg(msg_cycler);
+
+  if (msg.type == MSG_SEGMENT_REQUEST)
+    store(r, msg.segment);
+
+  else if (msg.type == MSG_YOU_CAN_SWITCH_SEGMENTS)
+    count_down_for_changing_segment(r);
+
+  else
+    return -1;
+
+  return 0;
+}
+
 
 int testable_wait(const Parent *r) {
   actions[action_head++] = A_WAIT;

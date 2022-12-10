@@ -1,13 +1,13 @@
 1115 2019 00048 Theodoros (more at the bottom)
 
-    cd build
-    make
-    ./rlr --help
-    ./rlr  # [...]
-    ls ../output
-    make clean
+cd build
+make
+./rlr --help
+./rlr  # [...]
+ls ../output
+make clean
 
-    ./test  # recommended
+./test  # recommended
 
 
          _____ ___   ___  _     ____
