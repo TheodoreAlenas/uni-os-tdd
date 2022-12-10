@@ -1,9 +1,15 @@
+#include <unistd.h>
+
 #include "be_yourself.h"
 #include "dev_mode.h"
 #include "get_names.h"
 #include "parent.h"
 #include "child.h"
 
+
+int testable_fork() {
+  return fork();
+}
 
 int be_parent(Params *p, ChildData *children) {
   int err;

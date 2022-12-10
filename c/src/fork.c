@@ -42,7 +42,7 @@ int give_birth(Params *p, ChildData *children) {
 
   for (child_index = 0; child_index < p->parent_params->num_of_children; child_index++) {
     sem_name = get_semaphore_name(child_index);
-    pid = is_parent = fork();
+    pid = is_parent = testable_fork();
 
     if (pid > 0)
       store_child_for_parent(children + child_index, sem_name, pid);

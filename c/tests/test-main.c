@@ -25,6 +25,7 @@ void call_all() {
   test_stack();
   test_arg_parse();
   test_semaphores();
+  test_fork();
 }
 
 #define CONSIDER(n) else if (strcmp(name, #n) == 0) test_##n()
@@ -34,6 +35,7 @@ void call_individual_with_same_name(char *name) {
   CONSIDER(stack);
   CONSIDER(arg_parse);
   CONSIDER(semaphores);
+  CONSIDER(fork);
 }
 #undef CONSIDER
 
