@@ -5,7 +5,6 @@
 
 #include <stdio.h>
 #include <unistd.h>
-static char *WHO;
 
 #define PRINT_DEV_STATUS() printf("\x1b[%dm[pid %d %s > %s]\x1b[0m ", \
     getpid() % 6 + 32, getpid(), __FILE__, __FUNCTION__)

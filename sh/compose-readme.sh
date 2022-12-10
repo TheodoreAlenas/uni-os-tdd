@@ -13,7 +13,7 @@ extract () {
 
   awk_scr="$exit_on_end $after_match $print_with_number"
 
-  awk "$awk_scr" "$file"
+  awk "$awk_scr" "$file" | sed 's/ *$//'
 
   printf "[ file $file ]\n"
 }
