@@ -49,8 +49,7 @@ bool has(enum Action a) {
 
 void test_parent() {
 
-  announce("test_parent_exists_but_cant_do_much", true);
-  announce("test_parent_loop_1_1_returns_zero", 0 == loops(NULL, 1, 2));
+  announce("test_parent_loop_1_2_returns_zero", 0 == loops(NULL, 1, 2));
   announce("test_parent_has_read_req", has(A_READ_REQ));
   announce("test_parent_has_read_file", has(A_READ_FILE));
   announce("test_parent_has_write", has(A_WRITE));
