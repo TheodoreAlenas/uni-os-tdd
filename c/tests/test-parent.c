@@ -7,6 +7,12 @@ static int action_head, res_head;
 static enum Action actions[256];
 static unsigned res[256];
 
+void notification(Parent *r) {}
+Msg check_one_msg(MsgCycler *msg_cycler) { Msg msg; return msg; }
+void clean_msg(const MsgCycler *msg_cycler) {}
+int store(Parent *r, int segment) { return 0; }  /* doesn't necessarily add to the stack */
+int count_down_for_changing_segment(Parent *r) { return 0; }
+
 int testable_wait(const Parent *r) {
   actions[action_head++] = A_WAIT;
   return 0;
@@ -49,16 +55,21 @@ bool has(enum Action a) {
 
 void test_parent() {
 
+  /* for README, test-parent */
+
   announce("test_parent_loop_1_2_returns_zero", 0 == loops(NULL, 1, 2));
   announce("test_parent_has_read_req", has(A_READ_REQ));
   announce("test_parent_has_read_file", has(A_READ_FILE));
   announce("test_parent_has_write", has(A_WRITE));
   announce("test_parent_has_post", has(A_POST));
   announce("test_parent_has_wait", has(A_WAIT));
-  announce("test_parent_posts_to_the_right", res[0] == 3 && res[1] == 3);
+/*announce("test_parent_posts_to_the_right", res[0] == 3 && res[1] == 3);
   announce("test_parent_1_wait", actions[0] == A_WAIT);
   announce("test_parent_2_post", actions[1] == A_POST);
-  announce("test_parent_3_read_req", actions[2] == A_READ_REQ);
+  announce("test_parent_3_read_req", actions[2] == A_READ_REQ);*/
+  announce("test_parent_one_cycle_idea", -1 == one_cycle_idea(NULL, NULL));
+
+  /* end of snippet test parent */
 
   action_head = 0;
   //parent_loop(NULL);

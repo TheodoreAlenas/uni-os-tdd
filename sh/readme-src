@@ -84,10 +84,7 @@ I tried out some test driven development.
 
 Some .c files aren't built when using 'make test'.
 
-    10 | int testable_fork() {
-    11 |   return fork();
-    12 | }
-    [ file c/src/be_yourself.c ]
+SNIPPET:testable-fork
 
 They're marked in the Makefile:
 

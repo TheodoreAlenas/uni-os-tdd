@@ -6,10 +6,11 @@
 #include "parent.h"
 #include "child.h"
 
-
+/* for README, testable-fork */
 int testable_fork() {
   return fork();
 }
+/* end of snippet */
 
 int be_parent(Params *p, ChildData *children) {
   int err;

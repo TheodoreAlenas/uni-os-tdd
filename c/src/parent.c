@@ -123,6 +123,25 @@ int one_cycle(Parent *r) {
   return 0;
 }
 
+int one_cycle_idea(Parent *r, MsgCycler *msg_cycler) {
+  Msg msg;
+
+  notification(r);
+  msg = check_one_msg(msg_cycler);
+  clean_msg(msg_cycler);
+
+  if (msg.type == MSG_SEGMENT_REQUEST)
+    store(r, msg.segment);
+
+  else if (msg.type == MSG_YOU_CAN_SWITCH_SEGMENTS)
+    count_down_for_changing_segment(r);
+
+  else
+    return -1;
+
+  return 0;
+}
+
 int parent_waitpid(const Parent *r) {
   int i, status;
 
