@@ -3,17 +3,17 @@
 #include "dev_mode.h"
 
 int testable_wait(const Parent *r) {
-  return sem_post(r->sem_yes_please);
+  return sem_wait(r->sem_yes_please);
 }
 
 int testable_post(const Parent *r, unsigned child) {
-  return sem_wait(r->pp->children[child].semaphore);
+  return sem_post(r->pp->children[child].semaphore);
 }
 
 int testable_sprintf(void *shm, char *str1, char *str2) { return sprintf(shm, str1, str2); }
 Req testable_parse_req(const void *shm) {
   Req req;
-  req.childs_semaphore = NULL;
+  req.child = 0;
   req.segment = -1;
   return req;
 }
