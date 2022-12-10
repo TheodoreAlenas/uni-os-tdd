@@ -80,7 +80,7 @@ int parent_loop(Parent *r) {
       testable_post(r->pp->children[i].semaphore);
       usleep(10000);
 
-      WELLL(printf("request says '%s'", r->shmem_yes_please));
+      WELLL(printf("request says '%s'", testable_shm_read(r->shmem_yes_please)));
 
       char *segment = parent_read_file_segment(r, 1);
       /* printf("%s\n", segment); */
