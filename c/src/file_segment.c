@@ -2,6 +2,10 @@
 #include "file_segment.h"
 #include "dev_mode.h"
 
+int testable_wait(sem_t *sem) { return sem_wait(sem); }
+int testable_post(sem_t *sem) { return sem_post(sem); }
+int testable_sprintf(void *shm, char *str1, char *str2) { return sprintf(shm, str1, str2); }
+
 char *read_segment_from_open_file(const ParentParams *pp, FILE *file, unsigned long segment);
 int skip_to_segment(FILE *file, unsigned long segment, unsigned long segment_length);
 void append_to_final(char **to_return, FILE *file);

@@ -56,7 +56,7 @@ sem_t *init_sem_and_broadcast(const Parent *r) {
 
   WELL("signaling that the semaphore is ready");
   for (i = 0; i < r->pp->num_of_children; i++) {
-    sem_post(r->pp->children[i].semaphore);
+    testable_post(r->pp->children[i].semaphore);
   }
 
   return s;
@@ -76,8 +76,8 @@ int parent_loop(Parent *r) {
   for (j = 0; j < 2; j++) {
     for (i = 0; i < r->pp->num_of_children; i++) {
       WELL("waiting for anyone to ask something");
-      sem_wait(r->sem_yes_please);
-      sem_post(r->pp->children[i].semaphore);
+      testable_wait(r->sem_yes_please);
+      testable_post(r->pp->children[i].semaphore);
       usleep(10000);
 
       WELLL(printf("request says '%s'", r->shmem_yes_please));
@@ -86,10 +86,10 @@ int parent_loop(Parent *r) {
       /* printf("%s\n", segment); */
       /* TODO shmem */
       free(segment);
-      sprintf(r->shmem_youre_ready, "okay then! Take %s", (char *) r->shmem_yes_please);
+      testable_sprintf(r->shmem_youre_ready, "okay then! Take %s", (char *) r->shmem_yes_please);
 
       WELLL(printf("telling child #%d that its file segment is ready", i));
-      sem_post(r->pp->children[i].semaphore);
+      testable_post(r->pp->children[i].semaphore);
     }
   }
   WELL("loop done");
