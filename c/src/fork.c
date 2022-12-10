@@ -4,6 +4,7 @@
 #include "fork.h"
 #include "constants.h"
 #include "dev_mode.h"
+#include "be_yourself.h"
 #include "get_names.h"
 #include "shmem.h"
 #include "parent.h"
@@ -15,9 +16,7 @@
 
 int give_birth(Params *p, ChildData *children);
 void store_child_for_parent(ChildData *child, char *sem_name, pid_t pid);
-int case_child(Params *p, unsigned child_index, char *sem_name);
-int be_parent(Params *p, ChildData *children);
-int be_child(Params *p, unsigned child_index, char *sem_name);
+int be_child_and_free(Params *p, unsigned child_index, char *sem_name);
 
 int handle_forks(Params *p) {
   unsigned n;
@@ -49,7 +48,7 @@ int give_birth(Params *p, ChildData *children) {
       store_child_for_parent(children + child_index, sem_name, pid);
 
     else if (pid == 0)
-      return case_child(p, child_index, sem_name);
+      return be_child_and_free(p, child_index, sem_name);
 
     else {
       perror("fork failed");
@@ -68,7 +67,7 @@ void store_child_for_parent(ChildData *child, char *sem_name, pid_t pid) {
   child->pid = pid;  /* the other attributes are initialized */
 }
 
-int case_child(Params *p, unsigned child_index, char *sem_name) {
+int be_child_and_free(Params *p, unsigned child_index, char *sem_name) {
   int err;
 
   err = be_child(p, child_index, sem_name);
@@ -77,39 +76,5 @@ int case_child(Params *p, unsigned child_index, char *sem_name) {
     free(sem_name);
 
   return err;
-}
-
-int be_parent(Params *p, ChildData *children) {
-  int err;
-  Parent *r;
-
-  p->parent_params->children = children;
-  r = parent_create(p->parent_params);
-  err = parent_loop(r);
-  WELL("freeing after parent_loop");
-  parent_waitpid(r);
-  parent_free(r);
-  return err;
-}
-
-int be_child(Params *p, unsigned child_index, char *sem_name) {
-  Child *child;
-  ChildArgs args;
-
-  WELL("");
-
-  args.sem_name_i_want = p->parent_params->sem_name_yes_please;
-  args.sem_name_thank_you = sem_name;
-  args.shmem_name_i_want = p->parent_params->shmem_name_yes_please;
-  args.shmem_name_thank_you = p->parent_params->shmem_name_youre_ready;
-  args.file_name = get_output_file_name(p->output_dir, child_index);
-
-  WELL(args.file_name);
-
-  child = child_create(&args);
-  child_loop(child);  /* TODO returns err */
-  child_free(child);
-
-  return 0;
 }
 
