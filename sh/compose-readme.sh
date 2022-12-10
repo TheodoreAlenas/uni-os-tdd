@@ -36,6 +36,8 @@ in_stdout () {
   done
 
   sed -n "$((prev_line + 1)),\$p" "$in"
+
+  printf "\nLast update: $(date)\n"
 }
 
 
