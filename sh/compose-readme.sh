@@ -8,7 +8,7 @@ extract () {
   line_number="$(echo "$ans" | cut -d ':' -f 2)"
 
   exit_on_end="/end of snippet/ {exit}"
-  print_with_number='{print NR, "|", $0}'
+  print_with_number='{printf "%+3s | %s\n", NR, $0}'
   after_match="NR > $line_number"
 
   awk_scr="$exit_on_end $after_match $print_with_number"

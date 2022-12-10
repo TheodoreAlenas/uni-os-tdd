@@ -81,25 +81,19 @@ one is not interested in.
 
 
 I tried out some test driven development.
+It didn't go the best, honestly.
 
 Some .c files aren't built when using 'make test'.
 
 SNIPPET:testable-fork
 
-They're marked in the Makefile:
-
-    TESTABLE_FILES := be_yourself.o file_segment.o
+SNIPPET:testable-files
 
 Instead, the functions declared
 in their header files are implemented elsewhere,
 in the c/tests directory.
 
-    static int num_of_forks;
-
-    int testable_fork() {
-      num_of_forks++;
-      return fork();
-    }
+SNIPPET:fork-in-test
 
 This makes them easy to test.
 

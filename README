@@ -81,28 +81,34 @@ one is not interested in.
 
 
 I tried out some test driven development.
+It didn't go the best, honestly.
 
 Some .c files aren't built when using 'make test'.
 
-    10 | int testable_fork() {
-    11 |   return fork();
-    12 | }
+     10 | int testable_fork() {
+     11 |   return fork();
+     12 | }
     [ file c/src/be_yourself.c ]
 
-They're marked in the Makefile:
-
-    TESTABLE_FILES := be_yourself.o file_segment.o
+      5 | TESTABLE_FILES := be_yourself.o file_segment.o
+    [ file build/Makefile ]
 
 Instead, the functions declared
 in their header files are implemented elsewhere,
 in the c/tests directory.
 
-    static int num_of_forks;
-
-    int testable_fork() {
-      num_of_forks++;
-      return fork();
-    }
+      4 | #include "../src/fork.h"
+      5 | #include "../src/be_yourself.h"
+      6 | 
+      7 | 
+      8 | static int num_of_forks;
+      9 | 
+     10 | int testable_fork() {
+     11 |   num_of_forks++;
+     12 |   return fork();
+     13 | }
+     14 | 
+    [ file c/tests/test-fork.c ]
 
 This makes them easy to test.
 

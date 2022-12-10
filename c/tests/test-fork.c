@@ -1,5 +1,6 @@
 #include "test.h"
 #include "../src/params.h"
+/* for README, fork-in-test */
 #include "../src/fork.h"
 #include "../src/be_yourself.h"
 
@@ -11,6 +12,7 @@ int testable_fork() {
   return fork();
 }
 
+/* end of snippet */
 int be_parent(Params *p, ChildData *children) {
   return 0;
 }
