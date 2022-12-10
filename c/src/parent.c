@@ -56,7 +56,7 @@ sem_t *init_sem_and_broadcast(const Parent *r) {
 
   WELL("signaling that the semaphore is ready");
   for (i = 0; i < r->pp->num_of_children; i++) {
-    testable_post(r->pp->children[i].semaphore);
+    testable_post(r, i);
   }
 
   return s;
@@ -77,8 +77,8 @@ int parent_loop(Parent *r) {
   for (j = 0; j < 2; j++) {
     for (i = 0; i < r->pp->num_of_children; i++) {
       WELL("waiting for anyone to ask something");
-      testable_wait(r->sem_yes_please);
-      testable_post(r->pp->children[i].semaphore);
+      testable_wait(r);
+      testable_post(r, i);
       usleep(10000);
 
       WELLL(printf("request says '%s'", r->shmem_yes_please));
@@ -90,7 +90,7 @@ int parent_loop(Parent *r) {
       testable_sprintf(r->shmem_youre_ready, "okay then! Take %s", (char *) r->shmem_yes_please);
 
       WELLL(printf("telling child #%d that its file segment is ready", i));
-      testable_post(r->pp->children[i].semaphore);
+      testable_post(r, i);
     }
   }
   WELL("loop done");
@@ -101,14 +101,21 @@ int parent_loop(Parent *r) {
   return 0;
 }
 
-int loops(int children, int per_child) {
+int loops(Parent *r, int children, int per_child) {
   int i;
   for (i = 0; i < children * per_child; i++)
-    one_cycle();
+    one_cycle(r);
   return 0;
 }
 
-int one_cycle() {
+int one_cycle(Parent *r) {
+  char *s;
+  s = malloc(64);
+  testable_wait(r);
+  testable_post(r, 0);
+  testable_sprintf(s, "hep%s", " bro");
+  testable_parse_req(NULL);
+  parent_read_file_segment(r, 0);
   return 0;
 }
 

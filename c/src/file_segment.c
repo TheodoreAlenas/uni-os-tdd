@@ -2,10 +2,16 @@
 #include "file_segment.h"
 #include "dev_mode.h"
 
-int testable_wait(sem_t *sem) { return sem_wait(sem); }
-int testable_post(sem_t *sem) { return sem_post(sem); }
+int testable_wait(const Parent *r) {
+  return sem_post(r->sem_yes_please);
+}
+
+int testable_post(const Parent *r, unsigned child) {
+  return sem_wait(r->pp->children[child].semaphore);
+}
+
 int testable_sprintf(void *shm, char *str1, char *str2) { return sprintf(shm, str1, str2); }
-Req testable_parse_req(void *shm) {
+Req testable_parse_req(const void *shm) {
   Req req;
   req.childs_semaphore = NULL;
   req.segment = -1;

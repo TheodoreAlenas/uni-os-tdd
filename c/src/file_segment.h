@@ -9,13 +9,13 @@ typedef struct {
   int segment;
 } Req;
 
-int testable_wait(sem_t *sem);
-int testable_post(sem_t *sem);
+int testable_wait(const Parent *r);
+int testable_post(const Parent *r, unsigned child);
 int testable_sprintf(void *shm, char *str1, char *str2);
-Req testable_parse_req(void *shm);
+Req testable_parse_req(const void *shm);
 char *parent_read_file_segment(const Parent *parent, unsigned long segment);
 
-int loops(int children, int per_child);
-int one_cycle();
+int loops(Parent *r, int children, int per_child);
+int one_cycle(Parent *r);
 
 #endif
