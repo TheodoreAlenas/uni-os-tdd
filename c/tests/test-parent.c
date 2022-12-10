@@ -56,6 +56,9 @@ void test_parent() {
   announce("test_parent_has_post", has(A_POST));
   announce("test_parent_has_wait", has(A_WAIT));
   announce("test_parent_posts_to_the_right", res[0] == 3 && res[1] == 3);
+  announce("test_parent_1_wait", actions[0] == A_WAIT);
+  announce("test_parent_2_post", actions[1] == A_POST);
+  announce("test_parent_3_read_req", actions[2] == A_READ_REQ);
 
   action_head = 0;
   //parent_loop(NULL);
