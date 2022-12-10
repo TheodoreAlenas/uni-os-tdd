@@ -15,4 +15,7 @@ int testable_sprintf(void *shm, char *str1, char *str2);
 Req testable_parse_req(void *shm);
 char *parent_read_file_segment(const Parent *parent, unsigned long segment);
 
+int loops(int children, int per_child);
+int one_cycle();
+
 #endif

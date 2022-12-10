@@ -73,6 +73,7 @@ int parent_loop(Parent *r) {
     return -1;
   }
 
+#ifndef TEST
   for (j = 0; j < 2; j++) {
     for (i = 0; i < r->pp->num_of_children; i++) {
       WELL("waiting for anyone to ask something");
@@ -93,7 +94,21 @@ int parent_loop(Parent *r) {
     }
   }
   WELL("loop done");
+#else
 
+#endif
+
+  return 0;
+}
+
+int loops(int children, int per_child) {
+  int i;
+  for (i = 0; i < children * per_child; i++)
+    one_cycle();
+  return 0;
+}
+
+int one_cycle() {
   return 0;
 }
 
