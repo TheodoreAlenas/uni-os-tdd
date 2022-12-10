@@ -109,12 +109,13 @@ int loops(Parent *r, int children, int per_child) {
 }
 
 int one_cycle(Parent *r) {
+  Req req;
   char *s;
   s = malloc(64);
   testable_wait(r);
-  testable_post(r, 0);
+  req = testable_parse_req(NULL);
+  testable_post(r, req.child);
   testable_sprintf(s, "hep%s", " bro");
-  testable_parse_req(NULL);
   testable_read_file_segment(r, 0);
   return 0;
 }

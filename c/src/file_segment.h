@@ -5,7 +5,7 @@
 #include "parent.h"
 
 typedef struct {
-  sem_t *childs_semaphore;
+  unsigned child;
   int segment;
 } Req;
 
