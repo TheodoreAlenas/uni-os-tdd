@@ -22,7 +22,7 @@ char *read_segment_from_open_file(const ParentParams *pp, FILE *file, unsigned l
 int skip_to_segment(FILE *file, unsigned long segment, unsigned long segment_length);
 void append_to_final(char **to_return, FILE *file);
 
-char *parent_read_file_segment(const Parent *parent, unsigned long segment) {
+char *testable_read_file_segment(const Parent *parent, unsigned long segment) {
 
   FILE *file;
   char *res;

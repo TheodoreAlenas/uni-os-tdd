@@ -83,7 +83,7 @@ int parent_loop(Parent *r) {
 
       WELLL(printf("request says '%s'", r->shmem_yes_please));
 
-      char *segment = parent_read_file_segment(r, 1);
+      char *segment = testable_read_file_segment(r, 1);
       /* printf("%s\n", segment); */
       /* TODO shmem */
       free(segment);
@@ -115,7 +115,7 @@ int one_cycle(Parent *r) {
   testable_post(r, 0);
   testable_sprintf(s, "hep%s", " bro");
   testable_parse_req(NULL);
-  parent_read_file_segment(r, 0);
+  testable_read_file_segment(r, 0);
   return 0;
 }
 

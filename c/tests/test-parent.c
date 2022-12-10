@@ -27,7 +27,7 @@ Req testable_parse_req(const void *shm) {
   return req;
 }
 
-char *parent_read_file_segment(const Parent *parent, unsigned long segment) {
+char *testable_read_file_segment(const Parent *parent, unsigned long segment) {
   char *res;
   actions[head++] = A_READ_FILE;
   res = malloc(64);
