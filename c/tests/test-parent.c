@@ -1,16 +1,10 @@
 #include "../src/parent.h"
+#include "../src/file_segment.h"
 #include "test.h"
 
-enum Action { A_READ, A_WRITE, A_POST, A_WAIT };
+enum Action { A_READ_REQ, A_READ_FILE, A_WRITE, A_POST, A_WAIT };
 static int head;
 static enum Action actions[256];
-
-char *parent_read_file_segment(const Parent *parent, unsigned long segment) {
-  char *res;
-  res = malloc(64);
-  strcpy(res, "hi there\nhow are you\n");
-  return res;
-}
 
 int testable_wait(sem_t *sem) {
   actions[head++] = A_WAIT;
@@ -27,9 +21,18 @@ int testable_sprintf(void *shm, char *str1, char *str2) {
   return 0;
 }
 
-char *testable_shm_read(void *shm) {
-  actions[head++] = A_READ;
-  return 0;
+Req testable_parse_req(void *shm) {
+  Req req;
+  actions[head++] = A_READ_REQ;
+  return req;
+}
+
+char *parent_read_file_segment(const Parent *parent, unsigned long segment) {
+  char *res;
+  actions[head++] = A_READ_FILE;
+  res = malloc(64);
+  strcpy(res, "hi there\nhow are you\n");
+  return res;
 }
 
 void test_parent() {
