@@ -20,7 +20,6 @@ typedef struct parent {
 Parent *parent_create(const ParentParams *pp);
 void parent_free(Parent *r);
 int parent_loop(Parent *r);
-char *parent_read_file_segment(const Parent *parent, unsigned long segment);
 int parent_waitpid(const Parent *r);
 
 #endif
