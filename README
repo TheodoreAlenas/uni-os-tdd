@@ -1,20 +1,13 @@
 1115 2019 00048 Theodoros (more at the bottom)
 
-
-             ____  _   _ _   _
-            |  _ \| | | | \ | |
-            | |_) | | | |  \| |
-            |  _ <| |_| | |\  |
-            |_| \_\\___/|_| \_|
-
-
-    ./test  # recommended
-
     cd build
     make
     ./rlr --help
     ./rlr  # [...]
+    ls ../output
     make clean
+
+    ./test  # recommended
 
 
          _____ ___   ___  _     ____
@@ -53,21 +46,24 @@ Semaphore/segment naming:
 
     Parent            Children
     ---------------------------
-    yes_please
-                      i_want
-    go_for_it
+                    < i_want
+    yes_please  <
+    go_for_it   >
                       [silent]
-    youre_ready
-                      thank_you
+    youre_ready >
+                    > thank_you
 
-sem_thank_you, SHM_I_WANT, and more.
+SHM_I_WANT, sem_thank_you, and so on.
+The paren't doesn't have 3 semaphores however.
+There are exactly as many semaphores as processes,
+and only 2 shared memory segments in total.
 
 'const' isn't used much because C allows casts
 to non-const, and insentivises them with readline
 and other standard functions. Plus I follow a
 retro style. The long names aren't retro but the
-comments are old school, the declarations are at
-the top and so on.
+comments are old school and the declarations are
+at the top.
 
 There are tiny functions because I'm trying out
 the "Uncle Bob" principles of clean coding.
