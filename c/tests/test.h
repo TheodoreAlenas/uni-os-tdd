@@ -13,7 +13,8 @@ int get_total_tests_passed();
 int get_total_tests_failed();
 void test_stack();
 void test_arg_parse();
-void test_semaphores();
+void test_get_names();
 void test_fork();
+void test_parent();
 
 #endif

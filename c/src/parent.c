@@ -9,7 +9,6 @@
 #include "file_segment.h"
 #include "dev_mode.h"
 #include "constants.h"
-#include "params.h"
 #include "parent_params.h"
 #include "shmem.h"
 

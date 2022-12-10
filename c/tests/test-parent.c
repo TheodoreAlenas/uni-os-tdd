@@ -1,19 +1,13 @@
-#include "../src/get_names.h"
-
+#include "../src/parent.h"
 #include "test.h"
 
-void test_semaphores() {
-  char *s, *expected, *pid;
+char *parent_read_file_segment(const Parent *parent, unsigned long segment) {
+  char *res = malloc(64);
+  strcpy(res, "hi there\nhow are you\n");
+  return res;
+}
 
-  s = get_semaphore_name(10);
-  announce("get_semaphore_name_says_10_for_10",
-      strcmp(s, "sem10") == 0);
-
-  expected = malloc(732);
-  sprintf(expected, "../output_dir/index-123-pid-%u", getpid());
-
-  s = get_output_file_name("../output", 123);
-  announce("get_output_file_name_says_123_right",
-      strcmp(s, expected));
+void test_parent() {
+  announce("test_parent_exists", true);
 }
 
