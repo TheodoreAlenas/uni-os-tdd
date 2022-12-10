@@ -24,7 +24,9 @@ int one_test(char *argv[3], int num) {
 
   start_pid = getpid();
   num_of_forks = 0;
+
   handle_forks(parameters_parse(3, argv));
+
   if (getpid() != start_pid)
     exit(0);
 
@@ -37,15 +39,18 @@ int one_test(char *argv[3], int num) {
 void test_fork() {
   char *path = "/some/path/to/binary";
   char *c_flag = "-c";
+  char *num_0 = "0";
   char *num_1 = "1";
   char *num_2 = "2";
   char *num_3 = "3";
   char *num_64 = "64";
+  char *argv_0[3] = { path, c_flag, num_0 };
   char *argv_1[3] = { path, c_flag, num_1 };
   char *argv_2[3] = { path, c_flag, num_2 };
   char *argv_3[3] = { path, c_flag, num_3 };
   char *argv_64[3] = { path, c_flag, num_64 };
 
+  announce("test_fork_0_child", one_test(argv_0, 0));
   announce("test_fork_1_child", one_test(argv_1, 1));
   announce("test_fork_2_childen", one_test(argv_2, 2));
   announce("test_fork_3_childen", one_test(argv_3, 3));

@@ -1,4 +1,3 @@
-#include <unistd.h>
 #include <stdio.h>
 
 #include "fork.h"
@@ -6,9 +5,7 @@
 #include "dev_mode.h"
 #include "be_yourself.h"
 #include "get_names.h"
-#include "shmem.h"
-#include "parent.h"
-#include "child.h"
+#include "child_data.h"
 
 /* nanoseconds per second, for the usleep function */
 #define SEC 1000000
