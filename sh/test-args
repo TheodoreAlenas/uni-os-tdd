@@ -1,15 +1,13 @@
 #!/bin/env sh
 
-ans="$(./rlr -c 732 --print)"
+reality="$(
+./rlr -c 732 --shm-i-want 'dont want' --print   |
+  sort)"
 
 expectation="$(sort <<EOF
 number of children: 732
-'yes please' shared memory name: 'shm_i_want'
+'yes please' shared memory name: 'dont want'
 EOF
-)"
-
-reality="$(
-echo "$ans" | sort
 )"
 
 test "$expectation" = "$reality" && exit 0
@@ -19,4 +17,6 @@ echo "$expectation" > "$tmp/e"
 echo "$reality" > "$tmp/r"
 diff "$tmp/e" "$tmp/r"
 rm -rf "$tmp"
+
+exit 1
 
