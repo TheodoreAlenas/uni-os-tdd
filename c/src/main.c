@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "dev_mode.h"
-#include "arg_parse.h"
+#include "params.h"
 #include "fork.h"
 #include "shmem.h"
 
