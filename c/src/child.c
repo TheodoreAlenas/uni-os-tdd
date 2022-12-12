@@ -28,11 +28,13 @@ Child *child_create(const ChildArgs *args) {
     return NULL;
   }
 
+  /* for README, child-shmem-offset */
   WELL("waiting for the parent to create his semaphore");
   sem_wait(child->sem_thank_you);
 
   child->shmem_i_want = shmem_open_write_only(args->shmem_name_i_want, args->id + 1) + args->id * MAX_LINE_LEN;
   child->shmem_thank_you = shmem_open_read_only(args->shmem_name_thank_you, args->file_segment_length);
+  /* end of snippet */
 
   child = try_opening_sem_i_want(child, args);
 
@@ -76,6 +78,7 @@ void child_loop(const Child *child) {
   WELL("loop done");
 }
 
+/* for README, do-a-cycle */
 void do_a_cycle(const Child *child) {
   ChildRes *res;
 
@@ -87,12 +90,12 @@ void do_a_cycle(const Child *child) {
   if (child->names->id % 2)
     sprintf(child->shmem_i_want, "yo mum");
   else
-    sprintf(child->shmem_i_want, "my mum");
+    sprintf(child->shmem_i_want, "deez nuts");
   //WELL("the detaile came...");
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
 
-  WELL("parent says I can read");
+  WELL("the parent says I can read");
   WELL(child->names->file_name);
 
   res = child_res_create();
@@ -109,3 +112,5 @@ void do_a_cycle(const Child *child) {
   usleep(200000);
   WELL("done");
 }
+/* end of snippet */
+

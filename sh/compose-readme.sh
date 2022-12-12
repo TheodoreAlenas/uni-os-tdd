@@ -7,7 +7,7 @@ extract () {
   file="$(echo "$ans" | cut -d ':' -f 1)"
   line_number="$(echo "$ans" | cut -d ':' -f 2)"
 
-  exit_on_end="/end of snippet/ {exit}"
+  exit_on_end="NR > $line_number && /end of snippet/ {exit}"
   print_with_number='{printf "%+3s | %s\n", NR, $0}'
   after_match="NR > $line_number"
 
