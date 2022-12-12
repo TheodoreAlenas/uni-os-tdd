@@ -1,7 +1,7 @@
 #ifndef FORK_H
 #define FORK_H
 
-#include "params.h"
+#include "arg_parse.h"
 
 int handle_forks(Params *p);
 

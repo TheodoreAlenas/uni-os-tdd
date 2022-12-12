@@ -4,7 +4,7 @@ PRIMARY_FILES := parent.o child.o
 # for README, testable-files
 TESTABLE_FILES := be_yourself.o file_segment.o
 # end of snippet
-SECONDARY_FILES := stack.o child_data.o params.o parent_params.o child_res.o get_names.o
+SECONDARY_FILES := stack.o child_data.o arg_parse.o parent_params.o child_res.o get_names.o
 TRICKY_FILES := fork.o shmem.o
 TEST_NAMED_FILES := test-stack.o test-util.o test-arg-parse.o test-get-names.o test-fork.o test-parent.o
 

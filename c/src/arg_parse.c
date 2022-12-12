@@ -5,7 +5,7 @@
 #include "dev_mode.h"
 #include "constants.h"
 #include "defaults.h"
-#include "params.h"
+#include "arg_parse.h"
 #include "parent_params.h"
 
 Params *parameters_create() {
