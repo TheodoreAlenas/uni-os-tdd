@@ -18,5 +18,6 @@ typedef struct parameters {
 Params *parameters_parse(int argc, char **argv);
 void parameters_free(Params *p);
 void parameters_print(Params *p);
+void parameters_help();
 
 #endif

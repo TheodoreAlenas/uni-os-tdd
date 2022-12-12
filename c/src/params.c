@@ -47,6 +47,17 @@ void parameters_print(Params *p) {
   printf("lines in file segment: %lu\n", p->parent_params->file_segment_length);
 }
 
+void parameters_help() {
+
+  printf("-c  --children              number of children\n");
+  printf("-r  --loops                 loops per child\n");
+  printf("-i  --input                 input file\n");
+  printf("-o  --output                output directory\n");
+  printf("-w  --shm-i-want            'I want' shared memory name\n");
+  printf("-t  --shm-thank-you         'thank you' shared memory name\n");
+  printf("-l  --file-segment-length   lines in file segment\n");
+}
+
 #define IF_ITS(SHORT_FLAG, LONG_FLAG) else if (strcmp(SHORT_FLAG, flag) == 0 || strcmp(LONG_FLAG, flag) == 0)
 #define UPON(ARG_FLAG) else if (strcmp(ARG_FLAG, argv[i]) == 0)
 

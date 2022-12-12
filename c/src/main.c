@@ -27,15 +27,14 @@ int main(int argc, char **argv) {
 
 int args_want_early_quit(Params *p) {
 
-  if (p->show_help) {
-    printf("well help you won't get\n");
-    return 1;
-  }
+  if (p->show_help)
+    parameters_help();
 
-  if (p->show_params) {
+  else if (p->show_params)
     parameters_print(p);
-    return 1;
-  }
 
-  return 0;
+  else
+    return 0;
+
+  return 1;
 }
