@@ -1,0 +1,22 @@
+#!/bin/env sh
+
+reality="$(
+./rlr -c 732 --shm-i-want 'dont want' --print   |
+  sort)"
+
+expectation="$(sort <<EOF
+number of children: 732
+'yes please' shared memory name: 'dont want'
+EOF
+)"
+
+test "$expectation" = "$reality" && exit 0
+
+tmp="$(mktemp -d /tmp/test-args-XXXXXXX)"
+echo "$expectation" > "$tmp/e"
+echo "$reality" > "$tmp/r"
+diff "$tmp/e" "$tmp/r"
+rm -rf "$tmp"
+
+exit 1
+

@@ -1,0 +1,149 @@
+1115 2019 00048 Theodoros (more at the bottom)
+
+cd build
+make
+./rlr --help
+./rlr  # [...]
+ls ../output
+make clean
+
+./test  # recommended
+
+
+         _____ ___   ___  _     ____
+        |_   _/ _ \ / _ \| |   / ___|
+          | || | | | | | | |   \___ \
+          | || |_| | |_| | |___ ___) |
+          |_| \___/ \___/|_____|____/
+
+
+- posix semaphores
+- posix shared memory
+- mostly heap allocations
+
+
+    ___  ____  ____ ___ _____ ___ _____ ____
+   / _ \|  _ \|  _ \_ _|_   _|_ _| ____/ ___|
+  | | | | | | | | | | |  | |  | ||  _| \___ \
+  | |_| | |_| | |_| | |  | |  | || |___ ___) |
+   \___/|____/|____/___| |_| |___|_____|____/
+
+
+    WELL("");
+    WELLL(printf("loop $%s", i));
+
+are dev - only macros.
+If the DEV constant isn't defined,
+then these macros are defined as empty.
+I do recommend trying
+    make dev && ./rlr
+
+Seemingly missing header files can be found by
+looking at the Makefile. I do recommend that,
+because it shows why they're managed their way.
+
+Semaphore/segment naming:
+
+    Parent            Children
+    ---------------------------
+                    < i_want
+    yes_please  <
+    go_for_it   >
+                      [silent]
+    youre_ready >
+                    > thank_you
+
+SHM_I_WANT, sem_thank_you, and so on.
+The paren't doesn't have 3 semaphores however.
+There are exactly as many semaphores as processes,
+and only 2 shared memory segments in total.
+
+'const' isn't used much because C allows casts
+to non-const, and insentivises them with readline
+and other standard functions. Plus I follow a
+retro style. The long names aren't retro but the
+comments are old school and the declarations are
+at the top.
+
+There are tiny functions because I'm trying out
+the "Uncle Bob" principles of clean coding.
+I do rely on jump-to-definition functionality
+(which breaks with conditional includes I have).
+The main point is to be easy to skip reading code
+one is not interested in.
+
+
+         _____ _____ ____ _____ ____
+        |_   _| ____/ ___|_   _/ ___|
+          | | |  _| \___ \ | | \___ \
+          | | | |___ ___) || |  ___) |
+          |_| |_____|____/ |_| |____/
+
+
+I tried out some test driven development.
+It didn't go the best, honestly.
+
+Some .c files aren't built when using 'make test'.
+
+SNIPPET:testable-fork
+
+SNIPPET:testable-files
+
+Instead, the functions declared
+in their header files are implemented elsewhere,
+in the c/tests directory.
+
+SNIPPET:fork-in-test
+
+This makes them easy to test.
+
+The tests aren't very sophisticated, they 'announce'
+the situation. There's an 'announce' function. Also
+they never deallocate.
+
+
+    ____ _   _ ___ _     ____  ____  _____ _   _
+   / ___| | | |_ _| |   |  _ \|  _ \| ____| \ | |
+  | |   | |_| || || |   | | | | |_) |  _| |  \| |
+  | |___|  _  || || |___| |_| |  _ <| |___| |\  |
+   \____|_| |_|___|_____|____/|_| \_\_____|_| \_|
+
+
+Children:
+- wait for the parent to initialize the resources
+- don't know what their order is
+- can't modify the shared memory segment for reading
+- don't know the recipe for file names,
+    semaphore names or shared memory segment names.
+
+    child.c:
+
+    Child *child_create(const ChildArgs *args);
+    void do_a_cycle(const Child *child);
+
+show the process.
+
+One irony is they can modify each other's request.
+They can't read it, but they can write unrestricted.
+There's only one, common, request segment.
+
+Memory that was allocated before forking,
+is deallocated.
+
+Some combinations of parent-children crashes make
+background processes go on, messing up next runs.
+This is to be fixed, and I'll update this README.
+
+
+
+
+Dimakopoulos Theodoros
+
+1115 2019 00048
+1115201900048
+sdi1900048
+
+sdi1900048@di.uoa.gr
+dimakopt732@gmail.com
+
+6939 75 16 42

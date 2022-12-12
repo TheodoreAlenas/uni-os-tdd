@@ -18,11 +18,11 @@ typedef struct child {
   sem_t *sem_thank_you;
   void *shmem_i_want;
   void *shmem_thank_you;
-  ChildArgs *names;
+  const ChildArgs *names;
 } Child;
 
-Child *child_create(ChildArgs *args);
+Child *child_create(const ChildArgs *args);
 void child_free(Child *child);
-int child_loop(Child *child);
+void child_loop(const Child *child);
 
 #endif

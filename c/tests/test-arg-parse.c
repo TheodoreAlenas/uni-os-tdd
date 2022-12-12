@@ -9,6 +9,8 @@ void test_arg_parse() {
   char *file_str = "filename.txt";
   char *ch_f_str = "-c";
   char *ch_a_str = "2";
+  char *loops_f_str = "-l";
+  char *loops_a_str = "3";
 
   char *help_b[] = { path_str, help_str };
   char *file_b[] = { path_str, file_str };

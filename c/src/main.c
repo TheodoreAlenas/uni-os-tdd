@@ -6,28 +6,36 @@
 #include "shmem.h"
 
 
+int args_want_early_quit(Params *p);
+
 int main(int argc, char **argv) {
   Params *p;
   int err;
-  void *shmem;
 
   WELL("parsing parameters");
   p = parameters_parse(argc, argv);
-
-  if (p->show_help) {
-    printf("well help you won't get\n");
+  if (args_want_early_quit(p))
     return 0;
-  }
 
-  WELL("creating shmem");
-  shmem = shmem_create(p->parent_params->file_segment_length);
-
-  err = handle_forks(p, shmem);
+  err = handle_forks(p);
 
   parameters_free(p);
-  shmem_free(shmem);
 
   WELL("DONE");
   return err;
 }
 
+int args_want_early_quit(Params *p) {
+
+  if (p->show_help) {
+    printf("well help you won't get\n");
+    return 1;
+  }
+
+  if (p->show_params) {
+    parameters_print(p);
+    return 1;
+  }
+
+  return 0;
+}

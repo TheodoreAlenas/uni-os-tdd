@@ -3,6 +3,6 @@
 
 #include "params.h"
 
-int handle_forks(Params *p, void *shmem);
+int handle_forks(Params *p);
 
 #endif

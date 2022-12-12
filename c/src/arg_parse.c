@@ -37,46 +37,53 @@ void parameters_free(Params *p) {
   free(p);
 }
 
-void parameters_print(Params *p) {
+void print_all(Params *p) {
   printf("number of children: %d\n", p->parent_params->num_of_children);
   printf("'yes please' shared memory name: '%s'\n", p->parent_params->shmem_name_yes_please);
 }
 
-#define IF_ITS(ARG_FLAG) else if (strcmp(ARG_FLAG, flag) == 0)
-#define UPON(ARG_FLAG) else if (strcmp(ARG_FLAG, argv[i]) == 0)
+enum FlagType { F_NONE, F_NUM_OF_CHILDREN, F_SHMEM_I_WANT, F_SHMEM_THANK_YOU };
+
+#define IF_ITS(s) else if (strcmp(argv[i], (s)) == 0)
 
 Params *parameters_parse(int argc, char **argv) {
-  int i, just_read_flag = 0, nope = 0;
-  char *flag = NULL;
+  int i;
+  enum FlagType flag = F_NONE;
   Params *p;
   p = parameters_create();
 
+  if (argc == 1)
+    return p;
+
+  if (strcmp(argv[1], "--help") == 0)
+    p->show_help = true;
+
   for (i = 1; i < argc; i++) {
 
-    if (argv[i][0] == '-') {
-      if (flag)
-        fprintf(stderr, "expecting argument for flag %s\n", flag);
-
-      if (0) {}
-      UPON("--print") p->show_params = true;
-      UPON("--help") p->show_help = true;
-      else flag = argv[i];
-
-      continue;
-    }
-
     if (0) {}
-    IF_ITS("-c") p->parent_params->num_of_children = atoi(argv[i]);
-    IF_ITS("--shm-i-want") strcpy(p->parent_params->shmem_name_yes_please, argv[i]);
-    IF_ITS("--shm-thank-you") strcpy(p->parent_params->shmem_name_youre_ready, argv[i]);
 
-    else p->parent_params->file_name = argv[i];
+    else if (flag == F_NUM_OF_CHILDREN)
+      p->parent_params->num_of_children = atoi(argv[i]);
 
-    flag = NULL;
+    else if (flag == F_SHMEM_I_WANT)
+      strcpy(p->parent_params->shmem_name_yes_please, argv[i]);
+
+    else if (flag == F_SHMEM_THANK_YOU)
+      strcpy(p->parent_params->shmem_name_youre_ready, argv[i]);
+
+    IF_ITS("-c") flag = F_NUM_OF_CHILDREN;
+    IF_ITS("--shm-i-want") flag = F_SHMEM_I_WANT;
+    IF_ITS("--shm-thank-you") flag = F_SHMEM_THANK_YOU;
+
+    IF_ITS("--print") { print_all(p); p->quit = true; }
+    else
+      p->parent_params->file_name = argv[i];
+
+    if (flag != F_NONE)
+      flag = F_NONE;
   }
 
   return p;
 }
 #undef IF_ITS
-#undef UPON
 
