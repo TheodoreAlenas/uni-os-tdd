@@ -1,24 +1,59 @@
 #!/bin/env sh
 
+say_diff () {
+  tmp="$(mktemp -d /tmp/test-args-XXXXXXX)"
+  echo "$expectation" > "$tmp/e"
+  echo "$reality" > "$tmp/r"
+  diff "$tmp/e" "$tmp/r"
+  rm -rf "$tmp"
+}
+
+judge () {
+  if [ "$expectation" != "$reality" ]
+  then
+    echo "$1" >&2
+    say_diff "$expectation" "$reality" >&2
+    exit 1
+  fi
+}
+
+reality="$(./rlr --print | sort)"
+
+expectation="$(sort <<EOF
+number of children: 8
+output directory: '../output'
+'I want' shared memory name: 'shm_i_want'
+'thank you' shared memory name: 'shm_thank_you'
+input file: '../data/1001-line-numbers.dat'
+lines in file segment: 128
+loops per child: 1024
+EOF
+)"
+
+judge "empty case"
+
 reality="$(
-./rlr -c 732 --shm-i-want 'dont want' --shm-thank-you 'nope' --loops 4 --print   |
+./rlr \
+  -c 732 \
+  --shm-i-want 'dont want' \
+  --shm-thank-you 'nope' \
+  --loops 4 \
+  --input 'path/to/input' \
+  --output 'path/to/output' \
+  --file-segment-length 101 \
+  --print   |
   sort)"
 
 expectation="$(sort <<EOF
 number of children: 732
+input file: 'path/to/input'
+output directory: 'path/to/output'
 'I want' shared memory name: 'dont want'
 'thank you' shared memory name: 'nope'
+lines in file segment: 101
 loops per child: 4
 EOF
 )"
 
-test "$expectation" = "$reality" && exit 0
-
-tmp="$(mktemp -d /tmp/test-args-XXXXXXX)"
-echo "$expectation" > "$tmp/e"
-echo "$reality" > "$tmp/r"
-diff "$tmp/e" "$tmp/r"
-rm -rf "$tmp"
-
-exit 1
+judge "long options"
 
