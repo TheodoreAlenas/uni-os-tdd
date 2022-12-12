@@ -2,13 +2,43 @@
 
 #find sh/tests -type f '!' -name '*.sh' -exec sh/test-one {} \;
 
-. sh/wrap.sh
+. sh/test-one
+
+nope () {
+  make clean > /dev/null
+  exit 1
+}
+
 
 cd build || exit 1
+make clean > /dev/null 2> /dev/null
+make > /dev/null || nope
 
-wrap all './rlr'
-wrap dev './rlr --help'
-wrap dev './rlr -c 1'
-wrap dev './rlr -c 2'
-wrap dev './rlr'
+test_one 'test -n "$(timeout 0.01s ./rlr --help)"'
+test_one 'test -n "$(timeout 0.01s ./rlr --print)"'
+
+./rlr --children 1 --loops 1
+
+files="$(ls ../output | wc -l)"
+test_one "test $files = 1"
+rm ../output/*
+
+./rlr --children 3 --loops 2
+
+files="$(ls ../output | wc -l)"
+test_one "test $files = 3"
+rm ../output/*
+
+./rlr --children 3 --loops 1 --output .
+
+files="$(ls ../output | wc -l)"
+test_one "test $files = 0"
+
+make clean > /dev/null
+make test > /dev/null
+
+test_one ./test
+
+make clean > /dev/null
+exit 0
 

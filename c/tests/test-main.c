@@ -23,10 +23,10 @@ int main(int argc, char **argv) {
 
 void call_all() {
   test_stack();
-  test_arg_parse();
+  //test_arg_parse();
   test_get_names();
   test_fork();
-  test_parent();
+  //test_parent();
 }
 
 #define CONSIDER(n) else if (strcmp(name, #n) == 0) test_##n()

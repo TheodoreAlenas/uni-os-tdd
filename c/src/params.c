@@ -48,7 +48,7 @@ void parameters_print(Params *p) {
 }
 
 void parameters_help() {
-
+  /* TODO ouch oh my God */
   printf("-c  --children              number of children\n");
   printf("-r  --loops                 loops per child\n");
   printf("-i  --input                 input file\n");
