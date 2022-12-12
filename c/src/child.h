@@ -11,6 +11,7 @@ typedef struct child_arguments {
   char *shmem_name_i_want;
   char *shmem_name_thank_you;
   char *file_name;
+  unsigned loops;
 } ChildArgs;
 
 typedef struct child {

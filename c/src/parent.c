@@ -74,7 +74,7 @@ int parent_loop(Parent *r) {
   }
 
 #ifndef TEST
-  for (j = 0; j < 2; j++) {
+  for (j = 0; j < r->pp->loops_per_child; j++) {
     for (i = 0; i < r->pp->num_of_children; i++) {
       WELL("waiting for anyone to ask something");
       testable_wait(r);

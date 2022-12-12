@@ -39,7 +39,9 @@ void parameters_free(Params *p) {
 
 void parameters_print(Params *p) {
   printf("number of children: %d\n", p->parent_params->num_of_children);
-  printf("'yes please' shared memory name: '%s'\n", p->parent_params->shmem_name_yes_please);
+  printf("'I want' shared memory name: '%s'\n", p->parent_params->shmem_name_yes_please);
+  printf("'thank you' shared memory name: '%s'\n", p->parent_params->shmem_name_youre_ready);
+  printf("loops per child: %d\n", p->parent_params->loops_per_child);
 }
 
 #define IF_ITS(ARG_FLAG) else if (strcmp(ARG_FLAG, flag) == 0)
@@ -69,6 +71,7 @@ Params *parameters_parse(int argc, char **argv) {
     IF_ITS("-c") p->parent_params->num_of_children = atoi(argv[i]);
     IF_ITS("--shm-i-want") strcpy(p->parent_params->shmem_name_yes_please, argv[i]);
     IF_ITS("--shm-thank-you") strcpy(p->parent_params->shmem_name_youre_ready, argv[i]);
+    IF_ITS("--loops") p->parent_params->loops_per_child = atoi(argv[i]);
 
     else p->parent_params->file_name = argv[i];
 

@@ -36,6 +36,7 @@ int be_child(Params *p, unsigned child_index, char *sem_name) {
   args.shmem_name_i_want = p->parent_params->shmem_name_yes_please;
   args.shmem_name_thank_you = p->parent_params->shmem_name_youre_ready;
   args.file_name = get_output_file_name(p->output_dir, child_index);
+  args.loops = p->parent_params->loops_per_child;
 
   WELL(args.file_name);
 

@@ -13,6 +13,7 @@ ParentParams *parent_params_create() {
 
   pp->file_segment_length = DEFAULT_SEGMENT_LENGTH;
   pp->num_of_children = DEFAULT_NUM_OF_CHILDREN;
+  pp->loops_per_child = DEFAULT_OPERATIONS_PER_CHILD;
 
   pp->sem_name_yes_please = malloc(MAX_FILE_NAME_LEN);
   strcpy(pp->sem_name_yes_please, DEFAULT_SEM_I_WANT);

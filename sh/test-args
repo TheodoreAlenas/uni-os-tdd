@@ -1,12 +1,14 @@
 #!/bin/env sh
 
 reality="$(
-./rlr -c 732 --shm-i-want 'dont want' --print   |
+./rlr -c 732 --shm-i-want 'dont want' --shm-thank-you 'nope' --loops 4 --print   |
   sort)"
 
 expectation="$(sort <<EOF
 number of children: 732
-'yes please' shared memory name: 'dont want'
+'I want' shared memory name: 'dont want'
+'thank you' shared memory name: 'nope'
+loops per child: 4
 EOF
 )"
 
