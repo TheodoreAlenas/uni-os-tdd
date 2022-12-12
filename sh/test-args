@@ -34,7 +34,7 @@ judge "empty case"
 
 reality="$(
 ./rlr \
-  -c 732 \
+  --children 732 \
   --shm-i-want 'dont want' \
   --shm-thank-you 'nope' \
   --loops 4 \
@@ -56,4 +56,29 @@ EOF
 )"
 
 judge "long options"
+
+reality="$(
+./rlr \
+  -c 732 \
+  -w 'dont want' \
+  -t 'nope' \
+  -r 4 \
+  -i 'path/to/input' \
+  -o 'path/to/output' \
+  -l 101 \
+  --print   |
+  sort)"
+
+expectation="$(sort <<EOF
+number of children: 732
+input file: 'path/to/input'
+output directory: 'path/to/output'
+'I want' shared memory name: 'dont want'
+'thank you' shared memory name: 'nope'
+lines in file segment: 101
+loops per child: 4
+EOF
+)"
+
+judge "short options"
 

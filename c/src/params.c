@@ -47,7 +47,7 @@ void parameters_print(Params *p) {
   printf("lines in file segment: %lu\n", p->parent_params->file_segment_length);
 }
 
-#define IF_ITS(ARG_FLAG) else if (strcmp(ARG_FLAG, flag) == 0)
+#define IF_ITS(SHORT_FLAG, LONG_FLAG) else if (strcmp(SHORT_FLAG, flag) == 0 || strcmp(LONG_FLAG, flag) == 0)
 #define UPON(ARG_FLAG) else if (strcmp(ARG_FLAG, argv[i]) == 0)
 
 Params *parameters_parse(int argc, char **argv) {
@@ -71,13 +71,13 @@ Params *parameters_parse(int argc, char **argv) {
     }
 
     if (0) {}
-    IF_ITS("-c") p->parent_params->num_of_children = atoi(argv[i]);
-    IF_ITS("--shm-i-want") strcpy(p->parent_params->shmem_name_yes_please, argv[i]);
-    IF_ITS("--shm-thank-you") strcpy(p->parent_params->shmem_name_youre_ready, argv[i]);
-    IF_ITS("--loops") p->parent_params->loops_per_child = atoi(argv[i]);
-    IF_ITS("--input") strcpy(p->parent_params->file_name, argv[i]);
-    IF_ITS("--output") strcpy(p->output_dir, argv[i]);
-    IF_ITS("--file-segment-length") p->parent_params->file_segment_length = atoi(argv[i]);
+    IF_ITS("-c", "--children") p->parent_params->num_of_children = atoi(argv[i]);
+    IF_ITS("-w", "--shm-i-want") strcpy(p->parent_params->shmem_name_yes_please, argv[i]);
+    IF_ITS("-t", "--shm-thank-you") strcpy(p->parent_params->shmem_name_youre_ready, argv[i]);
+    IF_ITS("-r", "--loops") p->parent_params->loops_per_child = atoi(argv[i]);
+    IF_ITS("-i", "--input") strcpy(p->parent_params->file_name, argv[i]);
+    IF_ITS("-o", "--output") strcpy(p->output_dir, argv[i]);
+    IF_ITS("-l", "--file-segment-length") p->parent_params->file_segment_length = atoi(argv[i]);
 
     else p->parent_params->file_name = argv[i];
 
