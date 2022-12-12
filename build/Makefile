@@ -11,6 +11,7 @@ TEST_NAMED_FILES := test-stack.o test-util.o test-arg-parse.o test-get-names.o t
 NORMAL_FILES := $(PRIMARY_FILES) $(SECONDARY_FILES) $(TRICKY_FILES)
 RLR_FILES := main.o $(NORMAL_FILES) $(TESTABLE_FILES)
 TEST_FILES := test-main.o $(TEST_NAMED_FILES) $(NORMAL_FILES)
+TEST_DEP := main.o test-main.o $(TEST_NAMED_FILES) $(NORMAL_FILES) $(TESTABLE_FILES)
 
 all: rlr
 
@@ -24,8 +25,9 @@ rlr: $(RLR_FILES)
 dev: $(RLR_FILES)
 	gcc -D DEV $(RLR_FILES) -o rlr
 
-test: $(TEST_FILES)
+test: $(TEST_DEP)
 	gcc -D TEST $(TEST_FILES) -o test
+	gcc -D TEST $(RLR_FILES) -o rlr
 
 test-%.o: $(TEST)/test-%.c
 	gcc -c $(TEST)/$(basename $(notdir $@)).c -o $@

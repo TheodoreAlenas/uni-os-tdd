@@ -38,7 +38,8 @@ void parameters_free(Params *p) {
 }
 
 void print_all(Params *p) {
-  printf("num_of_children %d\n", p->parent_params->num_of_children);
+  printf("number of children: %d\n", p->parent_params->num_of_children);
+  printf("'yes please' shared memory name: '%s'\n", p->parent_params->shmem_name_yes_please);
 }
 
 enum FlagType { F_NONE, F_NUM_OF_CHILDREN, F_SHMEM_I_WANT, F_SHMEM_THANK_YOU };
@@ -77,6 +78,9 @@ Params *parameters_parse(int argc, char **argv) {
     IF_ITS("--print") { print_all(p); p->quit = true; }
     else
       p->parent_params->file_name = argv[i];
+
+    if (flag != F_NONE)
+      flag = F_NONE;
   }
 
   return p;

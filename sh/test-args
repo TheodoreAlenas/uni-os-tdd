@@ -1,0 +1,22 @@
+#!/bin/env sh
+
+ans="$(./rlr -c 732 --print)"
+
+expectation="$(sort <<EOF
+number of children: 732
+'yes please' shared memory name: 'shm_i_want'
+EOF
+)"
+
+reality="$(
+echo "$ans" | sort
+)"
+
+test "$expectation" = "$reality" && exit 0
+
+tmp="$(mktemp -d /tmp/test-args-XXXXXXX)"
+echo "$expectation" > "$tmp/e"
+echo "$reality" > "$tmp/r"
+diff "$tmp/e" "$tmp/r"
+rm -rf "$tmp"
+
