@@ -12,6 +12,8 @@ typedef struct child_arguments {
   char *shmem_name_thank_you;
   char *file_name;
   unsigned loops;
+  unsigned id;
+  unsigned file_segment_length;
 } ChildArgs;
 
 typedef struct child {

@@ -14,6 +14,7 @@ void *shmem_create(const char *name, unsigned long max_lines, int oflag, int pro
   const unsigned long SIZE = MAX_LINE_LEN * max_lines;
   int shm_fd;
   void* ptr;
+  WELLL(printf("name: %s, size: %d", name, SIZE));
   shm_fd = shm_open(name, oflag, 0666);
 
   /* changing the size of the shared memory segment */

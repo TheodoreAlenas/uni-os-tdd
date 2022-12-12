@@ -28,13 +28,11 @@ Child *child_create(const ChildArgs *args) {
     return NULL;
   }
 
-  WELL("waiting for parent to create his semaphore");
+  WELL("waiting for the parent to create his semaphore");
   sem_wait(child->sem_thank_you);
 
-  /* TODO look at the output, there's an odd coorelation here. */
-  child->shmem_i_want    = shmem_open_write_only(args->shmem_name_i_want, 1);
-  child->shmem_thank_you = shmem_open_read_only(args->shmem_name_thank_you, 1);
-  //void *another = shmem_open_write_only(args.shmem_name_i_want, 1);
+  child->shmem_i_want = shmem_open_write_only(args->shmem_name_i_want, args->id + 1) + args->id * MAX_LINE_LEN;
+  child->shmem_thank_you = shmem_open_read_only(args->shmem_name_thank_you, args->file_segment_length);
 
   child = try_opening_sem_i_want(child, args);
 
@@ -85,8 +83,11 @@ void do_a_cycle(const Child *child) {
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
 
-  WELL("asking, with details");
-  sprintf(child->shmem_i_want, "yo mum");
+  WELLL(printf("asking, with details. id \% 2 = %d", child->names->id % 2));
+  if (child->names->id % 2)
+    sprintf(child->shmem_i_want, "yo mum");
+  else
+    sprintf(child->shmem_i_want, "my mum");
   //WELL("the detaile came...");
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);

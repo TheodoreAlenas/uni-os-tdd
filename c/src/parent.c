@@ -22,8 +22,8 @@ Parent *parent_create(const ParentParams *pp) {
   r->pp = pp;
   r->requests = stack_create(r->pp->num_of_children);
   WELLL(printf("%s, %s", r->pp->shmem_name_yes_please, r->pp->shmem_name_youre_ready));
-  r->shmem_yes_please = shmem_create_read_only(r->pp->shmem_name_yes_please, 1);
-  r->shmem_youre_ready = shmem_create_write_only(r->pp->shmem_name_youre_ready, 1);
+  r->shmem_yes_please = shmem_create_read_only(r->pp->shmem_name_yes_please, r->pp->num_of_children);
+  r->shmem_youre_ready = shmem_create_write_only(r->pp->shmem_name_youre_ready, r->pp->file_segment_length);
   r->sem_yes_please = init_sem_and_broadcast(r);
   if (r->sem_yes_please == NULL)
     return NULL;
@@ -73,7 +73,6 @@ int parent_loop(Parent *r) {
     return -1;
   }
 
-#ifndef TEST
   for (j = 0; j < r->pp->loops_per_child; j++) {
     for (i = 0; i < r->pp->num_of_children; i++) {
       WELL("waiting for anyone to ask something");
@@ -81,22 +80,21 @@ int parent_loop(Parent *r) {
       testable_post(r, i);
       usleep(10000);
 
-      WELLL(printf("request says '%s'", r->shmem_yes_please));
+      WELLL(printf("request says '%s'", r->shmem_yes_please + i * MAX_LINE_LEN));
 
       char *segment = testable_read_file_segment(r, 1);
       /* printf("%s\n", segment); */
       /* TODO shmem */
       free(segment);
-      testable_sprintf(r->shmem_youre_ready, "okay then! Take %s", (char *) r->shmem_yes_please);
+      testable_sprintf(r->shmem_youre_ready, "okay then! Take %s", (char *) (r->shmem_yes_please + i * MAX_LINE_LEN));
 
       WELLL(printf("telling child #%d that its file segment is ready", i));
       testable_post(r, i);
+
+      usleep(80000);  /* to be removed */
     }
   }
   WELL("loop done");
-#else
-
-#endif
 
   return 0;
 }
