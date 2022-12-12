@@ -4,8 +4,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <stdbool.h>
+#include <unistd.h>
+
+#include <semaphore.h>
+#include <fcntl.h>
+#include <sys/shm.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include "../src/constants.h"
 
 void announce(char *function_name, bool passed);
 int get_total_tests();

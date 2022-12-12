@@ -17,6 +17,9 @@ int main(int argc, char **argv) {
     printf("well help you won't get\n");
     return 0;
   }
+  if (p->quit) {
+    return 0;
+  }
 
   WELL("creating shmem");
 

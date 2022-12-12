@@ -23,7 +23,7 @@ typedef struct { MsgType type; int child; int segment; } Msg;
 typedef struct { void *shm; int head; int step; int size; } MsgCycler;
 void notification(Parent *r);
 Msg check_one_msg(MsgCycler *msg_cycler);
-void clean_msg(const MsgCycler *msg_cycler);
+void clean_msg(Msg msg);
 int store(Parent *r, int segment);
 int count_down_for_changing_segment(Parent *r);
 int one_cycle_idea(Parent *r, MsgCycler *msg_cycler);

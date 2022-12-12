@@ -9,6 +9,7 @@
 
 typedef struct parameters {
   bool show_help;
+  bool quit;
   unsigned operations_of_each_worker;
   char *output_dir;
   ParentParams *parent_params;
