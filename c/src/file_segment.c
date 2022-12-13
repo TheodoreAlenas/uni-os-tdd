@@ -3,22 +3,6 @@
 #include "dev_mode.h"
 #include "constants.h"
 
-int testable_wait(const Parent *r) {
-  return sem_wait(r->sem_yes_please);
-}
-
-int testable_post(const Parent *r, unsigned child) {
-  return sem_post(r->pp->children[child].semaphore);
-}
-
-int testable_sprintf(void *shm, char *str1, char *str2) { return sprintf(shm, str1, str2); }
-Req testable_parse_req(const void *shm) {
-  Req req;
-  req.child = 0;
-  req.segment = -1;
-  return req;
-}
-
 char *read_segment_from_open_file(const ParentParams *pp, FILE *file, unsigned long segment);
 int skip_to_segment(FILE *file, unsigned long segment, unsigned long segment_length);
 void append_to_final(char **to_return, FILE *file);

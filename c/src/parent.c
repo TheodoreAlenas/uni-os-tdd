@@ -55,12 +55,18 @@ sem_t *init_sem_and_broadcast(const Parent *r) {
   }
 
   WELL("signaling that the semaphore is ready");
-  for (i = 0; i < r->pp->num_of_children; i++) {
-    testable_post(r, i);
-  }
+  for (i = 0; i < r->pp->num_of_children; i++)
+    sem_post(r->pp->children[i].semaphore);
 
   return s;
 }
+
+typedef enum { MSG_ERROR, MSG_SEGMENT_REQUEST, MSG_YOU_CAN_SWITCH_SEGMENTS } MsgType;
+typedef struct { MsgType type; int child; int segment; } Msg;
+void notification(Parent *r);
+void clean_msg(Msg msg);
+int store(Parent *r, int segment);
+int count_down_for_changing_segment(Parent *r);
 
 int parent_loop(Parent *r) {
   int child = 0, j;
@@ -73,8 +79,7 @@ int parent_loop(Parent *r) {
 
   for (j = 0; j < r->pp->num_of_children * r->pp->loops_per_child; j++) {
     WELL("waiting for notification");
-    testable_wait(r);
-    //sem_wait(r->sem_yes_please);
+    sem_wait(r->sem_yes_please);
 
     req_ptr = msg_cycler_find(&msg_cycler);
     child = msg_cycler.head;
@@ -87,39 +92,16 @@ int parent_loop(Parent *r) {
     /* printf("%s\n", segment); */
     /* TODO shmem */
     free(segment);
-    testable_sprintf(r->shmem_youre_ready, "okay then! Take %s", req);
+    sprintf(r->shmem_youre_ready, "okay then! Take %s", req);
     WELLL(printf("saved '%s'", r->shmem_youre_ready));
 
     WELLL(printf("telling child #%d that its file segment is ready", child));
-    testable_post(r, child);
+    sem_post(r->pp->children[child].semaphore);
   }
   WELL("loop done");
 
   return 0;
 }
-
-int loops(Parent *r, int children, int per_child) {
-  int i;
-  for (i = 0; i < children * per_child; i++)
-    one_cycle(r);
-  return 0;
-}
-
-int one_cycle(Parent *r) {
-  Req req;
-  char *s;
-  s = malloc(64);
-
-  testable_wait(r);
-  testable_post(r, req.child);
-  /* usleep */
-  req = testable_parse_req(NULL);
-  testable_read_file_segment(r, 0);
-  testable_sprintf(s, "hep%s", " bro");
-  testable_post(r, req.child);
-  return 0;
-}
-
 
 int parent_waitpid(const Parent *r) {
   int i, status;
