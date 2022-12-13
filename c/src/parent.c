@@ -85,8 +85,6 @@ int parent_loop(Parent *r) {
     strcpy(req, req_ptr);
     *req_ptr = '\0';
 
-    usleep(10000);
-
     char *segment = testable_read_file_segment(r, 1);
     /* printf("%s\n", segment); */
     /* TODO shmem */
@@ -96,8 +94,6 @@ int parent_loop(Parent *r) {
 
     WELLL(printf("telling child #%d that its file segment is ready", child));
     testable_post(r, child);
-
-    usleep(80000);  /* to be removed */
   }
   WELL("loop done");
 
