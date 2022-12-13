@@ -20,4 +20,5 @@
 - rename shmem functions
 - delete bad tests
 - less malloc
+- use `MAX_REQ_LEN`
 

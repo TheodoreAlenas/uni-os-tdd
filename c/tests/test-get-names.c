@@ -5,11 +5,14 @@
 void test_get_names() {
   char *s, *expected, *pid;
 
+  expected = malloc(732);
+
+  sprintf(expected, "sem10%u", getpid());
+
   s = get_semaphore_name(10);
   announce("get_semaphore_name_says_10_for_10",
-      strcmp(s, "sem10") == 0);
+      strcmp(s, expected));
 
-  expected = malloc(732);
   sprintf(expected, "../output_dir/index-123-pid-%u", getpid());
 
   s = get_output_file_name("../output", 123);

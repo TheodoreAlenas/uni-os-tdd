@@ -4,8 +4,9 @@
 typedef struct {
   unsigned child;
   int segment;
+  int error;
 } Req;
 
-int req_parse(char *msg, Req *result);
+Req *req_parse(char *msg, Req *result);
 
 #endif
