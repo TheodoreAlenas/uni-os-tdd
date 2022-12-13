@@ -8,7 +8,9 @@ void test_req() {
   announce("errors_on_empty", req_parse("", &r)->error);
   announce("errors_on_no_num", req_parse("<,>", &r)->error);
   announce("errors_on_letter", req_parse("<2a,4>", &r)->error);
-  announce("parses_segment", 2 == req_parse("<2,4>", &r)->segment);
+  announce("parses_one_digit", 2 == req_parse("<2,4>", &r)->segment);
+  announce("takes_many_digits", 7325 == req_parse("<7325,4444>", &r)->segment);
+  announce("no_error_when_fine", !req_parse("<7325,4444>", &r)->error);
   announce("errors_on_long", req_parse(
         "<"
         "22222222222222222222222222222222222222222222222222"
