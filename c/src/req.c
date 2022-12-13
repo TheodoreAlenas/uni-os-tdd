@@ -14,7 +14,7 @@ Req *req_parse(char *msg, Req *result) {
 
 void req_parse_dry(char *msg, Req *result) {
   int comma_pos, gt_pos, length, i;
-  char segment[MAX_REQ_LEN], line[MAX_REQ_LEN];
+  char segment[MAX_REQUEST_LEN], line[MAX_REQUEST_LEN];
 
   if (msg[0] != '<') {
     result->error = 1;
@@ -43,7 +43,7 @@ int chop(char *dest, char *str, int start, char end_char) {
   if (str[start] == end_char)
     return -1;
 
-  for (i = start; i < MAX_REQ_LEN; i++) {
+  for (i = start; i < MAX_REQUEST_LEN; i++) {
 
     if (str[i] == end_char) {
       *dest = '\0';

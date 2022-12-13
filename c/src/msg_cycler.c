@@ -13,7 +13,7 @@ char *msg_cycler_find(MsgCycler *cycler) {
 
   for (i = 0; i < cycler->size; i++) {
 
-    msg_spot = cycler->messages + cycler->head * MAX_LINE_LEN;
+    msg_spot = cycler->messages + cycler->head * MAX_REQUEST_LEN;
     if ('\0' != *msg_spot)
       return msg_spot;
 

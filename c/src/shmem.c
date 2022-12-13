@@ -11,7 +11,7 @@
 #include "constants.h"
 
 void *shmem_create(const char *name, unsigned long max_lines, int oflag, int prot) {
-  const unsigned long SIZE = MAX_LINE_LEN * max_lines;
+  const unsigned long SIZE = MAX_LINE_LEN * max_lines;  /* TODO MAX_REQUEST_LEN */
   int shm_fd;
   void* ptr;
   WELLL(printf("name: %s, size: %d", name, SIZE));

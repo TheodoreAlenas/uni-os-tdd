@@ -32,7 +32,7 @@ Child *child_create(const ChildArgs *args) {
   WELL("waiting for the parent to create his semaphore");
   sem_wait(child->sem_thank_you);
 
-  child->shmem_i_want = shmem_open_write_only(args->shmem_name_i_want, args->id + 1) + args->id * MAX_LINE_LEN;
+  child->shmem_i_want = shmem_open_write_only(args->shmem_name_i_want, args->id + 1) + args->id * MAX_REQUEST_LEN;
   child->shmem_thank_you = shmem_open_read_only(args->shmem_name_thank_you, args->file_segment_length);
   /* end of snippet */
 

@@ -73,7 +73,7 @@ int count_down_for_changing_segment(Parent *r);
 int parent_loop(Parent *r) {
   int child = 0, j;
   MsgCycler msg_cycler;
-  char req[MAX_LINE_LEN], *req_ptr;
+  char req[MAX_REQUEST_LEN], *req_ptr;
 
   msg_cycler.head = 0;
   msg_cycler.messages = r->shmem_yes_please;
