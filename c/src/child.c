@@ -87,10 +87,7 @@ void do_a_cycle(const Child *child) {
   sem_wait(child->sem_thank_you);
 
   WELLL(printf("asking, with details. id \% 2 = %d", child->names->id % 2));
-  if (child->names->id % 2)
-    sprintf(child->shmem_i_want, "yo mum");
-  else
-    sprintf(child->shmem_i_want, "deez nuts");
+  sprintf(child->shmem_i_want, "<%d,%d>", getpid(), 1);
   //WELL("the detaile came...");
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
