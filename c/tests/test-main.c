@@ -23,12 +23,10 @@ int main(int argc, char **argv) {
 
 void call_all() {
   test_stack();
-  //test_arg_parse();
   test_get_names();
   test_fork();
   test_msg_cycler();
   test_req();
-  //test_parent();
 }
 
 #define CONSIDER(n) else if (strcmp(name, #n) == 0) test_##n()
@@ -36,10 +34,8 @@ void call_all() {
 void call_individual_with_same_name(char *name) {
   if (0) return;
   CONSIDER(stack);
-  CONSIDER(arg_parse);
   CONSIDER(get_names);
   CONSIDER(fork);
-  CONSIDER(parent);
   CONSIDER(msg_cycler);
   CONSIDER(req);
 }

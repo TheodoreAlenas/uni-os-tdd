@@ -11,6 +11,8 @@
 #include "constants.h"
 #include "parent_params.h"
 #include "shmem.h"
+#include "msg_cycler.h"
+#include "req.h"
 
 sem_t *init_sem_and_broadcast(const Parent *r);
 

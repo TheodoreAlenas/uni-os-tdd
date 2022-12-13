@@ -19,10 +19,8 @@ int get_total_tests();
 int get_total_tests_passed();
 int get_total_tests_failed();
 void test_stack();
-void test_arg_parse();
 void test_get_names();
 void test_fork();
-void test_parent();
 void test_msg_cycler();
 void test_req();
 
