@@ -82,15 +82,8 @@ int parent_loop(Parent *r) {
     testable_wait(r);
     //sem_wait(r->sem_yes_please);
 
-    for (child = 0; child < r->pp->num_of_children; child++)
-      if ('\0' != *((char *) r->shmem_yes_please + child * MAX_LINE_LEN))
-        break;
-
-    /*
-    req_ptr = find_one_who_asks(msg_cycler);
+    req_ptr = msg_cycler_find(msg_cycler);
     child = msg_cycler->head;
-    */
-    req_ptr = r->shmem_yes_please + child * MAX_LINE_LEN;
     WELLL(printf("cycler has req_ptr %p and child %d", req_ptr, child));
 
     strcpy(req, req_ptr);
