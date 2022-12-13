@@ -4,26 +4,16 @@
 #include "child_res.h"
 
 
-ChildRes *child_res_create() {
-  ChildRes *res = malloc(sizeof(ChildRes));
+void child_res_init(ChildRes *res) {
 
   WELL("");
   res->application_time_in_ns = -1;
   res->responce_time_in_ns = -1;
   res->file_segment = -1;
   res->line_in_segment = -1;
-  res->line_contents = NULL;
-
-  return res;
+  res->line_contents[0] = '\0';
 }
 
-void child_res_free(ChildRes *res) {
-
-  if (res->line_contents)
-    free(res->line_contents);
-
-  free(res);
-}
 
 int child_res_to_ostream(ChildRes *res, FILE *file) {
 

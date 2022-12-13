@@ -80,27 +80,23 @@ void child_loop(const Child *child) {
 
 /* for README, do-a-cycle */
 void do_a_cycle(const Child *child) {
-  ChildRes *res;
+  ChildRes res;
 
-  WELLL(printf("asking, with details. id \% 2 = %d", child->names->id % 2));
-  sprintf(child->shmem_i_want, "<%d,%d>", getpid(), 1);
-  //WELL("the detaile came...");
+  res.file_segment = getpid() % 13;
+  res.line_in_segment = getpid() % 7;
+
+  sprintf(child->shmem_i_want, "<%d,%d>", res.file_segment, res.line_in_segment);
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
 
   WELL("the parent says I can read");
   WELL(child->names->file_name);
 
-  res = child_res_create();
-  res->file_segment = 1;
-  res->line_in_segment = 2;
-  res->application_time_in_ns = 3;
-  res->responce_time_in_ns = 4;
-  res->line_contents = malloc(MAX_LINE_LEN);
-  strcpy(res->line_contents, child->shmem_thank_you);
-  WELLL(printf("read '%s'", res->line_contents));
-  child_res_to_file(res, child->names->file_name);
-  child_res_free(res);
+  res.application_time_in_ns = 3;
+  res.responce_time_in_ns = 4;
+  strcpy(res.line_contents, child->shmem_thank_you);
+  WELLL(printf("read '%s'", res.line_contents));
+  child_res_to_file(&res, child->names->file_name);
 
   WELL("responce put in file");
   usleep(200000);
