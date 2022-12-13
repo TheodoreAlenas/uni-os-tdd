@@ -5,8 +5,8 @@
 #include <stdbool.h>
 
 typedef struct item {
-  int file_segment;
-  int line;
+  unsigned file_segment;
+  unsigned child;
 } Item;
 
 typedef struct stack {
@@ -22,5 +22,9 @@ bool stack_is_empty(Stack *s);
 bool stack_is_full(Stack *s);
 bool stack_push(Stack *s, Item *item);
 bool stack_pop(Stack *s, Item **item);
+
+int stack_position(const Stack *s, unsigned file_segment);
+int stack_end_of_bubble(const Stack *s, int index);
+int stack_bubble(Stack *s, unsigned file_segment);
 
 #endif
