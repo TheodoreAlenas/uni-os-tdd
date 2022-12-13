@@ -27,6 +27,7 @@ void call_all() {
   test_get_names();
   test_fork();
   test_msg_cycler();
+  test_req();
   //test_parent();
 }
 
@@ -40,6 +41,7 @@ void call_individual_with_same_name(char *name) {
   CONSIDER(fork);
   CONSIDER(parent);
   CONSIDER(msg_cycler);
+  CONSIDER(req);
 }
 #undef CONSIDER
 
