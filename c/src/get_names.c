@@ -9,7 +9,7 @@
 char *get_semaphore_name(unsigned child_index) {
   char *ans;
   ans = malloc(256);
-  sprintf(ans, "sem%u", child_index);
+  sprintf(ans, "sem%u-%d", child_index, getpid());
   return ans;
 }
 
