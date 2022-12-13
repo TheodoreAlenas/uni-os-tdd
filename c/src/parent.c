@@ -64,26 +64,20 @@ sem_t *init_sem_and_broadcast(const Parent *r) {
 
 int parent_loop(Parent *r) {
   int child = 0, j;
-  MsgCycler *msg_cycler;
-  char *req, *req_ptr;
+  MsgCycler msg_cycler;
+  char req[MAX_LINE_LEN], *req_ptr;
 
-  req = malloc(MAX_LINE_LEN);
-  if (req == NULL) {
-    perror("parent's malloc for req");
-    return -1;
-  }
-  msg_cycler = malloc(sizeof(MsgCycler));
-  msg_cycler->head = 0;
-  msg_cycler->messages = r->shmem_yes_please;
-  msg_cycler->size = r->pp->num_of_children;
+  msg_cycler.head = 0;
+  msg_cycler.messages = r->shmem_yes_please;
+  msg_cycler.size = r->pp->num_of_children;
 
   for (j = 0; j < r->pp->num_of_children * r->pp->loops_per_child; j++) {
     WELL("waiting for notification");
     testable_wait(r);
     //sem_wait(r->sem_yes_please);
 
-    req_ptr = msg_cycler_find(msg_cycler);
-    child = msg_cycler->head;
+    req_ptr = msg_cycler_find(&msg_cycler);
+    child = msg_cycler.head;
     WELLL(printf("cycler has req_ptr %p and child %d", req_ptr, child));
 
     strcpy(req, req_ptr);
