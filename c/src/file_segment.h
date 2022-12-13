@@ -3,6 +3,7 @@
 
 #include <semaphore.h>
 #include "parent.h"
+#include "msg_cycler.h"
 
 typedef struct {
   unsigned child;
@@ -20,9 +21,7 @@ int one_cycle(Parent *r);
 
 typedef enum { MSG_ERROR, MSG_SEGMENT_REQUEST, MSG_YOU_CAN_SWITCH_SEGMENTS } MsgType;
 typedef struct { MsgType type; int child; int segment; } Msg;
-typedef struct { void *shm; int head; int size; } MsgCycler;
 void notification(Parent *r);
-Msg check_one_msg(MsgCycler *msg_cycler);
 void clean_msg(Msg msg);
 int store(Parent *r, int segment);
 int count_down_for_changing_segment(Parent *r);

@@ -1,6 +1,7 @@
 #include <string.h>
 #include "file_segment.h"
 #include "dev_mode.h"
+#include "constants.h"
 
 int testable_wait(const Parent *r) {
   return sem_wait(r->sem_yes_please);

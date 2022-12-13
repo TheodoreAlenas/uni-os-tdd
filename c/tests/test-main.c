@@ -26,6 +26,7 @@ void call_all() {
   //test_arg_parse();
   test_get_names();
   test_fork();
+  test_msg_cycler();
   //test_parent();
 }
 
@@ -38,6 +39,7 @@ void call_individual_with_same_name(char *name) {
   CONSIDER(get_names);
   CONSIDER(fork);
   CONSIDER(parent);
+  CONSIDER(msg_cycler);
 }
 #undef CONSIDER
 
