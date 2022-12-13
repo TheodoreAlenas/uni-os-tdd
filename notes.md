@@ -18,5 +18,4 @@
 
 - rename shmem functions
 - less malloc
-- use `MAX_REQ_LEN`
 

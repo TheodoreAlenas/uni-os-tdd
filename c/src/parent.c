@@ -24,8 +24,8 @@ Parent *parent_create(const ParentParams *pp) {
   r->pp = pp;
   r->requests = stack_create(r->pp->num_of_children);
   WELLL(printf("%s, %s", r->pp->shmem_name_yes_please, r->pp->shmem_name_youre_ready));
-  r->shmem_yes_please = shmem_create_write_only(r->pp->shmem_name_yes_please, r->pp->num_of_children);
-  r->shmem_youre_ready = shmem_create_write_only(r->pp->shmem_name_youre_ready, r->pp->file_segment_length);
+  r->shmem_yes_please = shmem_create_i_want(r->pp->shmem_name_yes_please, r->pp->num_of_children);
+  r->shmem_youre_ready = shmem_create_thank_you(r->pp->shmem_name_youre_ready, r->pp->file_segment_length);
   r->sem_yes_please = init_sem_and_broadcast(r);
   if (r->sem_yes_please == NULL)
     return NULL;
