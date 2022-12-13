@@ -82,10 +82,6 @@ void child_loop(const Child *child) {
 void do_a_cycle(const Child *child) {
   ChildRes *res;
 
-  WELL("asking to ask");
-  sem_post(child->sem_i_want);
-  sem_wait(child->sem_thank_you);
-
   WELLL(printf("asking, with details. id \% 2 = %d", child->names->id % 2));
   sprintf(child->shmem_i_want, "<%d,%d>", getpid(), 1);
   //WELL("the detaile came...");
@@ -102,6 +98,7 @@ void do_a_cycle(const Child *child) {
   res->responce_time_in_ns = 4;
   res->line_contents = malloc(MAX_LINE_LEN);
   strcpy(res->line_contents, child->shmem_thank_you);
+  WELLL(printf("read '%s'", res->line_contents));
   child_res_to_file(res, child->names->file_name);
   child_res_free(res);
 

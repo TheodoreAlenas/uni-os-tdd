@@ -135,8 +135,6 @@ Children:
 show the process.
 
 One irony is they can modify each other's request.
-They can't read it, but they can write unrestricted.
-There's only one, common, request segment.
 
 Memory that was allocated before forking,
 is deallocated.

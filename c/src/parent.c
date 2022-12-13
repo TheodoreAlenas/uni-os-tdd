@@ -64,7 +64,7 @@ sem_t *init_sem_and_broadcast(const Parent *r) {
 
 int parent_loop(Parent *r) {
   sem_t *send_me, *wait_me;
-  int i, j;
+  int child = 0, j;
 
   char *req, *req_ptr;
   req = malloc(MAX_LINE_LEN);
@@ -73,30 +73,31 @@ int parent_loop(Parent *r) {
     return -1;
   }
 
-  for (j = 0; j < r->pp->loops_per_child; j++) {
-    for (i = 0; i < r->pp->num_of_children; i++) {
-      WELL("waiting for anyone to ask something");
-      testable_wait(r);
-      req_ptr = r->shmem_yes_please + i * MAX_LINE_LEN;
-      req = req_ptr;
-      strcpy(req, req_ptr);
-      *req_ptr = '\0';
+  for (j = 0; j < r->pp->num_of_children * r->pp->loops_per_child; j++) {
+    WELL("waiting for notification");
+    testable_wait(r);
 
-      testable_post(r, i);
-      usleep(10000);
+    for (child = 0; child < r->pp->num_of_children; child++)
+      if ('\0' != *((char *) r->shmem_yes_please + child * MAX_LINE_LEN))
+        break;
 
+    req_ptr = r->shmem_yes_please + child * MAX_LINE_LEN;
+    strcpy(req, req_ptr);
+    *req_ptr = '\0';
 
-      char *segment = testable_read_file_segment(r, 1);
-      /* printf("%s\n", segment); */
-      /* TODO shmem */
-      free(segment);
-      testable_sprintf(r->shmem_youre_ready, "okay then! Take %s", req);
+    usleep(10000);
 
-      WELLL(printf("telling child #%d that its file segment is ready", i));
-      testable_post(r, i);
+    char *segment = testable_read_file_segment(r, 1);
+    /* printf("%s\n", segment); */
+    /* TODO shmem */
+    free(segment);
+    testable_sprintf(r->shmem_youre_ready, "okay then! Take %s", req);
+    WELLL(printf("saved '%s'", r->shmem_youre_ready));
 
-      usleep(80000);  /* to be removed */
-    }
+    WELLL(printf("telling child #%d that its file segment is ready", child));
+    testable_post(r, child);
+
+    usleep(80000);  /* to be removed */
   }
   WELL("loop done");
 
