@@ -71,9 +71,9 @@ int store(Parent *r, int segment);
 int count_down_for_changing_segment(Parent *r);
 
 int parent_loop(Parent *r) {
-  int child = 0, j;
+  int child = 0, j, current_segment = -1, new_segment = -1, err;
   MsgCycler msg_cycler;
-  char req[MAX_REQUEST_LEN], *req_ptr;
+  char req_str[MAX_REQUEST_LEN], *req_ptr;
 
   msg_cycler.head = 0;
   msg_cycler.messages = r->shmem_yes_please;
@@ -87,15 +87,15 @@ int parent_loop(Parent *r) {
     child = msg_cycler.head;
     WELLL(printf("cycler has req_ptr %p and child %d", req_ptr, child));
 
-    strcpy(req, req_ptr);
+    strcpy(req_str, req_ptr);
+
+    new_segment = req_parse(req_ptr);
     *req_ptr = '\0';
 
-    char *segment = testable_read_file_segment(r, 1);
+    err = testable_read_file_segment(r, r->shmem_youre_ready, new_segment);
     /* printf("%s\n", segment); */
     /* TODO shmem */
-    free(segment);
-    sprintf(r->shmem_youre_ready, "okay then! Take %s", req);
-    WELLL(printf("saved '%s'", r->shmem_youre_ready));
+    WELLL(printf("saved '%c%c...'", ((char *) r->shmem_youre_ready)[0], ((char *) r->shmem_youre_ready)[1]));
 
     WELLL(printf("telling child #%d that its file segment is ready", child));
     sem_post(r->pp->children[child].semaphore);

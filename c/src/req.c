@@ -5,36 +5,23 @@
 #include "req.h"
 
 int chop(char *dest, char *str, int start, char end_char);
-void req_parse_dry(char *msg, Req *result);
 
-Req *req_parse(char *msg, Req *result) {
-  req_parse_dry(msg, result);
-  return result;
-}
-
-void req_parse_dry(char *msg, Req *result) {
+int req_parse(char *msg) {
   int comma_pos, gt_pos, length, i;
   char segment[MAX_REQUEST_LEN], line[MAX_REQUEST_LEN];
 
-  if (msg[0] != '<') {
-    result->error = 1;
-    return;
-  }
+  if (msg[0] != '<')
+    return -1;
 
   comma_pos = chop(segment, msg, 1, ',');
-  if (comma_pos < 0) {
-    result->error = 1;
-    return;
-  }
+  if (comma_pos < 0)
+    return -1;
 
   gt_pos = chop(line, msg, comma_pos + 1, '>');
-  if (gt_pos < 0) {
-    result->error = 1;
-    return;
-  }
+  if (gt_pos < 0)
+    return -1;
 
-  result->segment = atoi(segment);
-  result->error = 0;
+  return atoi(segment);
 }
 
 int chop(char *dest, char *str, int start, char end_char) {
@@ -57,4 +44,28 @@ int chop(char *dest, char *str, int start, char end_char) {
       return -1;
   }
   return -1;
+}
+
+/* untested TODO */
+int isolate_line(char *dest, char *str, int line) {
+  int i;
+
+  for (i = 0; i < line; i++) {
+
+    while (*str != '\0' && *str != '\n')
+      str++;
+
+    if (*str == '\0')
+      return -1;
+
+    str++;
+  }
+
+  while (*str != '\n' && *str != '\0') {
+    *(dest++) = *(str++);
+  }
+
+  *dest = '\0';
+
+  return 0;
 }

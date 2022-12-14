@@ -24,11 +24,12 @@ int be_child(Params *p, unsigned child_index, char *sem_name) {
 int one_test(char *argv[3], int num, char *msg) {
   pid_t start_pid;
   int success = 1;
+  Params p;
 
   start_pid = getpid();
   num_of_forks = 0;
 
-  handle_forks(parameters_parse(3, argv));
+  handle_forks(parameters_parse(&p, 3, argv));
 
   /* this is meant to happen.
    * Any resources created before handle_forks

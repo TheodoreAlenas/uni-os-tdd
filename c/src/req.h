@@ -1,12 +1,7 @@
 #ifndef REQ_H
 #define REQ_H
 
-typedef struct {
-  unsigned child;
-  int segment;
-  int error;
-} Req;
-
-Req *req_parse(char *msg, Req *result);
+int req_parse(char *msg);
+int isolate_line(char *dest, char *str, int line);
 
 #endif

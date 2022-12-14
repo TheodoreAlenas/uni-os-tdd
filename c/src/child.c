@@ -10,6 +10,7 @@
 #include "dev_mode.h"
 #include "child_res.h"
 #include "shmem.h"
+#include "req.h"
 
 Child *try_opening_sem_i_want(Child *child, const ChildArgs *args);
 void do_a_cycle(const Child *c);
@@ -81,6 +82,8 @@ void child_loop(const Child *child) {
 /* for README, do-a-cycle */
 void do_a_cycle(const Child *child) {
   ChildRes res;
+  char content[MAX_LINE_LEN];
+  int err;
 
   res.file_segment = getpid() % 13;
   res.line_in_segment = getpid() % 7;
@@ -89,9 +92,20 @@ void do_a_cycle(const Child *child) {
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
 
+  err = isolate_line(content, child->shmem_thank_you, res.line_in_segment);
+  if (err) {
+    fprintf(stderr,
+        "child %d couldn't find "
+        "line %d in segment %d ('%c%c...')\n",
+        child->names->id, res.line_in_segment, res.file_segment,
+        ((char *) child->shmem_thank_you)[0],
+        ((char *) child->shmem_thank_you)[1]);
+    return;
+  }
+
   res.application_time_in_ns = 3;
   res.responce_time_in_ns = 4;
-  strcpy(res.line_contents, child->shmem_thank_you);
+  strcpy(res.line_contents, content);
   child_res_to_file(&res, child->names->file_name);
 
   WELL("responce put in file");

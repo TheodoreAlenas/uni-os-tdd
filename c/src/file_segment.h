@@ -4,6 +4,6 @@
 #include <semaphore.h>
 #include "parent.h"
 
-char *testable_read_file_segment(const Parent *parent, unsigned long segment);
+int testable_read_file_segment(const Parent *parent, char *buf, unsigned long segment);
 
 #endif

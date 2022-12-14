@@ -2,16 +2,15 @@
 #include "../src/req.h"
 
 void test_req() {
-  Req r;
-  announce("its_fine_with_extras", 2 == req_parse("<2,4> hello", &r)->segment);
+  announce("its_fine_with_extras", 2 == req_parse("<2,4> hello"));
 
-  announce("errors_on_empty", req_parse("", &r)->error);
-  announce("errors_on_no_num", req_parse("<,>", &r)->error);
-  announce("errors_on_letter", req_parse("<2a,4>", &r)->error);
-  announce("parses_one_digit", 2 == req_parse("<2,4>", &r)->segment);
-  announce("takes_many_digits", 7325 == req_parse("<7325,4444>", &r)->segment);
-  announce("no_error_when_fine", !req_parse("<7325,4444>", &r)->error);
-  announce("errors_on_long", req_parse(
+  announce("errors_on_empty", -1 == req_parse(""));
+  announce("errors_on_no_num", -1 == req_parse("<,>"));
+  announce("errors_on_letter", -1 == req_parse("<2a,4>"));
+  announce("parses_one_digit", 2 == req_parse("<2,4>"));
+  announce("takes_many_digits", 7325 == req_parse("<7325,4444>"));
+  announce("no_error_when_fine", -1 != req_parse("<7325,4444>"));
+  announce("errors_on_long", -1 == req_parse(
         "<"
         "22222222222222222222222222222222222222222222222222"
         "22222222222222222222222222222222222222222222222222"
@@ -40,5 +39,5 @@ void test_req() {
 
         "22222222222222222222222222222222222222222222222222"
         ",4>"
-        , &r)->error);
+        ));
 }

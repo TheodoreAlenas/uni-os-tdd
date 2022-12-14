@@ -17,4 +17,6 @@
 ##TODO
 
 - less malloc
+- parent parameters for eveyone
+- consistent types
 
