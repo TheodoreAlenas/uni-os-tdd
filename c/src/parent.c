@@ -90,11 +90,19 @@ void handle_done(Parent *r, int *readers, int child) {
   (*readers)--;
 }
 
-int should_swap_segment(int readers) {
+int should_swap_segment(int readers, int new_segment, int current_segment) {
   static int bad_thing = 0;
 
-  WELLL(printf("readers: %d", readers));
-  return readers == 0;
+  WELLL(printf("readers: %d, new_segment: %d, current_segment: %d",
+        readers, new_segment, current_segment));
+
+  if (readers != 0)
+    return 0;
+
+  if (new_segment == current_segment)
+    return 0;
+
+  return 1;
 }
 
 void swap_segment(Parent *r, int *readers, int new_segment, int *current_segment, int child) {
@@ -117,7 +125,7 @@ void handle_not_done(Parent *r, char *req_str, int *readers, int *new_segment, i
     *new_segment = 0;
   }
 
-  if (should_swap_segment(*readers))
+  if (should_swap_segment(*readers, *new_segment, *current_segment))
     swap_segment(r, readers, *new_segment, current_segment, child);
 
   if (*new_segment == *current_segment)
