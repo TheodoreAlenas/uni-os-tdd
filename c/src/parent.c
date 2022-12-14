@@ -104,11 +104,6 @@ void handle_not_done(Parent *r, char *req_str, int *readers, int *new_segment, i
   else  /* TODO untested */
     handle_other_segment(r, child, *new_segment);
 
-  err = testable_read_file_segment(r, r->shmem_youre_ready, *new_segment);
-  WELLL(printf("saved '%c%c...'", ((char *) r->shmem_youre_ready)[0], ((char *) r->shmem_youre_ready)[1]));
-
-  WELLL(printf("telling child #%d that its file segment is ready", child));
-  sem_post(r->pp->children[child].semaphore);
 }
 
 void copy_and_clear_req(MsgCycler *msg_cycler, int child, char *req_str) {
@@ -121,6 +116,20 @@ void copy_and_clear_req(MsgCycler *msg_cycler, int child, char *req_str) {
   strcpy(req_str, req_ptr);
   *req_ptr = '\0';
 
+}
+
+void swap_segment_if_should(Parent *r, int new_segment, int child) {
+  int err;
+
+  static int bad_thing = 0;
+  if (bad_thing++ != 0)
+    return;
+
+  err = testable_read_file_segment(r, r->shmem_youre_ready, new_segment);
+  WELLL(printf("saved '%c%c...'", ((char *) r->shmem_youre_ready)[0], ((char *) r->shmem_youre_ready)[1]));
+
+  WELLL(printf("telling child #%d that its file segment is ready", child));
+  sem_post(r->pp->children[child].semaphore);
 }
 
 int parent_loop(Parent *r) {
@@ -145,6 +154,8 @@ int parent_loop(Parent *r) {
       handle_done(r, child);
     else
       handle_not_done(r, req_str, &readers, &new_segment, current_segment, child);
+
+    swap_segment_if_should(r, new_segment, child);
   }
   /* end of snippet */
   WELL("loop done");
