@@ -46,9 +46,8 @@ int chop(char *dest, char *str, int start, char end_char) {
   return -1;
 }
 
-/* untested TODO */
-int isolate_line(char *dest, char *str, int line) {
-  int i;
+int find_line(char *str, int line) {
+  int i, j;
 
   for (i = 0; i < line; i++) {
 
@@ -59,7 +58,12 @@ int isolate_line(char *dest, char *str, int line) {
       return -1;
 
     str++;
+    j++;
   }
+  return j;
+}
+
+int isolate_one(char *dest, char *str) {
 
   while (*str != '\n' && *str != '\0') {
     *(dest++) = *(str++);
@@ -68,4 +72,16 @@ int isolate_line(char *dest, char *str, int line) {
   *dest = '\0';
 
   return 0;
+}
+
+/* untested TODO */
+int isolate_line(char *dest, char *str, int line) {
+  int i;
+
+  i = find_line(str, line);
+  if (i < 0)
+    return -1;
+
+  str += i;
+  return isolate_one(dest, str);
 }
