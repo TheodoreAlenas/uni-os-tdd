@@ -71,7 +71,7 @@ int store(Parent *r, int segment);
 int count_down_for_changing_segment(Parent *r);
 
 void handle_same_segment(Parent *r, int *readers, int child) {
-  readers++;
+  (*readers)++;
   WELLL(printf("telling child #%d that its file segment is ready", child));
   sem_post(r->pp->children[child].semaphore);
 }
@@ -85,22 +85,42 @@ void handle_other_segment(Parent *r, int child, int new_segment) {
   stack_push(r->requests, req_item);
 }
 
-void handle_done(Parent *r, int child) {
-  WELL("said done");
+void handle_done(Parent *r, int *readers, int child) {
+  WELL("");
+  (*readers)--;
 }
 
-void handle_not_done(Parent *r, char *req_str, int *readers, int *new_segment, int current_segment, int child) {
+int should_swap_segment(int readers) {
+  static int bad_thing = 0;
+
+  WELLL(printf("readers: %d", readers));
+  return readers == 0;
+}
+
+void swap_segment(Parent *r, int *readers, int new_segment, int *current_segment, int child) {
+  int err;
+  Item *item;
+
+  err = testable_read_file_segment(r, r->shmem_youre_ready, new_segment);
+  *current_segment = new_segment;
+  WELLL(printf("saved '%c%c...'", ((char *) r->shmem_youre_ready)[0], ((char *) r->shmem_youre_ready)[1]));
+}
+
+void handle_not_done(Parent *r, char *req_str, int *readers, int *new_segment, int *current_segment, int child) {
   int err;
 
-  WELL("said give");
-  *new_segment = req_parse(req_str);  /* TODO a message may be 'I'm done' */
+  WELL("");
+  *new_segment = req_parse(req_str);
   if (*new_segment < 0) {
     fprintf(stderr, "invalid request by child #%d ('%c%c...')\n",
         child, req_str[0], req_str[1]);
     *new_segment = 0;
   }
 
-  if (*new_segment == current_segment)
+  if (should_swap_segment(*readers))
+    swap_segment(r, readers, *new_segment, current_segment, child);
+
+  if (*new_segment == *current_segment)
     handle_same_segment(r, readers, child);
   else  /* TODO untested */
     handle_other_segment(r, child, *new_segment);
@@ -119,23 +139,6 @@ void copy_and_clear_req(MsgCycler *msg_cycler, int child, char *req_str) {
 
 }
 
-int should_swap_segment() {
-  static int bad_thing = 0;
-
-  return bad_thing++ == 0;
-}
-
-void swap_segment(Parent *r, int new_segment, int child) {
-  int err;
-  Item *item;
-
-  err = testable_read_file_segment(r, r->shmem_youre_ready, new_segment);
-  WELLL(printf("saved '%c%c...'", ((char *) r->shmem_youre_ready)[0], ((char *) r->shmem_youre_ready)[1]));
-
-  WELLL(printf("telling child #%d that its file segment is ready", child));
-  sem_post(r->pp->children[child].semaphore);
-}
-
 int parent_loop(Parent *r) {
   int child = 0, j, current_segment = -1, new_segment = -1, readers = 0, total_notifications;
   MsgCycler msg_cycler;
@@ -149,18 +152,15 @@ int parent_loop(Parent *r) {
 
   /* for README, parent-loop */
   for (j = 0; j < total_notifications; j++) {
-    WELL("waiting for notification");
+    WELLL(printf("waiting for notification. %d readers on current.", readers));
     sem_wait(r->sem_yes_please);
 
     copy_and_clear_req(&msg_cycler, child, req_str);
 
     if (req_says_done(req_str))
-      handle_done(r, child);
+      handle_done(r, &readers, child);
     else
-      handle_not_done(r, req_str, &readers, &new_segment, current_segment, child);
-
-    if (should_swap_segment())
-      swap_segment(r, new_segment, child);
+      handle_not_done(r, req_str, &readers, &new_segment, &current_segment, child);
 
     current_segment = new_segment;
   }

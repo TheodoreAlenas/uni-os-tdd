@@ -85,7 +85,8 @@ void do_a_cycle(const Child *child) {
   char content[MAX_LINE_LEN];
   int err;
 
-  res.file_segment = getpid() % 3;
+  static int bullshit = 0;
+  res.file_segment = (getpid() + bullshit++) % 3;
   res.line_in_segment = getpid() % 7;
 
   sprintf(child->shmem_i_want, "<%d,%d>", res.file_segment, res.line_in_segment);
