@@ -6,6 +6,15 @@
 
 int chop(char *dest, char *str, int start, char end_char);
 
+void req_send_done(char *shm) {
+  shm[0] = '$';
+  shm[1] = '\0';
+}
+
+int req_says_done(char *msg) {
+  return msg[0] == '$';
+}
+
 int req_parse(char *msg) {
   int comma_pos, gt_pos, length, i;
   char segment[MAX_REQUEST_LEN], line[MAX_REQUEST_LEN];

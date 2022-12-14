@@ -19,4 +19,5 @@
 - less malloc
 - parent parameters for eveyone
 - consistent types
+- shmem could be char *
 

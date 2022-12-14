@@ -85,10 +85,11 @@ void do_a_cycle(const Child *child) {
   char content[MAX_LINE_LEN];
   int err;
 
-  res.file_segment = getpid() % 13;
+  res.file_segment = getpid() % 3;
   res.line_in_segment = getpid() % 7;
 
   sprintf(child->shmem_i_want, "<%d,%d>", res.file_segment, res.line_in_segment);
+  WELL("posting segment request");
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
 
@@ -99,16 +100,27 @@ void do_a_cycle(const Child *child) {
         child->names->id, res.line_in_segment, res.file_segment,
         ((char *) child->shmem_thank_you)[0],
         ((char *) child->shmem_thank_you)[1]);
-    return;
+
+    WELL("sending done");
+    req_send_done(child->shmem_i_want);
+    sem_post(child->sem_i_want);
+
+  }
+  else {
+    WELL("sending done");
+    req_send_done(child->shmem_i_want);
+    sem_post(child->sem_i_want);
+
+    res.application_time_in_ns = 3;
+    res.responce_time_in_ns = 4;
+    strcpy(res.line_contents, content);
+
+    child_res_to_file(&res, child->names->file_name);
+
+    WELL("responce put in file");
+    usleep(200000);
   }
 
-  res.application_time_in_ns = 3;
-  res.responce_time_in_ns = 4;
-  strcpy(res.line_contents, content);
-  child_res_to_file(&res, child->names->file_name);
-
-  WELL("responce put in file");
-  usleep(200000);
 }
 /* end of snippet */
 
