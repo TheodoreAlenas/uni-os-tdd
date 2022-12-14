@@ -70,12 +70,26 @@ void clean_msg(Msg msg);
 int store(Parent *r, int segment);
 int count_down_for_changing_segment(Parent *r);
 
+void handle_same_segment(Parent *r, int *readers, int child) {
+  readers++;
+  WELLL(printf("telling child #%d that its file segment is ready", child));
+  sem_post(r->pp->children[child].semaphore);
+}
+
+void handle_other_segment(Parent *r, int child, int new_segment) {
+  Item *req_item;
+  req_item = malloc(sizeof(Item));
+  req_item->child = child;
+  req_item->file_segment = new_segment;
+  stack_push(r->requests, req_item);
+}
+
 void handle_done(Parent *r, int child) {
     WELL("said done");
 }
+
 void handle_not_done(Parent *r, char *req_str, int *readers, int *new_segment, int current_segment, int child) {
   int err;
-  Item *req_item;
 
       WELL("said give");
       *new_segment = req_parse(req_str);  /* TODO a message may be 'I'm done' */
@@ -85,32 +99,34 @@ void handle_not_done(Parent *r, char *req_str, int *readers, int *new_segment, i
         new_segment = 0;
       }
 
-      if (*new_segment == current_segment) {
-        readers++;
-        WELLL(printf("telling child #%d that its file segment is ready", child));
-        sem_post(r->pp->children[child].semaphore);
-      }
-      else {  /* TODO untested */
-        req_item = malloc(sizeof(Item));
-        req_item->child = child;
-        req_item->file_segment = *new_segment;
-        stack_push(r->requests, req_item);
-      }
+      if (*new_segment == current_segment)
+        handle_same_segment(r, readers, child);
+      else  /* TODO untested */
+        handle_other_segment(r, child, *new_segment);
 
       err = testable_read_file_segment(r, r->shmem_youre_ready, *new_segment);
-      /* printf("%s\n", segment); */
-      /* TODO shmem */
       WELLL(printf("saved '%c%c...'", ((char *) r->shmem_youre_ready)[0], ((char *) r->shmem_youre_ready)[1]));
 
       WELLL(printf("telling child #%d that its file segment is ready", child));
       sem_post(r->pp->children[child].semaphore);
 }
 
+void copy_and_clear_req(MsgCycler *msg_cycler, int child, char *req_str) {
+  char *req_ptr;
+
+    req_ptr = msg_cycler_find(msg_cycler);
+    child = msg_cycler->head;
+    WELLL(printf("cycler has req_ptr %p and child %d", req_ptr, child));
+
+    strcpy(req_str, req_ptr);
+    *req_ptr = '\0';
+
+}
+
 int parent_loop(Parent *r) {
   int child = 0, j, current_segment = -1, new_segment = -1, err, readers = 0;
   MsgCycler msg_cycler;
   char req_str[MAX_REQUEST_LEN], *req_ptr;
-  Item *req_item;
 
   msg_cycler.head = 0;
   msg_cycler.messages = r->shmem_yes_please;
@@ -120,20 +136,12 @@ int parent_loop(Parent *r) {
     WELL("waiting for notification");
     sem_wait(r->sem_yes_please);
 
-    req_ptr = msg_cycler_find(&msg_cycler);
-    child = msg_cycler.head;
-    WELLL(printf("cycler has req_ptr %p and child %d", req_ptr, child));
+    copy_and_clear_req(&msg_cycler, child, req_str);
 
-    strcpy(req_str, req_ptr);
-    *req_ptr = '\0';
-
-    if (req_says_done(req_str)) {
+    if (req_says_done(req_str))
       handle_done(r, child);
-    }
-    else {
+    else
       handle_not_done(r, req_str, &readers, &new_segment, current_segment, child);
-    }
-
   }
   WELL("loop done");
 
