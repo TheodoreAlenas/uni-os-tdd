@@ -45,6 +45,8 @@ The parent cycles through the "rows" of the
 children's segments, reading one message per
 notification.
 
+SNIPPET:parent-loop
+
 SNIPPET:do-a-cycle
 
 
