@@ -92,8 +92,7 @@ void do_a_cycle(const Child *child) {
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
 
-  err = isolate_line(content, child->shmem_thank_you, res.line_in_segment);
-  if (err) {
+  if (!isolate_line(content, child->shmem_thank_you, res.line_in_segment)) {
     fprintf(stderr,
         "child %d couldn't find "
         "line %d in segment %d ('%c%c...')\n",

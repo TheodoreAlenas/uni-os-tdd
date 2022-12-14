@@ -2,6 +2,7 @@
 #include "../src/req.h"
 
 void test_req() {
+  char s[MAX_LINE_LEN];
   announce("its_fine_with_extras", 2 == req_parse("<2,4> hello"));
 
   announce("errors_on_empty", -1 == req_parse(""));
@@ -40,4 +41,10 @@ void test_req() {
         "22222222222222222222222222222222222222222222222222"
         ",4>"
         ));
+
+  announce("finding_line_0", 0 == strcmp("a", isolate_test(s, "a\0", 0, 2)));
+  announce("finding_line_1", 0 == strcmp("b", isolate_test(s, "a\nb\0", 1, 2)));
+  announce("not_finding_line_1", NULL == isolate_test(s, "a\0b\0", 1, 2));
+  announce("finding_empty_line", 0 == strcmp("", isolate_test(s, "\0", 0, 2)));
+  announce("finding_multi_char", 0 == strcmp("baba", isolate_test(s, "a\nhi \nbaba\n dude\0", 2, 5)));
 }

@@ -47,41 +47,51 @@ int chop(char *dest, char *str, int start, char end_char) {
 }
 
 int find_line(char *str, int line) {
-  int i, j;
+  int i, j = 0;
 
   for (i = 0; i < line; i++) {
 
-    while (*str != '\0' && *str != '\n')
-      str++;
+    while (str[j] != '\0' && str[j] != '\n')
+      j++;
 
-    if (*str == '\0')
+    if (str[j] == '\0')
       return -1;
 
-    str++;
     j++;
   }
   return j;
 }
 
-int isolate_one(char *dest, char *str) {
+int isolate_one(char *dest, char *str, int size) {
+  int i;
 
-  while (*str != '\n' && *str != '\0') {
-    *(dest++) = *(str++);
+  for (i = 0; i < size; i++) {
+
+    if (str[i] == '\n' || str[i] == '\0') {
+      dest[i] = '\0';
+      return 0;
+    }
+
+    dest[i] = str[i];
   }
 
-  *dest = '\0';
-
-  return 0;
+  return -1;
 }
 
-/* untested TODO */
-int isolate_line(char *dest, char *str, int line) {
+char *isolate_test(char *dest, char *str, int line, int size) {
   int i;
 
   i = find_line(str, line);
   if (i < 0)
-    return -1;
+    return NULL;
 
-  str += i;
-  return isolate_one(dest, str);
+  i = isolate_one(dest, str + i, size);
+  if (i < 0)
+    return NULL;
+
+  return dest;
+}
+
+char *isolate_line(char *dest, char *str, int line) {
+  return isolate_test(dest, str, line, MAX_LINE_LEN);
 }
