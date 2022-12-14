@@ -8,33 +8,13 @@
 #include "params.h"
 #include "parent_params.h"
 
-Params *parameters_create() {
-  Params *p = malloc(sizeof(Params));
-
+Params *parameters_init(Params *p) {
   p->parent_params = parent_params_create();
-
-  p->output_dir = malloc(sizeof(char) * MAX_FILE_NAME_LEN);
   strcpy(p->output_dir, DEFAULT_OUTPUT_DIR);
-
   p->operations_of_each_worker = 1024;
   p->show_help = false;
 
   return p;
-}
-
-void parameters_free(Params *p) {
-
-  WELL("");
-  if (p == NULL)
-    return;
-
-  if (p->parent_params)
-    parent_params_free(p->parent_params);
-
-  if (p->output_dir)
-    free(p->output_dir);
-
-  free(p);
 }
 
 void parameters_print(Params *p) {
@@ -61,11 +41,11 @@ void parameters_help() {
 #define IF_ITS(SHORT_FLAG, LONG_FLAG) else if (strcmp(SHORT_FLAG, flag) == 0 || strcmp(LONG_FLAG, flag) == 0)
 #define UPON(ARG_FLAG) else if (strcmp(ARG_FLAG, argv[i]) == 0)
 
-Params *parameters_parse(int argc, char **argv) {
+Params *parameters_parse(Params *p, int argc, char **argv) {
   int i, just_read_flag = 0, nope = 0;
   char *flag = NULL;
-  Params *p;
-  p = parameters_create();
+
+  parameters_init(p);
 
   for (i = 1; i < argc; i++) {
 

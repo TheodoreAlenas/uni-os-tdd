@@ -9,17 +9,15 @@
 int args_want_early_quit(Params *p);
 
 int main(int argc, char **argv) {
-  Params *p;
+  Params p;
   int err;
 
   WELL("parsing parameters");
-  p = parameters_parse(argc, argv);
-  if (args_want_early_quit(p))
+  parameters_parse(&p, argc, argv);
+  if (args_want_early_quit(&p))
     return 0;
 
-  err = handle_forks(p);
-
-  parameters_free(p);
+  err = handle_forks(&p);
 
   WELL("DONE");
   return err;

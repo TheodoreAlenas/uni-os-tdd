@@ -16,6 +16,5 @@
 
 ##TODO
 
-- rename shmem functions
 - less malloc
 

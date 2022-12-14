@@ -24,7 +24,6 @@ char *read_segment_from_open_file(const ParentParams *pp, FILE *file, unsigned l
   int i, err;
   char *to_return;
 
-  WELL("");
   to_return = malloc(1024 * sizeof(char));
   if (to_return == NULL) {
     perror("malloc failed on reading string: ");
@@ -38,7 +37,6 @@ char *read_segment_from_open_file(const ParentParams *pp, FILE *file, unsigned l
   for (i = 0; i < pp->file_segment_length; i++)
     append_to_final(&to_return, file);
 
-  WELL("Done");
   return to_return;
 }
 

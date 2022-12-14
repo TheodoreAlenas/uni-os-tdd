@@ -37,7 +37,6 @@ void *shmem_open_thank_you(const char *name, unsigned long max_lines) {
 }
 
 void shmem_free(const char *name) {
-  WELL("");
   shm_unlink(name);
 }
 

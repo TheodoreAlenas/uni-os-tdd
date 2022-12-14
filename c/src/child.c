@@ -89,18 +89,13 @@ void do_a_cycle(const Child *child) {
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
 
-  WELL("the parent says I can read");
-  WELL(child->names->file_name);
-
   res.application_time_in_ns = 3;
   res.responce_time_in_ns = 4;
   strcpy(res.line_contents, child->shmem_thank_you);
-  WELLL(printf("read '%s'", res.line_contents));
   child_res_to_file(&res, child->names->file_name);
 
   WELL("responce put in file");
   usleep(200000);
-  WELL("done");
 }
 /* end of snippet */
 
