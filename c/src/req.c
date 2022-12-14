@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "constants.h"
+#include "dev_mode.h"
 #include "req.h"
 
 int chop(char *dest, char *str, int start, char end_char);

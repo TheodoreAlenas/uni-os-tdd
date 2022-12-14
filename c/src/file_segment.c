@@ -29,6 +29,8 @@ int read_segment_from_open_file(const ParentParams *pp, FILE *file, char *buf, u
   if (err)
     return -1;
 
+  buf[0] = '\0';
+
   for (i = 0; i < pp->file_segment_length; i++)
     append_to_final(buf, file);
 

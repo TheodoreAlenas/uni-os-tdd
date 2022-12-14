@@ -103,7 +103,7 @@ void swap_segment(Parent *r, int *readers, int new_segment, int *current_segment
 
   err = testable_read_file_segment(r, r->shmem_youre_ready, new_segment);
   *current_segment = new_segment;
-  WELLL(printf("saved '%c%c...'", ((char *) r->shmem_youre_ready)[0], ((char *) r->shmem_youre_ready)[1]));
+  WELLL(printf("as %d, saved '%c...'", new_segment, ((char *) r->shmem_youre_ready)[0]));
 }
 
 void handle_not_done(Parent *r, char *req_str, int *readers, int *new_segment, int *current_segment, int child) {
