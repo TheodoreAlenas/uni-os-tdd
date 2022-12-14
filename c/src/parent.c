@@ -78,6 +78,7 @@ void handle_same_segment(Parent *r, int *readers, int child) {
 
 void handle_other_segment(Parent *r, int child, int new_segment) {
   Item *req_item;
+  WELL("");
   req_item = malloc(sizeof(Item));
   req_item->child = child;
   req_item->file_segment = new_segment;
@@ -126,6 +127,7 @@ int should_swap_segment() {
 
 void swap_segment(Parent *r, int new_segment, int child) {
   int err;
+  Item *item;
 
   err = testable_read_file_segment(r, r->shmem_youre_ready, new_segment);
   WELLL(printf("saved '%c%c...'", ((char *) r->shmem_youre_ready)[0], ((char *) r->shmem_youre_ready)[1]));
@@ -159,6 +161,8 @@ int parent_loop(Parent *r) {
 
     if (should_swap_segment())
       swap_segment(r, new_segment, child);
+
+    current_segment = new_segment;
   }
   /* end of snippet */
   WELL("loop done");
