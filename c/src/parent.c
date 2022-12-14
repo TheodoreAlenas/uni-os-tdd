@@ -118,12 +118,14 @@ void copy_and_clear_req(MsgCycler *msg_cycler, int child, char *req_str) {
 
 }
 
-void swap_segment_if_should(Parent *r, int new_segment, int child) {
-  int err;
-
+int should_swap_segment() {
   static int bad_thing = 0;
-  if (bad_thing++ != 0)
-    return;
+
+  return bad_thing++ == 0;
+}
+
+void swap_segment(Parent *r, int new_segment, int child) {
+  int err;
 
   err = testable_read_file_segment(r, r->shmem_youre_ready, new_segment);
   WELLL(printf("saved '%c%c...'", ((char *) r->shmem_youre_ready)[0], ((char *) r->shmem_youre_ready)[1]));
@@ -155,7 +157,8 @@ int parent_loop(Parent *r) {
     else
       handle_not_done(r, req_str, &readers, &new_segment, current_segment, child);
 
-    swap_segment_if_should(r, new_segment, child);
+    if (should_swap_segment())
+      swap_segment(r, new_segment, child);
   }
   /* end of snippet */
   WELL("loop done");
