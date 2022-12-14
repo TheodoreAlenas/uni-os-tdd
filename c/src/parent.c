@@ -85,41 +85,41 @@ void handle_other_segment(Parent *r, int child, int new_segment) {
 }
 
 void handle_done(Parent *r, int child) {
-    WELL("said done");
+  WELL("said done");
 }
 
 void handle_not_done(Parent *r, char *req_str, int *readers, int *new_segment, int current_segment, int child) {
   int err;
 
-      WELL("said give");
-      *new_segment = req_parse(req_str);  /* TODO a message may be 'I'm done' */
-      if (new_segment < 0) {
-        fprintf(stderr, "invalid request by child #%d ('%c%c...')\n",
-            child, req_str[0], req_str[1]);
-        new_segment = 0;
-      }
+  WELL("said give");
+  *new_segment = req_parse(req_str);  /* TODO a message may be 'I'm done' */
+  if (*new_segment < 0) {
+    fprintf(stderr, "invalid request by child #%d ('%c%c...')\n",
+        child, req_str[0], req_str[1]);
+    *new_segment = 0;
+  }
 
-      if (*new_segment == current_segment)
-        handle_same_segment(r, readers, child);
-      else  /* TODO untested */
-        handle_other_segment(r, child, *new_segment);
+  if (*new_segment == current_segment)
+    handle_same_segment(r, readers, child);
+  else  /* TODO untested */
+    handle_other_segment(r, child, *new_segment);
 
-      err = testable_read_file_segment(r, r->shmem_youre_ready, *new_segment);
-      WELLL(printf("saved '%c%c...'", ((char *) r->shmem_youre_ready)[0], ((char *) r->shmem_youre_ready)[1]));
+  err = testable_read_file_segment(r, r->shmem_youre_ready, *new_segment);
+  WELLL(printf("saved '%c%c...'", ((char *) r->shmem_youre_ready)[0], ((char *) r->shmem_youre_ready)[1]));
 
-      WELLL(printf("telling child #%d that its file segment is ready", child));
-      sem_post(r->pp->children[child].semaphore);
+  WELLL(printf("telling child #%d that its file segment is ready", child));
+  sem_post(r->pp->children[child].semaphore);
 }
 
 void copy_and_clear_req(MsgCycler *msg_cycler, int child, char *req_str) {
   char *req_ptr;
 
-    req_ptr = msg_cycler_find(msg_cycler);
-    child = msg_cycler->head;
-    WELLL(printf("cycler has req_ptr %p and child %d", req_ptr, child));
+  req_ptr = msg_cycler_find(msg_cycler);
+  child = msg_cycler->head;
+  WELLL(printf("cycler has req_ptr %p and child %d", req_ptr, child));
 
-    strcpy(req_str, req_ptr);
-    *req_ptr = '\0';
+  strcpy(req_str, req_ptr);
+  *req_ptr = '\0';
 
 }
 
