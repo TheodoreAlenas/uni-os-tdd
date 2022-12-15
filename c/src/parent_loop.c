@@ -1,3 +1,4 @@
+#include <semaphore.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -69,21 +70,32 @@ int should_pop_requests(int readers, Stack *requests) {
   WELLL(printf("readers: %d, request stack emptiness: %d",
         readers, stack_is_empty(requests)));
 
-  if (readers != 0)
-    return 0;
+  return readers == 0 && !stack_is_empty(requests);
+}
 
-  if (!stack_is_empty(requests))
-    return 0;
+struct for_each_args { sem_t **sems; int *readers; };
 
-  return 1;
+int tell_child(Item *item, void *r) {
+  struct for_each_args *a;
+
+  WELL("");
+  a = (struct for_each_args *) r;
+  (*(a->readers))++;
+  return sem_post(a->sems[item->child]);
 }
 
 void pop_requests(Parent *r, int *readers, int *current_segment, int child) {
   int err;
-  Item **item, **top_item;
+  Item *top_item;
+  struct for_each_args a;
+  WELL("");
 
-  /* TODO nope */
-  swap_segment(r, readers, current_segment, (*top_item)->file_segment, child);
+  top_item = r->requests->items[r->requests->size - 1];
+  swap_segment(r, readers, current_segment, top_item->file_segment, child);
+
+  a.readers = readers;
+  a.sems = r->sems_youre_ready;
+  stack_for_all_of_segment(r->requests, tell_child, &a);
 }
 
 void swap_segment(Parent *r, int *readers, int *current_segment, int new_segment, int child) {
@@ -106,13 +118,14 @@ void handle_not_done(Parent *r, char *req_str, int *readers, int *new_segment, i
     *new_segment = 0;
   }
 
+  if (stack_is_empty(r->requests) && *new_segment != *current_segment && *readers == 0)
+    swap_segment(r, readers, current_segment, *new_segment, child);
+  /* the current_segment might be mutated */
+
   if (*new_segment == *current_segment)
     handle_same_segment(r, readers, child);
-  else {
-    if (stack_is_empty(r->requests))
-      swap_segment(r, readers, current_segment, *new_segment, child);
+  else
     handle_other_segment(r, child, *new_segment);
-  }
 
 }
 
