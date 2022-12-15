@@ -20,6 +20,7 @@ Stack *stack_create(int capacity);
 void stack_free(Stack *s);
 bool stack_is_empty(Stack *s);
 bool stack_is_full(Stack *s);
+int stack_for_all_of_segment(Stack *s, int (*f) (Item *item, void *args), void *args);
 bool stack_push(Stack *s, Item *item);
 bool stack_pop(Stack *s, Item **item);
 void stack_print_inline(Stack *s);

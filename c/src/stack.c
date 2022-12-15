@@ -38,6 +38,32 @@ bool stack_is_full(Stack *s) {
   return s->size >= s->capacity;
 }
 
+int stack_for_all_of_segment(Stack *s, int (*f) (Item *item, void *args), void *args) {
+  Item *item;
+  int err;
+  unsigned segment;
+
+  if (stack_is_empty(s))
+    return 0;
+
+  segment = s->items[s->size - 1]->file_segment;
+
+  while (s->size > 0) {
+
+    if (s->items[s->size - 1]->file_segment != segment)
+      break;
+
+    stack_pop(s, &item);
+
+    err = f(item, args);
+
+    if (err)
+      return err;
+  }
+
+  return 0;
+}
+
 bool stack_push(Stack *s, Item *item) {
   if (stack_is_full(s))
     return false;
@@ -106,7 +132,7 @@ void stack_print_inline(Stack *s) {
 
   printf("stack with size %d/%d (child, segment)", s->size, s->capacity);
   for (i = 0; i < s->size; i++) {
-    printf(" > %d, %d", s->items[i]->child, s->items[i]->file_segment);
+    printf(" > %d,%d", s->items[i]->child, s->items[i]->file_segment);
   }
 }
 

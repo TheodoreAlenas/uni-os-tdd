@@ -13,7 +13,7 @@ int testable_fork() {
 }
 
 /* end of snippet */
-int be_parent(Params *p, ChildData *children) {
+int be_parent(Params *p, char **sem_names) {
   return 0;
 }
 

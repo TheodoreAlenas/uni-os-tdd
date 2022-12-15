@@ -6,6 +6,7 @@
 #include "file_segment.h"
 #include "req.h"
 #include "parent_loop.h"
+#include "stack.h"
 
 
 int parent_loop_backend(Parent *r) {
@@ -27,7 +28,7 @@ int parent_loop_backend(Parent *r) {
     copy_and_clear_req(&msg_cycler, &child, req_str);
 
     if (req_says_done(req_str))
-      handle_done(r, &readers, child);
+      handle_done(r, &readers, child, &current_segment);
     else
       handle_not_done(r, req_str, &readers, &new_segment, &current_segment, child);
 
@@ -55,31 +56,40 @@ void handle_other_segment(Parent *r, int child, int new_segment) {
   WELLL(stack_print_inline(r->requests));
 }
 
-void handle_done(Parent *r, int *readers, int child) {
+void handle_done(Parent *r, int *readers, int child, int *current_segment) {
   WELL("");
   (*readers)--;
+
+  if (should_pop_requests(*readers, r->requests))
+    pop_requests(r, readers, current_segment, child);
 }
 
-int should_swap_segment(int readers, int new_segment, int current_segment) {
-  static int bad_thing = 0;
+int should_pop_requests(int readers, Stack *requests) {
 
-  WELLL(printf("readers: %d, new_segment: %d, current_segment: %d",
-        readers, new_segment, current_segment));
+  WELLL(printf("readers: %d, request stack emptiness: %d",
+        readers, stack_is_empty(requests)));
 
   if (readers != 0)
     return 0;
 
-  /* TODO nope */
-  if (new_segment == current_segment)
+  if (!stack_is_empty(requests))
     return 0;
 
   return 1;
 }
 
-void swap_segment(Parent *r, int *readers, int new_segment, int *current_segment, int child) {
+void pop_requests(Parent *r, int *readers, int *current_segment, int child) {
   int err;
-  Item *item;
+  Item **item, **top_item;
 
+  /* TODO nope */
+  swap_segment(r, readers, current_segment, (*top_item)->file_segment, child);
+}
+
+void swap_segment(Parent *r, int *readers, int *current_segment, int new_segment, int child) {
+  int err;
+
+  /* TODO nope */
   err = testable_read_file_segment(r, r->shmem_youre_ready, new_segment);
   *current_segment = new_segment;
   WELLL(printf("as %d, saved '%c...'", new_segment, ((char *) r->shmem_youre_ready)[0]));
@@ -96,13 +106,13 @@ void handle_not_done(Parent *r, char *req_str, int *readers, int *new_segment, i
     *new_segment = 0;
   }
 
-  if (should_swap_segment(*readers, *new_segment, *current_segment))
-    swap_segment(r, readers, *new_segment, current_segment, child);
-
   if (*new_segment == *current_segment)
     handle_same_segment(r, readers, child);
-  else  /* TODO untested */
+  else {
+    if (stack_is_empty(r->requests))
+      swap_segment(r, readers, current_segment, *new_segment, child);
     handle_other_segment(r, child, *new_segment);
+  }
 
 }
 

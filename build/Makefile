@@ -32,7 +32,7 @@ test: $(TEST_DEP)
 	gcc $(RLR_FILES) -o rlr
 
 %.o: $(SRC)/%.c
-	gcc -c $$DEBUG_FLAG $(SRC)/$(@:.o=.c) -o $@
+	gcc -c $(SRC)/$(@:.o=.c) -o $@
 
 %.o.dev.o: $(SRC)/%.c
 	gcc -c -D DEV $(SRC)/$(@:.o.dev.o=.c) -o $@
