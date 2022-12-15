@@ -28,7 +28,7 @@ int child_res_to_ostream(ChildRes *res, FILE *file) {
   char *to_write;
   to_write = malloc(1024);
   sprintf(to_write, ARGS());
-  WELL(to_write);
+  WELL("");
   return fprintf(file, to_write);
 #else
 

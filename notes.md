@@ -20,4 +20,5 @@
 - parent parameters for eveyone
 - consistent types
 - shmem could be char *
+- shmem functions should take child id, not size
 

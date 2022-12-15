@@ -38,6 +38,7 @@ int be_child(Params *p, unsigned child_index, char *sem_name) {
   args.loops = p->parent_params->loops_per_child;
   args.file_segment_length = p->parent_params->file_segment_length;
   args.id = child_index;
+  args.num_of_children = p->parent_params->num_of_children;
 
   WELL(args.file_name);
 

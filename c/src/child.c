@@ -33,7 +33,7 @@ Child *child_create(const ChildArgs *args) {
   WELL("waiting for the parent to create his semaphore");
   sem_wait(child->sem_thank_you);
 
-  child->shmem_i_want = shmem_open_i_want(args->shmem_name_i_want, args->id + 1) + args->id * MAX_REQUEST_LEN;
+  child->shmem_i_want = shmem_open_i_want(args->shmem_name_i_want, args->num_of_children) + args->id * MAX_REQUEST_LEN;
   child->shmem_thank_you = shmem_open_thank_you(args->shmem_name_thank_you, args->file_segment_length);
   /* end of snippet */
 
@@ -87,10 +87,9 @@ void do_a_cycle(const Child *child) {
 
   static int bullshit = 0;
   res.file_segment = 2;//(getpid() + bullshit++) % 3;
-  res.line_in_segment = getpid() % 7;
+  res.line_in_segment = child->names->id; //getpid() % 7;
 
   sprintf(child->shmem_i_want, "<%d,%d>", res.file_segment, res.line_in_segment);
-  WELL("posting segment request");
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
 
@@ -102,7 +101,7 @@ void do_a_cycle(const Child *child) {
         ((char *) child->shmem_thank_you)[0],
         ((char *) child->shmem_thank_you)[1]);
 
-    WELL("sending done");
+    WELL("sending done (though failed)");
     req_send_done(child->shmem_i_want);
     sem_post(child->sem_i_want);
 
@@ -118,7 +117,6 @@ void do_a_cycle(const Child *child) {
 
     child_res_to_file(&res, child->names->file_name);
 
-    WELL("responce put in file");
     usleep(200000);
   }
 

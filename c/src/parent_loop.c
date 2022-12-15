@@ -109,7 +109,7 @@ void copy_and_clear_req(MsgCycler *msg_cycler, int *child, char *req_str) {
 
   req_ptr = msg_cycler_find(msg_cycler);
   *child = msg_cycler->head;
-  WELLL(printf("cycler has req_ptr %p and child %d", req_ptr, child));
+  WELLL(printf("cycler has req_ptr '%s' and child %d", req_ptr, *child));
 
   strcpy(req_str, req_ptr);
   *req_ptr = '\0';

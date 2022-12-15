@@ -13,6 +13,7 @@ typedef struct child_arguments {
   char *file_name;
   unsigned loops;
   unsigned id;
+  unsigned num_of_children;
   unsigned file_segment_length;
 } ChildArgs;
 

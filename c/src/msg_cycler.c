@@ -9,6 +9,14 @@ char *msg_cycler_find(MsgCycler *cycler) {
   int i;
   char *msg_spot;
 
+  WELLL(printf("head on %d ------ | %s | %s | %s | %s | --------",
+        cycler->head,
+        cycler->messages + 0 * MAX_REQUEST_LEN,
+        cycler->messages + 1 * MAX_REQUEST_LEN,
+        cycler->messages + 2 * MAX_REQUEST_LEN,
+        cycler->messages + 3 * MAX_REQUEST_LEN
+        ));
+
   CYCLE_HEAD;
 
   for (i = 0; i < cycler->size; i++) {
