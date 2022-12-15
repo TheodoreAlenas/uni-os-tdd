@@ -24,7 +24,7 @@ int parent_loop_backend(Parent *r) {
     WELLL(printf("waiting for notification. %d readers on current.", readers));
     sem_wait(r->sem_yes_please);
 
-    copy_and_clear_req(&msg_cycler, child, req_str);
+    copy_and_clear_req(&msg_cycler, &child, req_str);
 
     if (req_says_done(req_str))
       handle_done(r, &readers, child);
@@ -104,11 +104,11 @@ void handle_not_done(Parent *r, char *req_str, int *readers, int *new_segment, i
 
 }
 
-void copy_and_clear_req(MsgCycler *msg_cycler, int child, char *req_str) {
+void copy_and_clear_req(MsgCycler *msg_cycler, int *child, char *req_str) {
   char *req_ptr;
 
   req_ptr = msg_cycler_find(msg_cycler);
-  child = msg_cycler->head;
+  *child = msg_cycler->head;
   WELLL(printf("cycler has req_ptr %p and child %d", req_ptr, child));
 
   strcpy(req_str, req_ptr);
