@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <stdio.h>
 #include "dev_mode.h"
 #include "constants.h"
@@ -30,8 +31,6 @@ ParentParams *parent_params_create() {
   pp->shmem_name_youre_ready = malloc(MAX_FILE_NAME_LEN);
   strcpy(pp->shmem_name_youre_ready, DEFAULT_SHM_THANK_YOU);
   strcat(pp->shmem_name_youre_ready, pid);
-
-  pp->children = NULL;
 
   return pp;
 }

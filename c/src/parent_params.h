@@ -1,7 +1,7 @@
 #ifndef PARENT_PARAMS_H
 #define PARENT_PARAMS_H
 
-#include "child_data.h"
+#include <semaphore.h>
 
 typedef struct parent_params {
   unsigned num_of_children;
@@ -11,7 +11,6 @@ typedef struct parent_params {
   char *sem_name_yes_please;
   char *shmem_name_yes_please;
   char *shmem_name_youre_ready;
-  ChildData *children;
 } ParentParams;
 
 ParentParams *parent_params_create();

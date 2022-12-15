@@ -12,12 +12,11 @@ int testable_fork() {
 }
 /* end of snippet */
 
-int be_parent(Params *p, ChildData *children) {
+int be_parent(Params *p, char **sem_names) {
   int err;
   Parent *r;
 
-  p->parent_params->children = children;
-  r = parent_create(p->parent_params);
+  r = parent_create(p->parent_params, sem_names);
   err = parent_loop(r);
   WELL("freeing after parent_loop");
   parent_waitpid(r);
