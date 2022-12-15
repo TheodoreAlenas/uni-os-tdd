@@ -93,34 +93,7 @@ sem_t *init_sem_and_broadcast(const Parent *r) {
 
 
 int parent_loop(Parent *r) {
-  int child = 0, j, current_segment = -1, new_segment = -1, readers = 0, total_notifications;
-  MsgCycler msg_cycler;
-  char req_str[MAX_REQUEST_LEN];
-
-  msg_cycler.head = 0;
-  msg_cycler.messages = r->shmem_yes_please;
-  msg_cycler.size = r->pp->num_of_children;
-
-  total_notifications = 2 * r->pp->num_of_children * r->pp->loops_per_child;
-
-  /* for README, parent-loop */
-  for (j = 0; j < total_notifications; j++) {
-    WELLL(printf("waiting for notification. %d readers on current.", readers));
-    sem_wait(r->sem_yes_please);
-
-    copy_and_clear_req(&msg_cycler, child, req_str);
-
-    if (req_says_done(req_str))
-      handle_done(r, &readers, child);
-    else
-      handle_not_done(r, req_str, &readers, &new_segment, &current_segment, child);
-
-    current_segment = new_segment;
-  }
-  /* end of snippet */
-  WELL("loop done");
-
-  return 0;
+  return parent_loop_backend(r);  /* sorry */
 }
 
 int parent_waitpid(const Parent *r) {

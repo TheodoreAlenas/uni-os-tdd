@@ -4,6 +4,8 @@
 #include "parent_struct.h"
 #include "msg_cycler.h"
 
+int parent_loop_backend(Parent *r);
+
 void handle_same_segment(Parent *r, int *readers, int child);
 void handle_other_segment(Parent *r, int child, int new_segment);
 void handle_done(Parent *r, int *readers, int child);
