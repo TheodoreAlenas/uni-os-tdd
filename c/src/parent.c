@@ -93,13 +93,6 @@ sem_t *init_sem_and_broadcast(const Parent *r) {
   return s;
 }
 
-typedef enum { MSG_ERROR, MSG_SEGMENT_REQUEST, MSG_YOU_CAN_SWITCH_SEGMENTS } MsgType;
-typedef struct { MsgType type; int child; int segment; } Msg;
-void notification(Parent *r);
-void clean_msg(Msg msg);
-int store(Parent *r, int segment);
-int count_down_for_changing_segment(Parent *r);
-
 void handle_same_segment(Parent *r, int *readers, int child) {
   (*readers)++;
   WELLL(printf("telling child #%d that its file segment is ready", child));
