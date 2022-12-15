@@ -22,6 +22,8 @@ bool stack_is_empty(Stack *s);
 bool stack_is_full(Stack *s);
 bool stack_push(Stack *s, Item *item);
 bool stack_pop(Stack *s, Item **item);
+void stack_print_inline(Stack *s);
+void stack_print(Stack *s);
 
 int stack_position(const Stack *s, unsigned file_segment);
 int stack_end_of_bubble(const Stack *s, int index);

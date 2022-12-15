@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include "stack.h"
+#include "dev_mode.h"
 
 int max(int a, int b) { if (a < b) return b; return a; }
 
@@ -99,3 +101,16 @@ void bubble(Stack *s, int start, int end) {
   }
 }
 
+void stack_print_inline(Stack *s) {
+  int i;
+
+  printf("stack with size %d/%d (child, segment)", s->size, s->capacity);
+  for (i = 0; i < s->size; i++) {
+    printf(" > %d, %d", s->items[i]->child, s->items[i]->file_segment);
+  }
+}
+
+void stack_print(Stack *s) {
+  stack_print_inline(s);
+  printf("\n");
+}

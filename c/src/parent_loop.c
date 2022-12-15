@@ -52,6 +52,7 @@ void handle_other_segment(Parent *r, int child, int new_segment) {
   req_item->child = child;
   req_item->file_segment = new_segment;
   stack_push(r->requests, req_item);
+  WELLL(stack_print_inline(r->requests));
 }
 
 void handle_done(Parent *r, int *readers, int child) {
@@ -68,6 +69,7 @@ int should_swap_segment(int readers, int new_segment, int current_segment) {
   if (readers != 0)
     return 0;
 
+  /* TODO nope */
   if (new_segment == current_segment)
     return 0;
 
