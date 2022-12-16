@@ -81,7 +81,9 @@ void handle_other_segment(Parent *r, int child, int new_segment) {
   req_item = malloc(sizeof(Item));
   req_item->child = child;
   req_item->file_segment = new_segment;
+
   stack_push(r->requests, req_item);
+
   WELLL(stack_print_inline(r->requests));
 }
 
@@ -103,13 +105,14 @@ int should_pop_requests(int readers, Stack *requests) {
 
 struct for_each_args { sem_t **sems; int *readers; };
 
-int tell_child(Item *item, void *r) {
-  struct for_each_args *a;
-
+int tell_child(int child, struct for_each_args *a) {
   WELL("");
-  a = (struct for_each_args *) r;
   (*(a->readers))++;
-  return sem_post(a->sems[item->child]);
+  return sem_post(a->sems[child]);
+}
+
+int callback_tell_child(Item *item, void *r) {
+  return tell_child(item->child, (struct for_each_args *) r);
 }
 
 void pop_requests(LoopState * s) {
@@ -123,13 +126,12 @@ void pop_requests(LoopState * s) {
 
   a.readers = &(s->readers);
   a.sems = s->r->sems_youre_ready;
-  stack_for_all_of_segment(s->r->requests, tell_child, &a);
+  stack_for_all_of_segment(s->r->requests, callback_tell_child, &a);
 }
 
 void swap_segment(LoopState * s, int new_segment) {
   int err;
 
-  /* TODO nope */
   err = testable_read_file_segment(s->r, s->r->shmem_youre_ready, new_segment);
   s->current_segment = new_segment;
   WELLL(printf("as %d, saved '%c...'", new_segment, ((char *) s->r->shmem_youre_ready)[0]));
