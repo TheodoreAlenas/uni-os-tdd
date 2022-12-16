@@ -82,15 +82,20 @@ void child_loop(const Child *child) {
 /* for README, do-a-cycle */
 void do_a_cycle(const Child *child) {
   ChildRes res;
-  char content[MAX_LINE_LEN];
-  int err;
+  char content[MAX_LINE_LEN], req_str[MAX_REQUEST_LEN];
+  int err, i;
 
   static int bullshit = 0;  /* TODO rename */
   res.file_segment = (getpid() + !((bullshit++) % 4)) % 3;
   res.line_in_segment = child->names->id; //getpid() % 7;
 
-  sprintf(child->shmem_i_want, "<%d,%d>", res.file_segment, res.line_in_segment);
+  /* back to front writing */
+  sprintf(req_str, "<%d,%d>", res.file_segment, res.line_in_segment);
+  for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
+    ((char *)child->shmem_i_want)[i] = req_str[i];
+
   sem_post(child->sem_i_want);
+
   sem_wait(child->sem_thank_you);
 
   if (!isolate_line(content, child->shmem_thank_you, res.line_in_segment)) {

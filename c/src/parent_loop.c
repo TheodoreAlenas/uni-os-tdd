@@ -85,7 +85,7 @@ int parent_loop_backend(Parent *r) {
 
   for (j = 0; j < total_notifications; j++) {
     single_loop(&s, &msg_cycler);
-    if (j % 256 == 0)
+    if (j % 1024 == 0)
       printf("progress: %d/%d\n", j, total_notifications);
   }
 
@@ -165,11 +165,11 @@ void handle_req_saying_i_want(LoopState *s, char *req_str) {
   int new_segment = -1;
 
   WELL("");
-  new_segment = req_parse(req_str);  /* take your time */
+  new_segment = req_parse(req_str);
 
   if (new_segment < 0) {
-    fprintf(stderr, "invalid request by child #%d ('%c%c...')\n",
-        s->child, req_str[0], req_str[1]);
+    fprintf(stderr, "invalid request by child #%d ('%c%c...', ASCII %d %d)\n",
+        s->child, req_str[0], req_str[1], req_str[0], req_str[1]);
     new_segment = 0;
   }
 

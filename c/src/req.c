@@ -5,7 +5,7 @@
 #include "dev_mode.h"
 #include "req.h"
 
-int chop(char *dest, char *str, int start, char end_char);
+int chop(char *dest, const char *str, int start, char end_char);
 
 void req_send_done(char *shm) {
   shm[0] = '$';
@@ -16,7 +16,7 @@ int req_says_got_it(char *msg) {
   return msg[0] == '$';
 }
 
-int req_parse(char *msg) {
+int req_parse(const char *msg) {
   int comma_pos, gt_pos, length, i;
   char segment[MAX_REQUEST_LEN], line[MAX_REQUEST_LEN];
 
@@ -34,7 +34,7 @@ int req_parse(char *msg) {
   return atoi(segment);
 }
 
-int chop(char *dest, char *str, int start, char end_char) {
+int chop(char *dest, const char *str, int start, char end_char) {
   int i;
 
   if (str[start] == end_char)
