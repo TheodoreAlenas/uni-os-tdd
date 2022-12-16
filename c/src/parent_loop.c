@@ -6,19 +6,8 @@
 #include "dev_mode.h"
 #include "req.h"
 #include "parent_loop.h"
+#include "parent_loop_exposed.h"
 #include "stack.h"
-
-typedef struct {
-  sem_t *sem_yes_please;
-  sem_t **sems_youre_ready;
-  void *shmem_youre_ready;
-  Stack *requests;
-} ParentLoopParams;
-
-typedef struct {
-  ParentLoopParams *r; int readers; int current_segment; int child;
-  Parent *parent;  /* limited use */
-} LoopState;
 
 int copy_and_clear_req(MsgCycler *msg_cycler, char *req_str);
 
@@ -32,8 +21,6 @@ int he_asked_alone(LoopState *s, int new_segment);
 int should_pop_requests(int readers, Stack *requests);
 void pop_requests(LoopState *s);
 void swap_segment(LoopState *s, int new_segment);
-
-void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str);
 
 
 #ifndef TEST

@@ -1,5 +1,5 @@
 #include "test.h"
-#include "../src/parent_loop.h"
+#include "../src/parent_loop_exposed.h"
 
 
 int _read_file_segment(Parent *parent, void *shm, int segment) {

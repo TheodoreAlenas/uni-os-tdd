@@ -13,10 +13,7 @@ typedef struct {
   int num_of_children;
 } ParentLoopArgs;
 
-int parent_loop_backend(Parent *r);
 
-int _read_file_segment(Parent *parent, void *shm, int segment);
-int _sem_wait(sem_t *s);
-int _sem_post(sem_t **sems, int child);
+int parent_loop_backend(Parent *r);
 
 #endif
