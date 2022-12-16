@@ -27,7 +27,8 @@ void swap_segment(LoopState *s, int new_segment);
 void single_loop(LoopState *s, MsgCycler *msg_cycler) {
   char req_str[MAX_REQUEST_LEN];
 
-  WELLL(printf("waiting for notification. %d readers on current.", s->readers));
+  WELLL(printf("waiting for notification. %d readers on current, %d.",
+        s->readers, s->current_segment));
   _sem_wait(s->r->sem_yes_please);
 
   s->child = copy_and_clear_req(msg_cycler, req_str);
@@ -82,8 +83,11 @@ int parent_loop_backend(Parent *r) {
 
   total_notifications = 2 * r->pp->num_of_children * r->pp->loops_per_child;
 
-  for (j = 0; j < total_notifications; j++)
+  for (j = 0; j < total_notifications; j++) {
     single_loop(&s, &msg_cycler);
+    if (j % 256 == 0)
+      printf("progress: %d/%d\n", j, total_notifications);
+  }
 
   WELL("loop done");
 
@@ -111,6 +115,7 @@ void handle_other_segment(ParentLoopParams *r, int child, int new_segment) {
 void handle_req_saying_got_it(LoopState * s) {
   WELL("");
   s->readers--;
+  _sem_post(s->r->sems_youre_ready, s->child);
 
   if (should_pop_requests(s->readers, s->r->requests))
     pop_requests(s);
@@ -144,6 +149,7 @@ void pop_requests(LoopState *s) {
   a.readers = &(s->readers);
   a.sems = s->r->sems_youre_ready;
   stack_for_all_of_segment(s->r->requests, update_readers_and_tell_child, &a);
+  WELLL(stack_print_inline(s->r->requests));
 }
 
 void swap_segment(LoopState *s, int new_segment) {
@@ -155,11 +161,12 @@ void swap_segment(LoopState *s, int new_segment) {
 }
 
 void handle_req_saying_i_want(LoopState *s, char *req_str) {
-  int err;
-  int new_segment;
+  int err, i;
+  int new_segment = -1;
 
   WELL("");
-  new_segment = req_parse(req_str);
+  new_segment = req_parse(req_str);  /* take your time */
+
   if (new_segment < 0) {
     fprintf(stderr, "invalid request by child #%d ('%c%c...')\n",
         s->child, req_str[0], req_str[1]);
@@ -174,8 +181,6 @@ void handle_req_saying_i_want(LoopState *s, char *req_str) {
     handle_same_segment(s);
   else
     handle_other_segment(s->r, s->child, new_segment);
-
-  s->current_segment = new_segment;
 }
 
 int he_asked_alone(LoopState *s, int new_segment) {

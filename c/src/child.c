@@ -117,7 +117,8 @@ void do_a_cycle(const Child *child) {
 
     child_res_to_file(&res, child->names->file_name);
 
-    usleep(20000);
+    sem_wait(child->sem_thank_you);
+    //usleep(20000);
   }
 
 }

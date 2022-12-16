@@ -7,7 +7,7 @@ int callback_3(Item *item, void *args);
 void test_stack() {
 
   Stack *s;
-  Item **i, *x, *y, *x1, *y1, *x2, *y2, *x3, *y3, xs[32], ys[32];
+  Item **i, *x, *y, *x1, *y1, *x2, *y2, *x3, *y3, xs[32], *ys[32];
 
   x = malloc(sizeof(Item));
   x1 = malloc(sizeof(Item));
@@ -86,6 +86,37 @@ void test_stack() {
   stack_push(s, x2);
   stack_push(s, x3);
   announce("test_stack_for_each_3", 3 == stack_for_all_of_segment(s, callback_3, x1));
+
+  stack_pop(s, &y);
+  stack_pop(s, &y);
+  stack_pop(s, &y);
+  announce("test_stack_empty", stack_is_empty(s));
+
+  xs[0].file_segment = 1; xs[0].child = 2;
+  xs[1].file_segment = 1; xs[1].child = 5;
+  xs[2].file_segment = 2; xs[2].child = 6;
+  xs[3].file_segment = 2; xs[3].child = 0;
+
+  xs[4].file_segment = 2; xs[4].child = 3;
+
+  s = stack_create(5);
+
+  stack_push(s, xs + 0);
+  stack_push(s, xs + 1);
+  stack_push(s, xs + 2);
+  stack_push(s, xs + 3);
+  stack_push(s, xs + 4);
+
+  stack_pop(s, ys + 4);
+  announce("test_stack_pain_ys4", ys[4]->child == 3);
+  stack_pop(s, ys + 3);
+  announce("test_stack_pain_ys3", ys[3]->child == 0);
+  stack_pop(s, ys + 2);
+  announce("test_stack_pain_ys2", ys[2]->child == 6);
+  stack_pop(s, ys + 1);
+  announce("test_stack_pain_ys1", ys[1]->child == 5);
+  stack_pop(s, ys + 0);
+  announce("test_stack_pain_ys0", ys[0]->child == 2);
 }
 
 

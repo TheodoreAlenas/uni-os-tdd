@@ -114,9 +114,8 @@ int stack_bubble(Stack *s, unsigned file_segment) {
     return s->size;
   end = stack_end_of_bubble(s, start);
 
-  s->items[s->size] = s->items[start];  /* making space */
-  bubble(s, start, end);
-  s->items[s->size - 1] = s->items[s->size]; /* putting back */
+  if (end < s->size - 1)
+    bubble(s, start, end);
 
   return 0;
 }
@@ -124,19 +123,23 @@ int stack_bubble(Stack *s, unsigned file_segment) {
 void bubble(Stack *s, int start, int end) {
   int i, dx;
 
+  s->items[s->size] = s->items[start];  /* making space */
+
   dx = end - start + 1;  /* bubbling */
   for (i = end + 1; i < s->size; i++) {
     s->items[i - dx] = s->items[i];
     s->items[i] = s->items[i - dx + 1];
   }
+
+  s->items[s->size - 1] = s->items[s->size]; /* putting back */
 }
 
 void stack_print_inline(Stack *s) {
   int i;
 
-  printf("stack with size %d/%d (child, segment)", s->size, s->capacity);
+  printf("stack with size %d/%d (segment, child)", s->size, s->capacity);
   for (i = 0; i < s->size; i++) {
-    printf(" > %d,%d", s->items[i]->child, s->items[i]->file_segment);
+    printf(" > %d,%d", s->items[i]->file_segment, s->items[i]->child);
   }
 }
 

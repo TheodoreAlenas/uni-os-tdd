@@ -9,13 +9,12 @@ char *msg_cycler_find(MsgCycler *cycler) {
   int i;
   char *msg_spot;
 
-  WELLL(printf("head on %d ------ | %s | %s | %s | %s | --------",
-        cycler->head,
-        cycler->messages + 0 * MAX_REQUEST_LEN,
-        cycler->messages + 1 * MAX_REQUEST_LEN,
-        cycler->messages + 2 * MAX_REQUEST_LEN,
-        cycler->messages + 3 * MAX_REQUEST_LEN
-        ));
+  WELLL(
+      printf("head on %d ------ ", cycler->head);
+      for (i = 0; i < cycler->size; i++)
+        printf("| %5s ", cycler->messages + i * MAX_REQUEST_LEN);
+      printf("| --------")
+      );
 
   CYCLE_HEAD;
 

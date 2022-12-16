@@ -26,6 +26,8 @@
 
 - test on SSH
 
+- child time arg
+
 ## Mocks
 
 - reading file segments
