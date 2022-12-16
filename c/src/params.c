@@ -12,6 +12,7 @@ Params *parameters_init(Params *p) {
   strcpy(p->output_dir, DEFAULT_OUTPUT_DIR);
   p->operations_of_each_worker = 1024;
   p->show_help = false;
+  p->microsecond_delay = 20000;
 
   return p;
 }
@@ -24,6 +25,7 @@ void parameters_print(Params *p) {
   printf("output directory: '%s'\n", p->output_dir);
   printf("input file: '%s'\n", p->parent_params->file_name);
   printf("lines in file segment: %lu\n", p->parent_params->file_segment_length);
+  printf("child's delay in microseconds: %u\n", p->microsecond_delay);
 }
 
 void parameters_help() {
@@ -35,6 +37,7 @@ void parameters_help() {
   printf("-w  --shm-i-want            'I want' shared memory name\n");
   printf("-t  --shm-thank-you         'thank you' shared memory name\n");
   printf("-l  --file-segment-length   lines in file segment\n");
+  printf("-m  --microsecond-delay     children's fake delay\n");
 }
 
 #define IF_ITS(SHORT_FLAG, LONG_FLAG) else if (strcmp(SHORT_FLAG, flag) == 0 || strcmp(LONG_FLAG, flag) == 0)
@@ -68,6 +71,7 @@ Params *parameters_parse(Params *p, int argc, char **argv) {
     IF_ITS("-i", "--input") strcpy(p->parent_params->file_name, argv[i]);
     IF_ITS("-o", "--output") strcpy(p->output_dir, argv[i]);
     IF_ITS("-l", "--file-segment-length") p->parent_params->file_segment_length = atoi(argv[i]);
+    IF_ITS("-m", "--microsecond-delay") p->microsecond_delay = atoi(argv[i]);
 
     else p->parent_params->file_name = argv[i];
 

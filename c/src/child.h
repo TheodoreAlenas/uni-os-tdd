@@ -15,6 +15,7 @@ typedef struct child_arguments {
   unsigned id;
   unsigned num_of_children;
   unsigned file_segment_length;
+  unsigned microsecond_delay;
 } ChildArgs;
 
 typedef struct child {

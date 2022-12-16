@@ -41,6 +41,7 @@ reality="$(
   --input 'path/to/input' \
   --output 'path/to/output' \
   --file-segment-length 101 \
+  --microsecond-delay 50000 \
   --print   |
   sort)"
 
@@ -52,6 +53,7 @@ output directory: 'path/to/output'
 'thank you' shared memory name: 'nope'
 lines in file segment: 101
 loops per child: 4
+child's delay in microseconds: 50000
 EOF
 )"
 
@@ -66,6 +68,7 @@ reality="$(
   -i 'path/to/input' \
   -o 'path/to/output' \
   -l 101 \
+  -m 50000 \
   --print   |
   sort)"
 
@@ -77,6 +80,7 @@ output directory: 'path/to/output'
 'thank you' shared memory name: 'nope'
 lines in file segment: 101
 loops per child: 4
+child's delay in microseconds: 50000
 EOF
 )"
 

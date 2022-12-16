@@ -12,6 +12,7 @@ typedef struct parameters {
   bool show_help;
   bool show_params;
   unsigned operations_of_each_worker;
+  unsigned microsecond_delay;
   char output_dir[MAX_FILE_NAME_LEN];
   ParentParams *parent_params;
 } Params;

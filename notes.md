@@ -22,11 +22,14 @@
 - shmem could be char *
 - shmem functions should take child id, not size
 - rename `handle_not_done`
+- rename `child->names`
 - clean up child's loop
 
 - test on SSH
 
 - child time arg
+
+- tell about the backwards writing
 
 ## Mocks
 

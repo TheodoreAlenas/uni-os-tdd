@@ -41,6 +41,7 @@ int be_child(Params *p, unsigned child_index, char *sem_name) {
   args.file_segment_length = p->parent_params->file_segment_length;
   args.id = child_index;
   args.num_of_children = p->parent_params->num_of_children;
+  args.microsecond_delay = p->microsecond_delay;
 
   WELL(args.file_name);
 

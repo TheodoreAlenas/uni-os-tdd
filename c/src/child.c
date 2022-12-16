@@ -89,14 +89,14 @@ void do_a_cycle(const Child *child) {
   res.file_segment = (getpid() + !((bullshit++) % 4)) % 3;
   res.line_in_segment = child->names->id; //getpid() % 7;
 
-  /* back to front writing */
+  /* for README: back-to-front-writing */
   sprintf(req_str, "<%d,%d>", res.file_segment, res.line_in_segment);
   for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
     ((char *)child->shmem_i_want)[i] = req_str[i];
 
   sem_post(child->sem_i_want);
-
   sem_wait(child->sem_thank_you);
+  /* end of snippet */
 
   if (!isolate_line(content, child->shmem_thank_you, res.line_in_segment)) {
     fprintf(stderr,
@@ -123,7 +123,7 @@ void do_a_cycle(const Child *child) {
     child_res_to_file(&res, child->names->file_name);
 
     sem_wait(child->sem_thank_you);
-    //usleep(20000);
+    usleep(child->names->microsecond_delay);
   }
 
 }
