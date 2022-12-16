@@ -13,14 +13,17 @@ typedef struct {
   Parent *r; int readers; int current_segment; int child;
 } LoopState;
 
+int copy_and_clear_req(MsgCycler *msg_cycler, char *req_str);
+
 void handle_same_segment(LoopState * s);
 void handle_other_segment(Parent *r, int child, int new_segment);
-void handle_done(LoopState * s);
+
+void handle_req_saying_read(LoopState * s);
+void handle_req_saying_i_want(LoopState *s, char *req_str);
+
 int should_pop_requests(int readers, Stack *requests);
 void pop_requests(LoopState * s);
 void swap_segment(LoopState * s, int new_segment);
-void handle_not_done(LoopState *s, char *req_str);
-int copy_and_clear_req(MsgCycler *msg_cycler, char *req_str);
 
 void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str);
 
@@ -33,9 +36,9 @@ void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str) {
   s->child = copy_and_clear_req(msg_cycler, req_str);
 
   if (req_says_done(req_str))
-    handle_done(s);
+    handle_req_saying_read(s);
   else
-    handle_not_done(s, req_str);
+    handle_req_saying_i_want(s, req_str);
 }
 /* end of snippet */
 
@@ -80,7 +83,7 @@ void handle_other_segment(Parent *r, int child, int new_segment) {
   WELLL(stack_print_inline(r->requests));
 }
 
-void handle_done(LoopState * s) {
+void handle_req_saying_read(LoopState * s) {
   WELL("");
   s->readers--;
 
@@ -130,7 +133,7 @@ void swap_segment(LoopState * s, int new_segment) {
   WELLL(printf("as %d, saved '%c...'", new_segment, ((char *) s->r->shmem_youre_ready)[0]));
 }
 
-void handle_not_done(LoopState *s, char *req_str) {
+void handle_req_saying_i_want(LoopState *s, char *req_str) {
   int err;
   int new_segment;
 
