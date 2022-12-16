@@ -4,7 +4,6 @@
 
 #include "constants.h"
 #include "dev_mode.h"
-#include "file_segment.h"
 #include "req.h"
 #include "parent_loop.h"
 #include "stack.h"
@@ -37,11 +36,27 @@ void swap_segment(LoopState *s, int new_segment);
 void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str);
 
 
+#ifndef TEST
+
+#include "file_segment.h"
+int _read_file_segment(Parent *parent, void *shm, int segment) {
+  return testable_read_file_segment(parent, shm, segment);
+}
+int _sem_wait(sem_t *s) {
+  return sem_wait(s);
+}
+int _sem_post(sem_t **sems, int child) {
+  return sem_post(sems[child]);
+}
+
+#endif
+
+
 /* for README, parent-loop */
 void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str) {
 
   WELLL(printf("waiting for notification. %d readers on current.", s->readers));
-  sem_wait(s->r->sem_yes_please);
+  _sem_wait(s->r->sem_yes_please);
 
   s->child = copy_and_clear_req(msg_cycler, req_str);
 
@@ -90,7 +105,7 @@ int parent_loop_backend(Parent *r) {
 void handle_same_segment(LoopState *s) {
   (s->readers)++;
   WELLL(printf("telling child #%d that its file segment is ready", s->child));
-  sem_post(s->r->sems_youre_ready[s->child]);
+  _sem_post(s->r->sems_youre_ready, s->child);
 }
 
 void handle_other_segment(ParentLoopParams *r, int child, int new_segment) {
@@ -126,7 +141,7 @@ struct for_each_args { sem_t **sems; int *readers; };
 int update_readers_and_tell_child(Item *item, void *r) {
   struct for_each_args *a = r;
   (*(a->readers))++;
-  return sem_post(a->sems[item->child]);
+  return _sem_post(a->sems, item->child);
 }
 
 void pop_requests(LoopState *s) {
@@ -146,7 +161,7 @@ void pop_requests(LoopState *s) {
 void swap_segment(LoopState *s, int new_segment) {
   int err;
 
-  err = testable_read_file_segment(s->parent, s->r->shmem_youre_ready, new_segment);
+  err = _read_file_segment(s->parent, s->r->shmem_youre_ready, new_segment);
   s->current_segment = new_segment;
   WELLL(printf("as %d, saved '%c...'", new_segment, ((char *) s->r->shmem_youre_ready)[0]));
 }
