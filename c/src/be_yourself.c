@@ -7,6 +7,8 @@
 #include "child.h"
 
 /* for README, testable-fork */
+#ifndef TEST
+
 int testable_fork() {
   return fork();
 }
@@ -49,4 +51,5 @@ int be_child(Params *p, unsigned child_index, char *sem_name) {
   return 0;
 }
 
+#endif
 
