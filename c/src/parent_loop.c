@@ -19,19 +19,36 @@ void handle_done(LoopState * s);
 int should_pop_requests(int readers, Stack *requests);
 void pop_requests(LoopState * s);
 void swap_segment(LoopState * s, int new_segment);
-void handle_not_done(LoopState *s, char *req_str, int *new_segment);
+void handle_not_done(LoopState *s, char *req_str);
 int copy_and_clear_req(MsgCycler *msg_cycler, char *req_str);
 
+void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str);
+
+/* for README, parent-loop */
+void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str) {
+
+  WELLL(printf("waiting for notification. %d readers on current.", s->readers));
+  sem_wait(s->r->sem_yes_please);
+
+  s->child = copy_and_clear_req(msg_cycler, req_str);
+
+  if (req_says_done(req_str))
+    handle_done(s);
+  else
+    handle_not_done(s, req_str);
+}
+/* end of snippet */
+
 int parent_loop_backend(Parent *r) {
-  int child = 0, j, current_segment = -1, new_segment = -1, readers = 0, total_notifications;
-  MsgCycler msg_cycler;
-  char req_str[MAX_REQUEST_LEN];
   LoopState s;
+  MsgCycler msg_cycler;
+  int j, total_notifications;
+  char req_str[MAX_REQUEST_LEN];
 
   s.r = r;
-  s.readers = readers;
-  s.current_segment = current_segment;
-  s.child = child;
+  s.readers = 0;
+  s.current_segment = -1;
+  s.child = 0;
 
   msg_cycler.head = 0;
   msg_cycler.messages = r->shmem_yes_please;
@@ -39,21 +56,9 @@ int parent_loop_backend(Parent *r) {
 
   total_notifications = 2 * r->pp->num_of_children * r->pp->loops_per_child;
 
-  /* for README, parent-loop */
-  for (j = 0; j < total_notifications; j++) {
-    WELLL(printf("waiting for notification. %d readers on current.", readers));
-    sem_wait(r->sem_yes_please);
+  for (j = 0; j < total_notifications; j++)
+    single_loop(&s, &msg_cycler, req_str);
 
-    s.child = copy_and_clear_req(&msg_cycler, req_str);
-
-    if (req_says_done(req_str))
-      handle_done(&s);
-    else
-      handle_not_done(&s, req_str, &new_segment);
-
-    current_segment = new_segment;
-  }
-  /* end of snippet */
   WELL("loop done");
 
   return 0;
@@ -125,26 +130,28 @@ void swap_segment(LoopState * s, int new_segment) {
   WELLL(printf("as %d, saved '%c...'", new_segment, ((char *) s->r->shmem_youre_ready)[0]));
 }
 
-void handle_not_done(LoopState *s, char *req_str, int *new_segment) {
+void handle_not_done(LoopState *s, char *req_str) {
   int err;
+  int new_segment;
 
   WELL("");
-  *new_segment = req_parse(req_str);
-  if (*new_segment < 0) {
+  new_segment = req_parse(req_str);
+  if (new_segment < 0) {
     fprintf(stderr, "invalid request by child #%d ('%c%c...')\n",
         s->child, req_str[0], req_str[1]);
-    *new_segment = 0;
+    new_segment = 0;
   }
 
-  if (stack_is_empty(s->r->requests) && *new_segment != s->current_segment && s->readers == 0)
-    swap_segment(s, *new_segment);
+  if (stack_is_empty(s->r->requests) && new_segment != s->current_segment && s->readers == 0)
+    swap_segment(s, new_segment);
   /* the current_segment might be mutated */
 
-  if (*new_segment == s->current_segment)
+  if (new_segment == s->current_segment)
     handle_same_segment(s);
   else
-    handle_other_segment(s->r, s->child, *new_segment);
+    handle_other_segment(s->r, s->child, new_segment);
 
+  s->current_segment = new_segment;
 }
 
 int copy_and_clear_req(MsgCycler *msg_cycler, char *req_str) {
