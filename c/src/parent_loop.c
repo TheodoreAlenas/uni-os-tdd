@@ -21,11 +21,13 @@ void handle_other_segment(Parent *r, int child, int new_segment);
 void handle_req_saying_read(LoopState * s);
 void handle_req_saying_i_want(LoopState *s, char *req_str);
 
+int he_asked_alone(LoopState *s, int new_segment);
 int should_pop_requests(int readers, Stack *requests);
 void pop_requests(LoopState * s);
 void swap_segment(LoopState * s, int new_segment);
 
 void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str);
+
 
 /* for README, parent-loop */
 void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str) {
@@ -145,7 +147,7 @@ void handle_req_saying_i_want(LoopState *s, char *req_str) {
     new_segment = 0;
   }
 
-  if (stack_is_empty(s->r->requests) && new_segment != s->current_segment && s->readers == 0)
+  if (he_asked_alone(s, new_segment))
     swap_segment(s, new_segment);
   /* the current_segment might be mutated */
 
@@ -155,6 +157,20 @@ void handle_req_saying_i_want(LoopState *s, char *req_str) {
     handle_other_segment(s->r, s->child, new_segment);
 
   s->current_segment = new_segment;
+}
+
+int he_asked_alone(LoopState *s, int new_segment) {
+
+  if (!stack_is_empty(s->r->requests))
+    return 0;
+
+  if (new_segment == s->current_segment)
+    return 0;
+
+  if (s->readers != 0)
+    return 0;
+
+  return 1;
 }
 
 int copy_and_clear_req(MsgCycler *msg_cycler, char *req_str) {
