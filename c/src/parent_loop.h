@@ -3,14 +3,16 @@
 
 #include <semaphore.h>
 #include "msg_cycler.h"
+#include "parent_struct.h"
 
 typedef struct {
   sem_t *sem_yes_please;
-  sem_t *sem_youre_ready;
+  sem_t **sems_youre_ready;
+  void *shmem_yes_please;
   void *shmem_youre_ready;
+  int num_of_children;
 } ParentLoopArgs;
 
-#include "parent_struct.h"
 int parent_loop_backend(Parent *r);
 
 #endif

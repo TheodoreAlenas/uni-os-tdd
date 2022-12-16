@@ -11,27 +11,28 @@
 
 typedef struct {
   sem_t *sem_yes_please;
-  sem_t *sem_youre_ready;
+  sem_t **sems_youre_ready;
   void *shmem_youre_ready;
   Stack *requests;
 } ParentLoopParams;
 
 typedef struct {
-  Parent *r; int readers; int current_segment; int child;
+  ParentLoopParams *r; int readers; int current_segment; int child;
+  Parent *parent;  /* limited use */
 } LoopState;
 
 int copy_and_clear_req(MsgCycler *msg_cycler, char *req_str);
 
-void handle_same_segment(LoopState * s);
-void handle_other_segment(Parent *r, int child, int new_segment);
+void handle_same_segment(LoopState *s);
+void handle_other_segment(ParentLoopParams *r, int child, int new_segment);
 
-void handle_req_saying_read(LoopState * s);
+void handle_req_saying_read(LoopState *s);
 void handle_req_saying_i_want(LoopState *s, char *req_str);
 
 int he_asked_alone(LoopState *s, int new_segment);
 int should_pop_requests(int readers, Stack *requests);
-void pop_requests(LoopState * s);
-void swap_segment(LoopState * s, int new_segment);
+void pop_requests(LoopState *s);
+void swap_segment(LoopState *s, int new_segment);
 
 void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str);
 
@@ -52,18 +53,25 @@ void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str) {
 /* end of snippet */
 
 int parent_loop_backend(Parent *r) {
+  ParentLoopParams p;
   LoopState s;
   MsgCycler msg_cycler;
   Stack requests;
   int j, total_notifications;
   char req_str[MAX_REQUEST_LEN];
 
-  s.r = r;
+  stack_init(&requests, r->pp->num_of_children);
+
+  p.sem_yes_please = r->sem_yes_please;
+  p.sems_youre_ready = r->sems_youre_ready;
+  p.shmem_youre_ready = r->shmem_youre_ready;
+  p.requests = &requests;
+
+  s.r = &p;
   s.readers = 0;
   s.current_segment = -1;
   s.child = 0;
-
-  stack_init(&requests, r->pp->num_of_children);
+  s.parent = r;
 
   msg_cycler.head = 0;
   msg_cycler.messages = r->shmem_yes_please;
@@ -85,7 +93,7 @@ void handle_same_segment(LoopState *s) {
   sem_post(s->r->sems_youre_ready[s->child]);
 }
 
-void handle_other_segment(Parent *r, int child, int new_segment) {
+void handle_other_segment(ParentLoopParams *r, int child, int new_segment) {
   Item *req_item;
   WELL("");
   req_item = malloc(sizeof(Item));
@@ -121,7 +129,7 @@ int update_readers_and_tell_child(Item *item, void *r) {
   return sem_post(a->sems[item->child]);
 }
 
-void pop_requests(LoopState * s) {
+void pop_requests(LoopState *s) {
   int err;
   Item *top_item;
   struct for_each_args a;
@@ -135,10 +143,10 @@ void pop_requests(LoopState * s) {
   stack_for_all_of_segment(s->r->requests, update_readers_and_tell_child, &a);
 }
 
-void swap_segment(LoopState * s, int new_segment) {
+void swap_segment(LoopState *s, int new_segment) {
   int err;
 
-  err = testable_read_file_segment(s->r, s->r->shmem_youre_ready, new_segment);
+  err = testable_read_file_segment(s->parent, s->r->shmem_youre_ready, new_segment);
   s->current_segment = new_segment;
   WELLL(printf("as %d, saved '%c...'", new_segment, ((char *) s->r->shmem_youre_ready)[0]));
 }
