@@ -2,14 +2,27 @@
 #include "../src/parent_loop_exposed.h"
 
 static char *messages, *youre_ready;
+static int (*read_fn_ptr) (Parent *parent, void *shm, int segment);
+static int (*wait_fn_ptr) (sem_t *s);
+static int (*post_fn_ptr) (sem_t **sems, int child);
 
 int _read_file_segment(Parent *parent, void *shm, int segment) {
-  return 0;
+  return read_fn_ptr(parent, shm, segment);
 }
 int _sem_wait(sem_t *s) {
-  return 0;
+  return wait_fn_ptr(s);
 }
 int _sem_post(sem_t **sems, int child) {
+  return post_fn_ptr(sems, child);
+}
+
+int read_1(Parent *parent, void *shm, int segment) {
+  return 0;
+}
+int wait_1(sem_t *s) {
+  return 0;
+}
+int post_1(sem_t **sems, int child) {
   return 0;
 }
 
@@ -26,6 +39,10 @@ void test_parent() {
     "<1,1>\0          "
     "<2,2>\0          "
     ;
+  read_fn_ptr = read_1;
+  wait_fn_ptr = wait_1;
+  post_fn_ptr = post_1;
+
   youre_ready = malloc(256);
   messages = malloc(3 * 16);
   for (j = 0; j < 3 * 16; j++)
