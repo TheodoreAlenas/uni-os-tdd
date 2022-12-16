@@ -2,6 +2,8 @@
 #include "../src/parent_loop_exposed.h"
 
 static char *messages, *youre_ready;
+static int num_of_children, loops_per_child;
+static int expected_posts, real_posts;
 static int (*read_fn_ptr) (Parent *parent, void *shm, int segment);
 static int (*wait_fn_ptr) (sem_t *s);
 static int (*post_fn_ptr) (sem_t **sems, int child);
@@ -16,24 +18,12 @@ int _sem_post(sem_t **sems, int child) {
   return post_fn_ptr(sems, child);
 }
 
-int read_1(Parent *parent, void *shm, int segment) {
-  return 0;
-}
-int wait_1(sem_t *s) {
-  return 0;
-}
-int post_1(sem_t **sems, int child) {
-  return 0;
-}
+int read_1(Parent *parent, void *shm, int segment) { return 0; }
+int wait_1(sem_t *s) { return 0; }
+int post_1(sem_t **sems, int child) { real_posts++; return 0; }
 
-void test_parent() {
-  ParentLoopParams p;
-  LoopState s;
-  MsgCycler msg_cycler;
-  Stack requests;
-  int j, total_notifications;
-  int num_of_children = 3, loops_per_child = 4;
-
+void scene_1() {
+  int j;
   char messages_original[] =
     "<0,0>\0          "
     "<1,1>\0          "
@@ -43,10 +33,25 @@ void test_parent() {
   wait_fn_ptr = wait_1;
   post_fn_ptr = post_1;
 
+  num_of_children = 3;
+  loops_per_child = 4;
+
   youre_ready = malloc(256);
   messages = malloc(3 * 16);
   for (j = 0; j < 3 * 16; j++)
     messages[j] = messages_original[j];
+
+  expected_posts = 1;
+}
+
+void test_parent() {
+  ParentLoopParams p;
+  LoopState s;
+  MsgCycler msg_cycler;
+  Stack requests;
+  int j, total_notifications;
+
+  scene_1();
 
   stack_init(&requests, num_of_children);
 
@@ -65,9 +70,10 @@ void test_parent() {
   msg_cycler.messages = messages;
   msg_cycler.size = num_of_children;
 
-  total_notifications = 2 * num_of_children * loops_per_child;
+  /*total_notifications = 2 * num_of_children * loops_per_child;*/
+  real_posts = 0;
 
   single_loop(&s, &msg_cycler);
 
-  announce("hi from parent", 0 == _read_file_segment(NULL, NULL, 0));
+  announce("scene_1", expected_posts == real_posts);
 }
