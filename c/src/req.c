@@ -12,7 +12,7 @@ void req_send_done(char *shm) {
   shm[1] = '\0';
 }
 
-int req_says_done(char *msg) {
+int req_says_got_it(char *msg) {
   return msg[0] == '$';
 }
 

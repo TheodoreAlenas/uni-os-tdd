@@ -14,13 +14,30 @@ int copy_and_clear_req(MsgCycler *msg_cycler, char *req_str);
 void handle_same_segment(LoopState *s);
 void handle_other_segment(ParentLoopParams *r, int child, int new_segment);
 
-void handle_req_saying_read(LoopState *s);
+void handle_req_saying_got_it(LoopState *s);
 void handle_req_saying_i_want(LoopState *s, char *req_str);
 
 int he_asked_alone(LoopState *s, int new_segment);
 int should_pop_requests(int readers, Stack *requests);
 void pop_requests(LoopState *s);
 void swap_segment(LoopState *s, int new_segment);
+
+
+/* for README, parent-loop */
+void single_loop(LoopState *s, MsgCycler *msg_cycler) {
+  char req_str[MAX_REQUEST_LEN];
+
+  WELLL(printf("waiting for notification. %d readers on current.", s->readers));
+  _sem_wait(s->r->sem_yes_please);
+
+  s->child = copy_and_clear_req(msg_cycler, req_str);
+
+  if (req_says_got_it(req_str))
+    handle_req_saying_got_it(s);
+  else
+    handle_req_saying_i_want(s, req_str);
+}
+/* end of snippet */
 
 
 #ifndef TEST
@@ -39,28 +56,12 @@ int _sem_post(sem_t **sems, int child) {
 #endif
 
 
-/* for README, parent-loop */
-void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str) {
-
-  WELLL(printf("waiting for notification. %d readers on current.", s->readers));
-  _sem_wait(s->r->sem_yes_please);
-
-  s->child = copy_and_clear_req(msg_cycler, req_str);
-
-  if (req_says_done(req_str))
-    handle_req_saying_read(s);
-  else
-    handle_req_saying_i_want(s, req_str);
-}
-/* end of snippet */
-
 int parent_loop_backend(Parent *r) {
   ParentLoopParams p;
   LoopState s;
   MsgCycler msg_cycler;
   Stack requests;
   int j, total_notifications;
-  char req_str[MAX_REQUEST_LEN];
 
   stack_init(&requests, r->pp->num_of_children);
 
@@ -82,7 +83,7 @@ int parent_loop_backend(Parent *r) {
   total_notifications = 2 * r->pp->num_of_children * r->pp->loops_per_child;
 
   for (j = 0; j < total_notifications; j++)
-    single_loop(&s, &msg_cycler, req_str);
+    single_loop(&s, &msg_cycler);
 
   WELL("loop done");
 
@@ -107,7 +108,7 @@ void handle_other_segment(ParentLoopParams *r, int child, int new_segment) {
   WELLL(stack_print_inline(r->requests));
 }
 
-void handle_req_saying_read(LoopState * s) {
+void handle_req_saying_got_it(LoopState * s) {
   WELL("");
   s->readers--;
 

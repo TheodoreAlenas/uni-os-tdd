@@ -15,7 +15,7 @@ typedef struct {
   Parent *parent;  /* limited use */
 } LoopState;
 
-void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str);
+void single_loop(LoopState *s, MsgCycler *msg_cycler);
 int _read_file_segment(Parent *parent, void *shm, int segment);
 int _sem_wait(sem_t *s);
 int _sem_post(sem_t **sems, int child);
