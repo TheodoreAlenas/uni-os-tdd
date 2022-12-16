@@ -23,5 +23,6 @@ void test_get_names();
 void test_fork();
 void test_msg_cycler();
 void test_req();
+void test_parent();
 
 #endif

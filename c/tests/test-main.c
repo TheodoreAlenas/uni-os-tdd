@@ -27,6 +27,7 @@ void call_all() {
   test_fork();
   test_msg_cycler();
   test_req();
+  test_parent();
 }
 
 #define CONSIDER(n) else if (strcmp(name, #n) == 0) test_##n()
@@ -38,6 +39,7 @@ void call_individual_with_same_name(char *name) {
   CONSIDER(fork);
   CONSIDER(msg_cycler);
   CONSIDER(req);
+  CONSIDER(parent);
 }
 #undef CONSIDER
 

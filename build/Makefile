@@ -7,7 +7,7 @@ TESTABLE_FILES := be_yourself.o
 SECONDARY_FILES := params.o parent_params.o get_names.o parent_loop.o
 TERTIARY_FILES := stack.o child_res.o file_segment.o msg_cycler.o req.o
 TRICKY_FILES := fork.o shmem.o
-TEST_NAMED_FILES := test-util.o test-stack.o test-get-names.o test-fork.o test-msg-cycler.o test-req.o
+TEST_NAMED_FILES := test-util.o test-stack.o test-get-names.o test-fork.o test-msg-cycler.o test-req.o test-parent.o
 
 NORMAL_FILES := $(PRIMARY_FILES) $(SECONDARY_FILES) $(TERTIARY_FILES) $(TRICKY_FILES)
 RLR_FILES := main.o $(NORMAL_FILES) $(TESTABLE_FILES)
