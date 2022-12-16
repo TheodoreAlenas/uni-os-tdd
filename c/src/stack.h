@@ -16,7 +16,8 @@ typedef struct stack {
 } Stack;
 
 
-Stack *stack_create(int capacity);
+Stack *stack_init(Stack *s, int capacity);
+Stack *stack_create(int capacity);  /* TODO remove */
 void stack_free(Stack *s);
 bool stack_is_empty(Stack *s);
 bool stack_is_full(Stack *s);

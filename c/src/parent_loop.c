@@ -10,6 +10,13 @@
 #include "stack.h"
 
 typedef struct {
+  sem_t *sem_yes_please;
+  sem_t *sem_youre_ready;
+  void *shmem_youre_ready;
+  Stack *requests;
+} ParentLoopParams;
+
+typedef struct {
   Parent *r; int readers; int current_segment; int child;
 } LoopState;
 
@@ -47,6 +54,7 @@ void single_loop(LoopState *s, MsgCycler *msg_cycler, char *req_str) {
 int parent_loop_backend(Parent *r) {
   LoopState s;
   MsgCycler msg_cycler;
+  Stack requests;
   int j, total_notifications;
   char req_str[MAX_REQUEST_LEN];
 
@@ -54,6 +62,8 @@ int parent_loop_backend(Parent *r) {
   s.readers = 0;
   s.current_segment = -1;
   s.child = 0;
+
+  stack_init(&requests, r->pp->num_of_children);
 
   msg_cycler.head = 0;
   msg_cycler.messages = r->shmem_yes_please;

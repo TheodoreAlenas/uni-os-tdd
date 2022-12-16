@@ -26,3 +26,9 @@
 
 - test on SSH
 
+## Mocks
+
+- reading file segments
+- semaphore actions
+- writing answers
+- reading requests

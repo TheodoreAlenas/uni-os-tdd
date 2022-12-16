@@ -10,16 +10,20 @@ void nullify_items(Stack *s) {
     s->items[i] = NULL;
 }
 
-Stack *stack_create(int capacity) {
-  Stack *s;
-  s = malloc(sizeof(Stack));
-
+Stack *stack_init(Stack *s, int capacity) {
   s->capacity = max(0, capacity);
   s->items = malloc(s->capacity * sizeof(Item));
   s->size = 0;
   nullify_items(s);
 
   return s;
+}
+
+Stack *stack_create(int capacity) {
+  Stack *s;
+  s = malloc(sizeof(Stack));
+
+  return stack_init(s, capacity);
 }
 
 void stack_free(Stack *s) {
