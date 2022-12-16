@@ -85,8 +85,8 @@ void do_a_cycle(const Child *child) {
   char content[MAX_LINE_LEN];
   int err;
 
-  static int bullshit = 0;
-  res.file_segment = (getpid() + bullshit++) % 3;
+  static int bullshit = 0;  /* TODO rename */
+  res.file_segment = (getpid() + !((bullshit++) % 4)) % 3;
   res.line_in_segment = child->names->id; //getpid() % 7;
 
   sprintf(child->shmem_i_want, "<%d,%d>", res.file_segment, res.line_in_segment);
@@ -117,7 +117,7 @@ void do_a_cycle(const Child *child) {
 
     child_res_to_file(&res, child->names->file_name);
 
-    usleep(200000);
+    usleep(20000);
   }
 
 }
