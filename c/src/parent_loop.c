@@ -105,14 +105,10 @@ int should_pop_requests(int readers, Stack *requests) {
 
 struct for_each_args { sem_t **sems; int *readers; };
 
-int tell_child(int child, struct for_each_args *a) {
-  WELL("");
+int update_readers_and_tell_child(Item *item, void *r) {
+  struct for_each_args *a = r;
   (*(a->readers))++;
-  return sem_post(a->sems[child]);
-}
-
-int callback_tell_child(Item *item, void *r) {
-  return tell_child(item->child, (struct for_each_args *) r);
+  return sem_post(a->sems[item->child]);
 }
 
 void pop_requests(LoopState * s) {
@@ -126,7 +122,7 @@ void pop_requests(LoopState * s) {
 
   a.readers = &(s->readers);
   a.sems = s->r->sems_youre_ready;
-  stack_for_all_of_segment(s->r->requests, callback_tell_child, &a);
+  stack_for_all_of_segment(s->r->requests, update_readers_and_tell_child, &a);
 }
 
 void swap_segment(LoopState * s, int new_segment) {
