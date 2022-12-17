@@ -1,4 +1,6 @@
 SRC := ../c
+TMP := /tmp/alenas-rlr-makefile
+FLAGS :=
 
 PARENT_O := $(foreach f, $(wildcard $(SRC)/parent/*.c), parent-$(notdir $(f:.c=.o)))
 CHILD_O := $(foreach f, $(wildcard $(SRC)/child/*.c), child-$(notdir $(f:.c=.o)))
@@ -19,13 +21,15 @@ clean:
 rlr: $(RLR_MAIN_O) main.o
 	gcc $(RLR_MAIN_O) main.o -o rlr
 
+dev: FLAGS = -DDEV
 dev: $(RLR_MAIN_O) main.o
 	gcc $(RLR_MAIN_O) main.o -o rlr
 
+test: FLAGS = -DTEST
 test: $(TEST_MAIN_O) test_main.o main.o
 	gcc $(TEST_MAIN_O) test_main.o -o test
 	gcc $(RLR_MAIN_O) main.o -o rlr
 
 %.o:
-	gcc -c $(SRC)/$(subst -,/,$(@:.o=.c)) -o $@
+	gcc $(FLAGS) -c $(SRC)/$(subst -,/,$(@:.o=.c)) -o $@
 
