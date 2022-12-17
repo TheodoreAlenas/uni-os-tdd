@@ -5,8 +5,6 @@ make          # or 'make dev', for verbose
 ls output
 make clean    # cleans the output/ too
 
-./test  # recommended
-
 1115 2019 00048 Theodoros (more at the bottom)
 
 
