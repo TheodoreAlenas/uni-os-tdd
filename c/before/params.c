@@ -64,6 +64,8 @@ Params *parameters_parse(Params *p, int argc, char **argv) {
     }
 
     if (0) {}
+    else if (flag == NULL && argv[i][0] != '-') strcpy(p->parent_params->file_name, argv[i]);
+    else if (flag == NULL && argv[i][0] == '-') fprintf(stderr, "bad flag %s\n", argv[i]);
     IF_ITS("-c", "--children") p->parent_params->num_of_children = atoi(argv[i]);
     IF_ITS("-w", "--shm-i-want") strcpy(p->parent_params->shmem_name_yes_please, argv[i]);
     IF_ITS("-t", "--shm-thank-you") strcpy(p->parent_params->shmem_name_youre_ready, argv[i]);
@@ -72,8 +74,6 @@ Params *parameters_parse(Params *p, int argc, char **argv) {
     IF_ITS("-o", "--output") strcpy(p->output_dir, argv[i]);
     IF_ITS("-l", "--file-segment-length") p->parent_params->file_segment_length = atoi(argv[i]);
     IF_ITS("-m", "--microsecond-delay") p->microsecond_delay = atoi(argv[i]);
-
-    else p->parent_params->file_name = argv[i];
 
     flag = NULL;
   }

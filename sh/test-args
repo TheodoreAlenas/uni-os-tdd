@@ -36,6 +36,18 @@ EOF
 
 judge "empty case"
 
+
+reality="$(./rlr f --print | grep 'input file:')"
+if [ "$reality" != "input file: 'f'" ]
+then echo "inupt file only" >&2
+fi
+
+reality="$(./rlr -c 2 f --print | grep 'input file:')"
+if [ "$reality" != "input file: 'f'" ]
+then echo "inupt file along with previous arguments" >&2
+fi
+
+
 reality="$(
 ./rlr \
   --children 732 \
@@ -89,14 +101,4 @@ EOF
 )"
 
 judge "short options"
-
-reality="$(./rlr f --print | grep 'input file:')"
-if [ "$reality" != "input file: 'f'" ]
-then echo "inupt file only" >&2
-fi
-
-reality="$(./rlr -c 2 f --print | grep 'input file:')"
-if [ "$reality" != "input file: 'f'" ]
-then echo "inupt file along with previous arguments" >&2
-fi
 
