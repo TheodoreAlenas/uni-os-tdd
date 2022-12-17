@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #include "loop.h"
 #include "../both/constants.h"
 #include "../both/dev_mode.h"
@@ -66,10 +67,14 @@ void do_a_cycle(const Child *child) {
   char isolated_line[MAX_LINE_LEN];
   int err, i;
   SegmAndLine d;
+  struct timespec req_start, req_end, res_start, res_end;
 
   d = write_a_request(child);
+
+  clock_gettime(CLOCK_MONOTONIC, &res_start);
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
+  clock_gettime(CLOCK_MONOTONIC, &res_end);
 
   err = !isolate_line(isolated_line, child->shmem_thank_you, d.line_in_segment);
 
@@ -81,7 +86,7 @@ void do_a_cycle(const Child *child) {
     print_isolate_line_error(child, d);
     return;
   }
-  record(isolated_line, child, d, 3, 4);
+  record(isolated_line, child, d, 3, res_end.tv_nsec - res_start.tv_nsec);
   usleep(child->names->microsecond_delay);
 
   sem_wait(child->sem_thank_you);

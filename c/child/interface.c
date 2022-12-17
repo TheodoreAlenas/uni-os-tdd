@@ -30,6 +30,7 @@ int child_init(Child *child, const ChildArgs *args) {
       args->shmem_name_i_want,
       args->num_of_children) + args->id * MAX_REQUEST_LEN;
   /* end of snippet */
+
   child->shmem_thank_you = shmem_open_thank_you(
       args->shmem_name_thank_you,
       args->file_segment_length);

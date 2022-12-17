@@ -17,7 +17,7 @@ void child_res_init(ChildRes *res) {
 
 int child_res_to_ostream(ChildRes *res, FILE *file) {
 
-#define ARGS() "%d %d <%d,%d> %s\n", \
+#define ARGS() "req: %d ns, res: %d ns, <%d,%d> $%s\n", \
     res->application_time_in_ns, \
     res->responce_time_in_ns, \
     res->file_segment, \
