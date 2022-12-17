@@ -17,16 +17,20 @@ judge () {
   fi
 }
 
-reality="$(./rlr --print | sort)"
+rtmp="$(mktemp /tmp/rtmpXXXXXX)"
+reality="$({ ./rlr --print & printf $! > $rtmp; } | sort)"
+pid="$(cat $rtmp)"
+rm $rtmp
 
 expectation="$(sort <<EOF
 number of children: 8
-output directory: '../output'
-'I want' shared memory name: 'shm_i_want'
-'thank you' shared memory name: 'shm_thank_you'
+output directory: 'output'
+'I want' shared memory name: 'shm_i_want$pid'
+'thank you' shared memory name: 'shm_thank_you$pid'
 input file: '../data/1001-line-numbers.dat'
 lines in file segment: 128
 loops per child: 1024
+child's delay in microseconds: 20000
 EOF
 )"
 
@@ -85,4 +89,14 @@ EOF
 )"
 
 judge "short options"
+
+reality="$(./rlr f --print | grep 'input file:')"
+if [ "$reality" != "input file: 'f'" ]
+then echo "inupt file only" >&2
+fi
+
+reality="$(./rlr -c 2 f --print | grep 'input file:')"
+if [ "$reality" != "input file: 'f'" ]
+then echo "inupt file along with previous arguments" >&2
+fi
 

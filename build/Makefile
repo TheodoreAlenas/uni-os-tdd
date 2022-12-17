@@ -15,7 +15,7 @@ all: rlr
 
 clean:
 	find . -type f '!' -name 'Makefile' -exec rm {} ';'
-	find ../output -type f -exec rm {} ';'
+	find output -type f -exec rm {} ';'
 
 rlr: $(RLR_MAIN_O) main.o
 	gcc $(RLR_MAIN_O) main.o -o rlr

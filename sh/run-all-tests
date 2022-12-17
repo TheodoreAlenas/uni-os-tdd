@@ -1,0 +1,19 @@
+#! /bin/env sh
+
+. sh/test-one
+
+alias make='make -s'
+cd build || exit 1
+make clean
+
+make test
+test_one -v ./test
+make clean
+
+make
+test_one ../sh/test-args
+make clean
+
+test_one 'make dev'
+make clean
+
