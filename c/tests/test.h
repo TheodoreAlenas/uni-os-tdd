@@ -12,7 +12,7 @@
 #include <sys/shm.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include "../src/constants.h"
+#include "../both/constants.h"
 
 void announce(char *function_name, bool passed);
 int get_total_tests();
