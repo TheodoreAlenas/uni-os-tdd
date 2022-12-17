@@ -122,7 +122,7 @@ void record(char *content, const Child *child, SegmAndLine d, int time1, int tim
 
 /* for README, do-a-cycle */
 void do_a_cycle(const Child *child) {
-  char content[MAX_LINE_LEN];
+  char isolated_line[MAX_LINE_LEN];
   int err, i;
   SegmAndLine d;
 
@@ -130,7 +130,7 @@ void do_a_cycle(const Child *child) {
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
 
-  err = !isolate_line(content, child->shmem_thank_you, d.line_in_segment);
+  err = !isolate_line(isolated_line, child->shmem_thank_you, d.line_in_segment);
 
   WELL("sending 'got the message'");
   req_send_done(child->shmem_i_want);
@@ -140,7 +140,7 @@ void do_a_cycle(const Child *child) {
     print_isolate_line_error(child, d);
     return;
   }
-  record(content, child, d, 3, 4);
+  record(isolated_line, child, d, 3, 4);
   usleep(child->names->microsecond_delay);
 
   sem_wait(child->sem_thank_you);
