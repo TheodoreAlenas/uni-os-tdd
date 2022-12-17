@@ -8,6 +8,42 @@
 #include "../both/req.h"
 #include "res.h"
 
+typedef struct { int file_segment; int line_in_segment; } SegmAndLine;
+typedef struct {
+    struct timespec req_time;
+    struct timespec res_start;
+    struct timespec res_end;
+} ThreeTimespecs;
+void post_and_wait(const Child *child, ThreeTimespecs * t);
+SegmAndLine write_a_request(const Child *child);
+void print_isolate_line_error(const Child *child, SegmAndLine d);
+void tell_you_got_the_message(const Child *child);
+void record_and_wait(const Child *child,
+    ThreeTimespecs *t, SegmAndLine d, char *content);
+
+
+
+/* for README, do-a-cycle */
+void do_a_cycle(const Child *child) {
+  char isolated_line[MAX_LINE_LEN];
+  int err, i;
+  SegmAndLine req;
+  ThreeTimespecs time_data;
+
+  req = write_a_request(child);
+  post_and_wait(child, &time_data);
+  err = !isolate_line(isolated_line,
+      child->shmem_thank_you, req.line_in_segment);
+  tell_you_got_the_message(child);
+
+  if (err)
+    print_isolate_line_error(child, req);
+  else
+    record_and_wait(child, &time_data, req, isolated_line);
+}
+/* end of snippet */
+
+
 
 int child_loop_backend(const Child *child) {
   int i;
@@ -20,15 +56,6 @@ int child_loop_backend(const Child *child) {
   WELL("loop done");
   return 0;
 }
-
-typedef struct { int file_segment; int line_in_segment; } SegmAndLine;
-typedef struct {
-    struct timespec req_time;
-    struct timespec res_start;
-    struct timespec res_end;
-} ThreeTimespecs;
-void post_and_wait(const Child *child, ThreeTimespecs * t);
-
 
 SegmAndLine write_a_request(const Child *child) {
   char req_str[MAX_REQUEST_LEN];
@@ -56,7 +83,8 @@ void print_isolate_line_error(const Child *child, SegmAndLine d) {
       ((char *) child->shmem_thank_you)[1]);
 }
 
-void record(const Child *child, ThreeTimespecs *t, SegmAndLine d, char *content) {
+void record(const Child *child,
+    ThreeTimespecs *t, SegmAndLine d, char *content) {
   ChildRes res;
 
   res.file_segment = d.file_segment;
@@ -86,31 +114,10 @@ void tell_you_got_the_message(const Child *child) {
   sem_post(child->sem_i_want);
 }
 
-void record_and_wait(const Child *child, ThreeTimespecs *t, SegmAndLine d, char *content) {
+void record_and_wait(const Child *child,
+    ThreeTimespecs *t, SegmAndLine d, char *content) {
   record(child, t, d, content);
   usleep(child->names->microsecond_delay);
   sem_wait(child->sem_thank_you);
 }
-
-/* for README, do-a-cycle */
-void do_a_cycle(const Child *child) {
-  char isolated_line[MAX_LINE_LEN];
-  int err, i;
-  SegmAndLine req;
-  ThreeTimespecs time_data;
-
-  req = write_a_request(child);
-  post_and_wait(child, &time_data);
-  err = !isolate_line(
-      isolated_line,
-      child->shmem_thank_you,
-      req.line_in_segment);
-  tell_you_got_the_message(child);
-
-  if (err)
-    print_isolate_line_error(child, req);
-  else
-    record_and_wait(child, &time_data, req, isolated_line);
-}
-/* end of snippet */
 
