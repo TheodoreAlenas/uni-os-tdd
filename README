@@ -1,0 +1,274 @@
+cd build
+make          # or 'make dev', for verbose
+./rlr --help
+./rlr         # ./rlr -c 2 [...]
+ls output
+make clean    # cleans the output/ too
+
+1115 2019 00048 Theodoros (more at the bottom)
+
+
+
+          - N POSIX semaphores
+
+          - 2 POSIX shared memory segments
+
+          - Writing requests end to start
+
+          - An improvised priority-stack
+
+          - rlr instances can run in parallel
+
+
+     ____  ____   ___   ____ _____ ____ ____
+    |  _ \|  _ \ / _ \ / ___| ____/ ___/ ___|
+    | |_) | |_) | | | | |   |  _| \___ \___ \
+    |  __/|  _ <| |_| | |___| |___ ___) |__) |
+    |_|   |_| \_\\___/ \____|_____|____/____/
+
+
+                Parent       Child
+                ------------------
+                init >
+                          < I want
+                ready >
+                            < read
+                ok >
+                          < I want
+                ready >
+                            < read
+                ok >
+                       ...
+                ok >
+                        $
+
+
+The child leaves its message at a specific part
+of the segment, and notifies.
+
+     29 |   child->shmem_i_want = shmem_open_i_want(
+     30 |       args->shmem_name_i_want,
+     31 |       args->num_of_children) + args->id * MAX_REQUEST_LEN;
+    [ file c/child/interface.c ]
+
+The parent cycles through the "rows" of the
+children's segments, reading one message per
+notification.
+
+     32 |   _sem_wait(s->r->sem_yes_please);
+     33 |
+     34 |   s->child = copy_and_clear_req(msg_cycler, req_str);
+     35 |
+     36 |   if (req_says_got_it(req_str))
+     37 |     handle_req_saying_got_it(s);
+     38 |   else
+     39 |     handle_req_saying_i_want(s, req_str);
+    [ file c/parent/loop.c ]
+
+The request is written back-to-front.
+
+     70 |   for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
+     71 |     ((char *)child->shmem_i_want)[i] = req_str[i];
+    [ file c/child/loop.c ]
+
+Before writing it, it is guaranteed that there was
+a null character at position 0. That character
+should be overriden last, because while the parent
+does wait for a semaphore, he doesn't know the
+source of the semaphore post, and he will pick up
+the first child request he finds to be non-empty.
+
+A request might also be an 'I read it' message.
+
+     11 | void req_send_done(char *shm) {
+     12 |   shm[1] = '\0';
+     13 |   shm[0] = '$';
+     14 | }
+     15 |
+     16 | int req_says_got_it(char *msg) {
+     17 |   return msg[0] == '$';
+     18 | }
+    [ file c/both/req.c ]
+
+When a request is about another file segment, it
+is stacked, but with priority. It's called
+'bubbling' in the code.
+
+     53 |   x1->file_segment = 1;
+     54 |   x2->file_segment = 2;
+     55 |   x3->file_segment = 1;
+     56 |   s = stack_create(3);
+     57 |   stack_push(s, x1);
+     58 |   stack_push(s, x2);
+     59 |   stack_push(s, x3);
+     60 |
+     61 |   stack_pop(s, &y3);
+     62 |   stack_pop(s, &y2);
+     63 |   stack_pop(s, &y1);
+     64 |   announce("test_stack_1_2_1_is_2_1_1",
+     65 |       y1->file_segment == 2 &&
+     66 |       y2->file_segment == 1 &&
+     67 |       y3->file_segment == 1
+     68 |       );
+    [ file c/tests/stack.c ]
+
+Then, multiple requests are popped and everyone
+interested is notified once the segment changes.
+
+    152 |   stack_for_all_of_segment(s->r->requests, update_readers_and_tell_child, &a);
+    153 |   WELLL(stack_print_inline(s->r->requests));
+    [ file c/parent/loop.c ]
+
+From the child's perspective:
+
+     27 | void do_a_cycle(const Child *child) {
+     28 |   char isolated_line[MAX_LINE_LEN];
+     29 |   int err, i;
+     30 |   SegmAndLine req;
+     31 |   ThreeTimespecs time_data;
+     32 |
+     33 |   req = write_a_request(child);
+     34 |   post_and_wait(child, &time_data);
+     35 |   err = !isolate_line(isolated_line,
+     36 |       child->shmem_thank_you, req.line_in_segment);
+     37 |   tell_you_got_the_message(child);
+     38 |
+     39 |   if (err)
+     40 |     print_isolate_line_error(child, req);
+     41 |   else
+     42 |     record_and_wait(child, &time_data, req, isolated_line);
+     43 | }
+    [ file c/child/loop.c ]
+
+
+    ___  ____  ____ ___ _____ ___ _____ ____
+   / _ \|  _ \|  _ \_ _|_   _|_ _| ____/ ___|
+  | | | | | | | | | | |  | |  | ||  _| \___ \
+  | |_| | |_| | |_| | |  | |  | || |___ ___) |
+   \___/|____/|____/___| |_| |___|_____|____/
+
+
+     12 | #define WELL(str) PRINT_DEV_STATUS(); printf("%s\n", str)
+     13 | #define WELLL(printf_expr) PRINT_DEV_STATUS(); printf_expr; printf("\n"); fflush(stdout)
+    [ file c/both/dev_mode.h ]
+
+     24 | dev: FLAGS = -DDEV
+     25 | dev: $(RLR_MAIN_O) main.o
+     26 | 	gcc $(RLR_MAIN_O) main.o -o rlr
+    [ file build/Makefile ]
+
+Naming:
+
+    Parent            Child
+    ---------------------------
+    yes_please    =   i_want
+    youre_ready   =   thank_you
+
+SHM_I_WANT, sem_thank_you, and so on.
+
+'const' isn't used much because data eventually
+reaches a standard function such as readline,
+which doesn't declare any arguments constant. So
+it feels awkward.
+
+Plus I follow a retro style. The long names
+aren't retro but the comments are old school and
+the declarations are at the top.
+
+Similarly I avoid unsigned types because they
+might come from the return value of a function.
+Type conversions remove any guarantee unsigned
+types are supposed to help with.
+
+There are tiny functions because I'm trying out
+the "Uncle Bob" principles of clean coding.
+I do rely on jump-to-definition functionality,
+though it does break with preprocessor
+definitions. The main point is to make it easy
+to skip reading code when one is not interested.
+
+
+         _____ _____ ____ _____ ____
+        |_   _| ____/ ___|_   _/ ___|
+          | | |  _| \___ \ | | \___ \
+          | | | |___ ___) || |  ___) |
+          |_| |_____|____/ |_| |____/
+
+
+I tried out some test driven development.
+It didn't go the best but it was entertaining.
+
+Some .c files are different with  make test
+
+     10 | #ifndef TEST
+     11 |
+     12 | int testable_fork() {
+     13 |   return fork();
+     14 | }
+    [ file c/before/be_yourself.c ]
+
+      8 | static int num_of_forks;
+      9 |
+     10 | int testable_fork() {
+     11 |   num_of_forks++;
+     12 |   return fork();
+     13 | }
+    [ file c/tests/fork.c ]
+
+The specific example is from a test that was
+actually written after making the forks work.
+There were bugs and any part of the code was
+suspicious, so I thought to secure the forks.
+
+The tests aren't very sophisticated, they 'announce'
+the situation. Also they never deallocate.
+
+     11 |   announce("errors_on_letter", -1 == req_parse("<2a,4>"));
+     12 |   announce("parses_one_digit", 2 == req_parse("<2,4>"));
+    [ file c/tests/req.c ]
+
+
+    ____ _   _ ___ _     ____  ____  _____ _   _
+   / ___| | | |_ _| |   |  _ \|  _ \| ____| \ | |
+  | |   | |_| || || |   | | | | |_) |  _| |  \| |
+  | |___|  _  || || |___| |_| |  _ <| |___| |\  |
+   \____|_| |_|___|_____|____/|_| \_\_____|_| \_|
+
+
+Children:
+- wait for the parent to initialize the resources
+- can't modify the shared memory segment for reading
+- don't know the recipe for file names,
+    semaphore names or shared memory segment names.
+
+    child.c:
+
+    Child *child_create(const ChildArgs *args);
+    void do_a_cycle(const Child *child);
+
+show the process.
+
+One irony is they can modify each other's request.
+
+Memory that was allocated before forking,
+is deallocated.
+
+Some combinations of parent-children crashes make
+background processes go on, messing up next runs.
+This is to be fixed, and I'll update this README.
+
+
+
+
+Dimakopoulos Theodoros
+
+1115 2019 00048
+1115201900048
+sdi1900048
+
+sdi1900048@di.uoa.gr
+dimakopt732@gmail.com
+
+6939 75 16 42
+
+Last update: Sat Dec 17 21:18:09 EET 2022
