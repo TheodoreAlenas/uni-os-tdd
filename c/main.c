@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
   pid = getpid();
   err = handle_forks(&p);
   if (getpid() == pid)
-    printf("The output is in the %s directory\n",
+    printf("The output is in the '%s' directory\n",
         p.output_dir);
 
   WELL("DONE");

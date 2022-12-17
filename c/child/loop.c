@@ -67,6 +67,8 @@ int little_offset(const Child *child, int prev_line) {
   len = child->names->file_segment_length / 2;
   random = rand() % len;
   shuffled = prev_line + random - len / 2;
+  if (shuffled < 0)
+    shuffled = -shuffled;
   normalized = shuffled % child->lines_in_file;
 
   return normalized;

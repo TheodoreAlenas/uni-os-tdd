@@ -38,8 +38,12 @@ Parent *parent_create(const ParentParams *pp, char **sem_names) {
     return NULL;
 
   /* waiting the children to read the number of lines */
-  for (i = 0; i < r->pp->num_of_children; i++)
+  for (i = 0; i < r->pp->num_of_children; i++) {
+    WELLL(printf("child %d also knows now", i));
     sem_wait(r->sem_yes_please);
+    sem_post(r->sems_youre_ready[i]);
+  }
+  WELL("All the children read the number of lines");
 
   return r;
 }

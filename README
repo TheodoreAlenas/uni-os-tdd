@@ -29,6 +29,8 @@ make clean    # cleans the output/ too
     ------------------
     init >
              < saw num
+    nice >
+
               < I want
     ready >
                 < read
@@ -47,9 +49,9 @@ start the loop until all the children have read the total number of lines.
 
 The child leaves its message at a specific part of the segment, and notifies.
 
-     30 |   child->shmem_i_want = shmem_open_i_want(
-     31 |       args->shmem_name_i_want,
-     32 |       args->num_of_children) + args->id * MAX_REQUEST_LEN;
+     31 |   child->shmem_i_want = shmem_open_i_want(
+     32 |       args->shmem_name_i_want,
+     33 |       args->num_of_children) + args->id * MAX_REQUEST_LEN;
     [ file c/child/interface.c ]
 
 The parent cycles through the "rows" of the children's segments, reading one
@@ -67,8 +69,8 @@ message per notification.
 
 The request is written back-to-front.
 
-     93 |   for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
-     94 |     child->shmem_i_want[i] = req_str[i];
+     95 |   for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
+     96 |     child->shmem_i_want[i] = req_str[i];
     [ file c/child/loop.c ]
 
 Before writing it, it is guaranteed that there was a null character at
@@ -139,10 +141,10 @@ From the child's perspective:
      45 | }
     [ file c/child/loop.c ]
 
-     81 |   if (rand() % 8 == 0)
-     82 |     line_in_file = rand() % child->lines_in_file;
-     83 |   else
-     84 |     line_in_file = little_offset(child, *prev_line);
+     83 |   if (rand() % 8 == 0)
+     84 |     line_in_file = rand() % child->lines_in_file;
+     85 |   else
+     86 |     line_in_file = little_offset(child, *prev_line);
     [ file c/child/loop.c ]
 
 
@@ -221,4 +223,4 @@ never deallocate.
 
 
 
-Last update: Sat Dec 17 23:33:09 EET 2022
+Last update: Sun Dec 18 00:20:43 EET 2022

@@ -25,6 +25,7 @@ int child_init(Child *child, const ChildArgs *args) {
 
   WELL("waiting for the parent to create his semaphore");
   sem_wait(child->sem_thank_you);
+  WELL("able to read the lines");
 
   /* for README, child-shmem-offset */
   child->shmem_i_want = shmem_open_i_want(
@@ -41,8 +42,10 @@ int child_init(Child *child, const ChildArgs *args) {
     return err;
 
   child->lines_in_file = *((int *) child->shmem_thank_you);
-  /* 'read the number of lines' */
+
   sem_post(child->sem_i_want);
+  sem_wait(child->sem_thank_you);
+  WELLL(printf("read that the file has %d lines", child->lines_in_file));
 
   return 0;
 }

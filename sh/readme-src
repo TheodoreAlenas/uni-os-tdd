@@ -29,6 +29,8 @@ make clean    # cleans the output/ too
     ------------------
     init >
              < saw num
+    nice >
+
               < I want
     ready >
                 < read
