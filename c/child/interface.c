@@ -39,16 +39,12 @@ int child_init(Child *child, const ChildArgs *args) {
 }
 
 void child_free(Child *child) {
-  if (child == NULL)
-    return;
 
   sem_unlink(child->names->sem_name_thank_you);
   sem_close(child->sem_i_want);
   sem_close(child->sem_thank_you);
   shmem_free(child->names->shmem_name_i_want);
   shmem_free(child->names->shmem_name_thank_you);
-
-  free(child);
 }
 
 int try_opening_sem_i_want(Child *child, const ChildArgs *args) {

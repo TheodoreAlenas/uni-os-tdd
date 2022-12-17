@@ -10,9 +10,9 @@
 
 typedef struct { int file_segment; int line_in_segment; } SegmAndLine;
 typedef struct {
-    struct timespec req_time;
-    struct timespec res_start;
-    struct timespec res_end;
+  struct timespec req_time;
+  struct timespec res_start;
+  struct timespec res_end;
 } ThreeTimespecs;
 void post_and_wait(const Child *child, ThreeTimespecs * t);
 SegmAndLine write_a_request(const Child *child);
@@ -94,7 +94,6 @@ void record(const Child *child,
   strcpy(res.line_contents, content);
 
   child_res_to_file(&res, child->names->file_name);
-
 }
 
 void post_and_wait(const Child *child, ThreeTimespecs * t) {
