@@ -1,6 +1,7 @@
 /build/*.o
 /build/rlr
 /bulid/test
+/build/output
 /data
 /output
-/README
+README
