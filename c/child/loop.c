@@ -48,12 +48,12 @@ SegmAndLine write_a_request(const Child *child) {
 }
 
 void print_isolate_line_error(const Child *child, SegmAndLine d) {
-    fprintf(stderr,
-        "child %d couldn't find "
-        "line %d in segment %d ('%c%c...')\n",
-        child->names->id, d.line_in_segment, d.file_segment,
-        ((char *) child->shmem_thank_you)[0],
-        ((char *) child->shmem_thank_you)[1]);
+  fprintf(stderr,
+      "child %d couldn't find "
+      "line %d in segment %d ('%c%c...')\n",
+      child->names->id, d.line_in_segment, d.file_segment,
+      ((char *) child->shmem_thank_you)[0],
+      ((char *) child->shmem_thank_you)[1]);
 }
 
 void record(const Child *child, ThreeTimespecs *t, SegmAndLine d, char *content) {
@@ -96,21 +96,21 @@ void record_and_wait(const Child *child, ThreeTimespecs *t, SegmAndLine d, char 
 void do_a_cycle(const Child *child) {
   char isolated_line[MAX_LINE_LEN];
   int err, i;
-  SegmAndLine d;
+  SegmAndLine req;
   ThreeTimespecs time_data;
 
-  d = write_a_request(child);
+  req = write_a_request(child);
   post_and_wait(child, &time_data);
   err = !isolate_line(
       isolated_line,
       child->shmem_thank_you,
-      d.line_in_segment);
+      req.line_in_segment);
   tell_you_got_the_message(child);
 
   if (err)
-    print_isolate_line_error(child, d);
+    print_isolate_line_error(child, req);
   else
-    record_and_wait(child, &time_data, d, isolated_line);
+    record_and_wait(child, &time_data, req, isolated_line);
 }
 /* end of snippet */
 
