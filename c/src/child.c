@@ -107,9 +107,21 @@ void print_isolate_line_error(const Child *child, SegmAndLine d) {
         ((char *) child->shmem_thank_you)[1]);
 }
 
+void record(char *content, const Child *child, SegmAndLine d, int time1, int time2) {
+  ChildRes res;
+
+  res.file_segment = d.file_segment;
+  res.line_in_segment = d.line_in_segment;
+  res.application_time_in_ns = time1;
+  res.responce_time_in_ns = time2;
+  strcpy(res.line_contents, content);
+
+  child_res_to_file(&res, child->names->file_name);
+
+}
+
 /* for README, do-a-cycle */
 void do_a_cycle(const Child *child) {
-  ChildRes res;
   char content[MAX_LINE_LEN];
   int err, i;
   SegmAndLine d;
@@ -128,18 +140,10 @@ void do_a_cycle(const Child *child) {
     print_isolate_line_error(child, d);
     return;
   }
-
-  res.file_segment = d.file_segment;
-  res.line_in_segment = d.line_in_segment;
-  res.application_time_in_ns = 3;
-  res.responce_time_in_ns = 4;
-  strcpy(res.line_contents, content);
-
-  child_res_to_file(&res, child->names->file_name);
-
-  sem_wait(child->sem_thank_you);
+  record(content, child, d, 3, 4);
   usleep(child->names->microsecond_delay);
 
+  sem_wait(child->sem_thank_you);
 }
 /* end of snippet */
 
