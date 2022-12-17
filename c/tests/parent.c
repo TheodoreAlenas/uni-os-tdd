@@ -1,5 +1,5 @@
 #include "test.h"
-#include "../src/parent_loop_exposed.h"
+#include "../parent/loop_exposed.h"
 
 static char *messages, *youre_ready;
 static int num_of_children, loops_per_child;

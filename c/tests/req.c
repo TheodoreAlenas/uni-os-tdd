@@ -1,5 +1,5 @@
 #include "test.h"
-#include "../src/req.h"
+#include "../both/req.h"
 
 void test_req() {
   char s[MAX_LINE_LEN];

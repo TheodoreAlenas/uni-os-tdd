@@ -1,4 +1,4 @@
-#include "../src/stack.h"
+#include "../parent/stack.h"
 #include "test.h"
 
 int callback_0(Item *item, void *args);

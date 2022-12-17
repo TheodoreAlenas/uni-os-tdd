@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "test.h"
+#include "tests/test.h"
 
 void call_all();
 void call_individual_with_same_name(char *name);

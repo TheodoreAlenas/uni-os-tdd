@@ -1,5 +1,5 @@
 #include "test.h"
-#include "../src/msg_cycler.h"
+#include "../parent/msg_cycler.h"
 
 void test_msg_cycler() {
 
