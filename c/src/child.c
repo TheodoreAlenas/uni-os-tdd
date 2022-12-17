@@ -98,6 +98,15 @@ SegmAndLine write_a_request(const Child *child) {
   return d;
 }
 
+void print_isolate_line_error(const Child *child, SegmAndLine d) {
+    fprintf(stderr,
+        "child %d couldn't find "
+        "line %d in segment %d ('%c%c...')\n",
+        child->names->id, d.line_in_segment, d.file_segment,
+        ((char *) child->shmem_thank_you)[0],
+        ((char *) child->shmem_thank_you)[1]);
+}
+
 /* for README, do-a-cycle */
 void do_a_cycle(const Child *child) {
   ChildRes res;
@@ -109,35 +118,27 @@ void do_a_cycle(const Child *child) {
   sem_post(child->sem_i_want);
   sem_wait(child->sem_thank_you);
 
-  if (!isolate_line(content, child->shmem_thank_you, d.line_in_segment)) {
-    fprintf(stderr,
-        "child %d couldn't find "
-        "line %d in segment %d ('%c%c...')\n",
-        child->names->id, d.line_in_segment, d.file_segment,
-        ((char *) child->shmem_thank_you)[0],
-        ((char *) child->shmem_thank_you)[1]);
+  err = !isolate_line(content, child->shmem_thank_you, d.line_in_segment);
 
-    WELL("sending done (though failed)");
-    req_send_done(child->shmem_i_want);
-    sem_post(child->sem_i_want);
+  WELL("sending 'got the message'");
+  req_send_done(child->shmem_i_want);
+  sem_post(child->sem_i_want);
 
+  if (err) {
+    print_isolate_line_error(child, d);
+    return;
   }
-  else {
-    WELL("sending done");
-    req_send_done(child->shmem_i_want);
-    sem_post(child->sem_i_want);
 
-    res.file_segment = d.file_segment;
-    res.line_in_segment = d.line_in_segment;
-    res.application_time_in_ns = 3;
-    res.responce_time_in_ns = 4;
-    strcpy(res.line_contents, content);
+  res.file_segment = d.file_segment;
+  res.line_in_segment = d.line_in_segment;
+  res.application_time_in_ns = 3;
+  res.responce_time_in_ns = 4;
+  strcpy(res.line_contents, content);
 
-    child_res_to_file(&res, child->names->file_name);
+  child_res_to_file(&res, child->names->file_name);
 
-    sem_wait(child->sem_thank_you);
-    usleep(child->names->microsecond_delay);
-  }
+  sem_wait(child->sem_thank_you);
+  usleep(child->names->microsecond_delay);
 
 }
 /* end of snippet */
