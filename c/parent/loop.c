@@ -149,7 +149,8 @@ void pop_requests(LoopState *s) {
   a.readers = &(s->readers);
   a.sems = s->r->sems_youre_ready;
   /* for README, pop-requests */
-  stack_for_all_of_segment(s->r->requests, update_readers_and_tell_child, &a);
+  stack_for_all_of_segment(s->r->requests,
+      update_readers_and_tell_child, &a);
   WELLL(stack_print_inline(s->r->requests));
   /* end of snippet */
 }
