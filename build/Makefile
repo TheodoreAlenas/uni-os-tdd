@@ -20,9 +20,11 @@ clean:
 rlr: $(RLR_MAIN_O) main.o
 	gcc $(RLR_MAIN_O) main.o -o rlr
 
+# for README, make-dev
 dev: FLAGS = -DDEV
 dev: $(RLR_MAIN_O) main.o
 	gcc $(RLR_MAIN_O) main.o -o rlr
+# end of snippet
 
 test: FLAGS = -DTEST
 test: $(TEST_O) $(RLR_MAIN_O) test.o

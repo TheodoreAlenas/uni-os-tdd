@@ -1,6 +1,7 @@
 #ifndef DEV_MODE_H
 #define DEV_MODE_H
 
+/* for README, dev-mode */
 #ifdef DEV
 
 #include <stdio.h>
@@ -18,6 +19,7 @@
 #define WELLL(printf_args)
 
 #endif
+/* end of snippet */
 
 
 #endif

@@ -5,8 +5,8 @@
 #include <unistd.h>
 #include "struct.h"
 
-Child *child_create(const ChildArgs *args);
+int child_init(Child *child, const ChildArgs *args);
 void child_free(Child *child);
-void child_loop(const Child *child);
+int child_loop(const Child *child);
 
 #endif

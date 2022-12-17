@@ -27,7 +27,7 @@ int be_parent(Params *p, char **sem_names) {
 }
 
 int be_child(Params *p, unsigned child_index, char *sem_name) {
-  Child *child;
+  Child child;
   ChildArgs args;
 
   WELL("");
@@ -45,11 +45,8 @@ int be_child(Params *p, unsigned child_index, char *sem_name) {
 
   WELL(args.file_name);
 
-  child = child_create(&args);
-  child_loop(child);  /* TODO returns err */
-  child_free(child);
-
-  return 0;
+  child_init(&child, &args);
+  return child_loop(&child);
 }
 
 #endif

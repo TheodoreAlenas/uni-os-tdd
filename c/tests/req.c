@@ -7,8 +7,10 @@ void test_req() {
 
   announce("errors_on_empty", -1 == req_parse(""));
   announce("errors_on_no_num", -1 == req_parse("<,>"));
+  /* for README, announce */
   announce("errors_on_letter", -1 == req_parse("<2a,4>"));
   announce("parses_one_digit", 2 == req_parse("<2,4>"));
+  /* end of snippet */
   announce("takes_many_digits", 7325 == req_parse("<7325,4444>"));
   announce("no_error_when_fine", -1 != req_parse("<7325,4444>"));
   announce("errors_on_long", -1 == req_parse(

@@ -17,6 +17,8 @@ make clean    # cleans the output/ too
 
           - An improvised priority-stack
 
+          - rlr instances can run in parallel
+
 
      ____  ____   ___   ____ _____ ____ ____
     |  _ \|  _ \ / _ \ / ___| ____/ ___/ ___|
@@ -53,6 +55,9 @@ notification.
 SNIPPET:parent-loop
 
 The request is written back-to-front.
+
+SNIPPET:back-to-front-writing
+
 Before writing it, it is guaranteed that there was
 a null character at position 0. That character
 should be overriden last, because while the parent
@@ -60,11 +65,20 @@ does wait for a semaphore, he doesn't know the
 source of the semaphore post, and he will pick up
 the first child request he finds to be non-empty.
 
-SNIPPET:back-to-front-writing
-
 A request might also be an 'I read it' message.
 
 SNIPPET:req-send-done
+
+When a request is about another file segment, it
+is stacked, but with priority. It's called
+'bubbling' in the code.
+
+SNIPPET:bubble-stack
+
+Then, multiple requests are popped and everyone
+interested is notified once the segment changes.
+
+SNIPPET:pop-requests
 
 From the child's perspective:
 
@@ -78,17 +92,16 @@ SNIPPET:do-a-cycle
    \___/|____/|____/___| |_| |___|_____|____/
 
 
-    WELL("");
-    WELLL(printf("loop $%s", i));
+SNIPPET:dev-mode
 
-are dev - only macros (make dev && ./rlr)
+SNIPPET:make-dev
 
 Naming:
 
     Parent            Child
     ---------------------------
-    yes_please  = i_want
-    youre_ready = thank_you
+    yes_please    =   i_want
+    youre_ready   =   thank_you
 
 SHM_I_WANT, sem_thank_you, and so on.
 
@@ -101,12 +114,17 @@ Plus I follow a retro style. The long names
 aren't retro but the comments are old school and
 the declarations are at the top.
 
+Similarly I avoid unsigned types because they
+might come from the return value of a function.
+Type conversions remove any guarantee unsigned
+types are supposed to help with.
+
 There are tiny functions because I'm trying out
 the "Uncle Bob" principles of clean coding.
-I do rely on jump-to-definition functionality
-(which breaks with conditional includes I have).
-The main point is to be easy to skip reading code
-one is not interested in.
+I do rely on jump-to-definition functionality,
+though it does break with preprocessor
+definitions. The main point is to make it easy
+to skip reading code when one is not interested.
 
 
          _____ _____ ____ _____ ____
@@ -117,25 +135,23 @@ one is not interested in.
 
 
 I tried out some test driven development.
-It didn't go the best, honestly.
+It didn't go the best but it was entertaining.
 
-Some .c files aren't built when using 'make test'.
+Some .c files are different with  make test
 
 SNIPPET:testable-fork
 
-SNIPPET:testable-files
-
-Instead, the functions declared
-in their header files are implemented elsewhere,
-in the c/tests directory.
-
 SNIPPET:fork-in-test
 
-This makes them easy to test.
+The specific example is from a test that was
+actually written after making the forks work.
+There were bugs and any part of the code was
+suspicious, so I thought to secure the forks.
 
 The tests aren't very sophisticated, they 'announce'
-the situation. There's an 'announce' function. Also
-they never deallocate.
+the situation. Also they never deallocate.
+
+SNIPPET:announce
 
 
     ____ _   _ ___ _     ____  ____  _____ _   _

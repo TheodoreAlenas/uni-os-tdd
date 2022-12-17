@@ -4,6 +4,6 @@
 #include "struct.h"
 
 void do_a_cycle(const Child *c);
-void child_loop_backend(const Child *child);
+int child_loop_backend(const Child *child);
 
 #endif

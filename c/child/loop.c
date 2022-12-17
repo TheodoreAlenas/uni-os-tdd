@@ -8,7 +8,7 @@
 #include "res.h"
 
 
-void child_loop_backend(const Child *child) {
+int child_loop_backend(const Child *child) {
   int i;
 
   WELLL(printf("%s", child->names->file_name));
@@ -17,6 +17,7 @@ void child_loop_backend(const Child *child) {
     do_a_cycle(child);
 
   WELL("loop done");
+  return 0;
 }
 
 typedef struct { int file_segment; int line_in_segment; } SegmAndLine;
@@ -29,8 +30,8 @@ SegmAndLine write_a_request(const Child *child) {
   d.file_segment = (getpid() + !((bullshit++) % 4)) % 3;
   d.line_in_segment = child->names->id; //getpid() % 7;
 
-  /* for README, back-to-front-writing */
   sprintf(req_str, "<%d,%d>", d.file_segment, d.line_in_segment);
+  /* for README, back-to-front-writing */
   for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
     ((char *)child->shmem_i_want)[i] = req_str[i];
   /* end of snippet */

@@ -23,12 +23,12 @@ void pop_requests(LoopState *s);
 void swap_segment(LoopState *s, int new_segment);
 
 
-/* for README, parent-loop */
 void single_loop(LoopState *s, MsgCycler *msg_cycler) {
   char req_str[MAX_REQUEST_LEN];
 
   WELLL(printf("waiting for notification. %d readers on current, %d.",
         s->readers, s->current_segment));
+/* for README, parent-loop */
   _sem_wait(s->r->sem_yes_please);
 
   s->child = copy_and_clear_req(msg_cycler, req_str);
@@ -37,8 +37,8 @@ void single_loop(LoopState *s, MsgCycler *msg_cycler) {
     handle_req_saying_got_it(s);
   else
     handle_req_saying_i_want(s, req_str);
-}
 /* end of snippet */
+}
 
 
 #ifndef TEST
@@ -148,8 +148,10 @@ void pop_requests(LoopState *s) {
 
   a.readers = &(s->readers);
   a.sems = s->r->sems_youre_ready;
+  /* for README, pop-requests */
   stack_for_all_of_segment(s->r->requests, update_readers_and_tell_child, &a);
   WELLL(stack_print_inline(s->r->requests));
+  /* end of snippet */
 }
 
 void swap_segment(LoopState *s, int new_segment) {

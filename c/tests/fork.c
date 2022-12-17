@@ -1,18 +1,18 @@
 #include "test.h"
 #include "../before/params.h"
-/* for README, fork-in-test */
 #include "../before/fork.h"
 #include "../before/be_yourself.h"
 
 
+/* for README, fork-in-test */
 static int num_of_forks;
 
 int testable_fork() {
   num_of_forks++;
   return fork();
 }
-
 /* end of snippet */
+
 int be_parent(Params *p, char **sem_names) {
   return 0;
 }

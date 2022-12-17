@@ -49,6 +49,7 @@ void test_stack() {
   stack_pop(s, &y1);
   announce("test_stack_double_push_pop_same_item", x1 == y1 && x2 == y2);
 
+  /* for README, bubble-stack */
   x1->file_segment = 1;
   x2->file_segment = 2;
   x3->file_segment = 1;
@@ -56,11 +57,6 @@ void test_stack() {
   stack_push(s, x1);
   stack_push(s, x2);
   stack_push(s, x3);
-  announce("test_stack_position_2_1_1", stack_position(s, 1) == 1);
-  announce("test_stack_position_2_1_1", stack_position(s, 2) == 0);
-  announce("test_stack_position_2_1_1", stack_position(s, 3) == -1);
-  announce("test_stack_bubble_end_2_1_1", stack_end_of_bubble(s, 1) == 2);
-  announce("test_stack_bubble_end_2_1_1", stack_end_of_bubble(s, 0) == 0);
 
   stack_pop(s, &y3);
   stack_pop(s, &y2);
@@ -70,6 +66,7 @@ void test_stack() {
       y2->file_segment == 1 &&
       y3->file_segment == 1
       );
+  /* end of snippet */
 
   announce("test_stack_xs_remain",
       x1->file_segment == 1 &&
