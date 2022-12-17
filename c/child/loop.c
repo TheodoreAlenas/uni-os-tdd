@@ -64,7 +64,7 @@ int child_loop_backend(const Child *child) {
 int little_offset(const Child *child, int prev_line) {
   int len, random, shuffled, normalized;
 
-  len = child->names->file_segment_length;
+  len = child->names->file_segment_length / 2;
   random = rand() % len;
   shuffled = prev_line + random - len / 2;
   normalized = shuffled % child->lines_in_file;
@@ -77,10 +77,12 @@ SegmAndLine write_a_request(const Child *child, int *prev_line) {
   int i, line_in_file, random;
   SegmAndLine d;
 
+  /* for README, rand */
   if (rand() % 8 == 0)
     line_in_file = rand() % child->lines_in_file;
   else
     line_in_file = little_offset(child, *prev_line);
+  /* end of snippet */
 
   d.file_segment = line_in_file / child->names->file_segment_length;
   d.line_in_segment = line_in_file % child->names->file_segment_length;

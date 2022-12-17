@@ -28,6 +28,7 @@ make clean    # cleans the output/ too
     Parent       Child
     ------------------
     init >
+             < saw num
               < I want
     ready >
                 < read
@@ -41,11 +42,14 @@ make clean    # cleans the output/ too
             $
 
 
+The parent creates the resounces and counts the lines of the file. He won't
+start the loop until all the children have read the total number of lines.
+
 The child leaves its message at a specific part of the segment, and notifies.
 
-     29 |   child->shmem_i_want = shmem_open_i_want(
-     30 |       args->shmem_name_i_want,
-     31 |       args->num_of_children) + args->id * MAX_REQUEST_LEN;
+     30 |   child->shmem_i_want = shmem_open_i_want(
+     31 |       args->shmem_name_i_want,
+     32 |       args->num_of_children) + args->id * MAX_REQUEST_LEN;
     [ file c/child/interface.c ]
 
 The parent cycles through the "rows" of the children's segments, reading one
@@ -63,8 +67,8 @@ message per notification.
 
 The request is written back-to-front.
 
-     70 |   for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
-     71 |     ((char *)child->shmem_i_want)[i] = req_str[i];
+     93 |   for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
+     94 |     child->shmem_i_want[i] = req_str[i];
     [ file c/child/loop.c ]
 
 Before writing it, it is guaranteed that there was a null character at
@@ -109,30 +113,36 @@ is stacked, but with priority. It's called
 Then, multiple requests are popped and everyone
 interested is notified once the segment changes.
 
-    152 |   stack_for_all_of_segment(s->r->requests,
-    153 |       update_readers_and_tell_child, &a);
-    154 |   WELLL(stack_print_inline(s->r->requests));
+    151 |   stack_for_all_of_segment(s->r->requests,
+    152 |       update_readers_and_tell_child, &a);
+    153 |   WELLL(stack_print_inline(s->r->requests));
     [ file c/parent/loop.c ]
 
 From the child's perspective:
 
-     27 | void do_a_cycle(const Child *child) {
-     28 |   char isolated_line[MAX_LINE_LEN];
-     29 |   int err, i;
-     30 |   SegmAndLine req;
-     31 |   ThreeTimespecs time_data;
-     32 |
-     33 |   req = write_a_request(child);
-     34 |   post_and_wait(child, &time_data);
-     35 |   err = !isolate_line(isolated_line,
-     36 |       child->shmem_thank_you, req.line_in_segment);
-     37 |   tell_you_got_the_message(child);
-     38 |
-     39 |   if (err)
-     40 |     print_isolate_line_error(child, req);
-     41 |   else
-     42 |     record_and_wait(child, &time_data, req, isolated_line);
-     43 | }
+     29 | void do_a_cycle(const Child *child, int *prev_line) {
+     30 |   char isolated_line[MAX_LINE_LEN];
+     31 |   int err, i;
+     32 |   SegmAndLine req;
+     33 |   ThreeTimespecs time_data;
+     34 |
+     35 |   req = write_a_request(child, prev_line);
+     36 |   post_and_wait(child, &time_data);
+     37 |   err = !isolate_line(isolated_line,
+     38 |       child->shmem_thank_you, req.line_in_segment);
+     39 |   tell_you_got_the_message(child);
+     40 |
+     41 |   if (err)
+     42 |     print_isolate_line_error(child, req);
+     43 |   else
+     44 |     record_and_wait(child, &time_data, req, isolated_line);
+     45 | }
+    [ file c/child/loop.c ]
+
+     81 |   if (rand() % 8 == 0)
+     82 |     line_in_file = rand() % child->lines_in_file;
+     83 |   else
+     84 |     line_in_file = little_offset(child, *prev_line);
     [ file c/child/loop.c ]
 
 
@@ -211,4 +221,4 @@ never deallocate.
 
 
 
-Last update: Sat Dec 17 22:00:22 EET 2022
+Last update: Sat Dec 17 23:33:09 EET 2022
