@@ -88,8 +88,7 @@ int parent_loop_backend(Parent *r) {
     if (j % 1024 == 0)
       printf("progress: %d/%d\n", j, total_notifications);
   }
-
-  WELL("loop done");
+  printf("progress: %d/%d\n", j, total_notifications);
 
   return 0;
 }
@@ -160,7 +159,7 @@ void swap_segment(LoopState *s, int new_segment) {
 
   err = _read_file_segment(s->parent, s->r->shmem_youre_ready, new_segment);
   s->current_segment = new_segment;
-  WELLL(printf("as %d, saved '%c...'", new_segment, ((char *) s->r->shmem_youre_ready)[0]));
+  WELLL(printf("as %d, saved '%c...'", new_segment, s->r->shmem_youre_ready[0]));
 }
 
 void handle_req_saying_i_want(LoopState *s, char *req_str) {

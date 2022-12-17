@@ -15,6 +15,7 @@ typedef struct parameters {
   unsigned microsecond_delay;
   char output_dir[MAX_FILE_NAME_LEN];
   ParentParams *parent_params;
+  size_t file_size;
 } Params;
 
 Params *parameters_parse(Params *p, int argc, char **argv);

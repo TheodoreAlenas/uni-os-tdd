@@ -68,7 +68,7 @@ SegmAndLine write_a_request(const Child *child) {
   sprintf(req_str, "<%d,%d>", d.file_segment, d.line_in_segment);
   /* for README, back-to-front-writing */
   for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
-    ((char *)child->shmem_i_want)[i] = req_str[i];
+    child->shmem_i_want[i] = req_str[i];
   /* end of snippet */
 
   return d;
@@ -79,8 +79,8 @@ void print_isolate_line_error(const Child *child, SegmAndLine d) {
       "child %d couldn't find "
       "line %d in segment %d ('%c%c...')\n",
       child->names->id, d.line_in_segment, d.file_segment,
-      ((char *) child->shmem_thank_you)[0],
-      ((char *) child->shmem_thank_you)[1]);
+      child->shmem_thank_you[0],
+      child->shmem_thank_you[1]);
 }
 
 void record(const Child *child,

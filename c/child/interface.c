@@ -12,6 +12,7 @@
 int try_opening_sem_i_want(Child *child, const ChildArgs *args);
 
 int child_init(Child *child, const ChildArgs *args) {
+  int err;
 
   child->names = args;
   WELLL(printf("file name: %s", child->names->file_name));
@@ -35,7 +36,15 @@ int child_init(Child *child, const ChildArgs *args) {
       args->shmem_name_thank_you,
       args->file_segment_length);
 
-  return try_opening_sem_i_want(child, args);
+  err = try_opening_sem_i_want(child, args);
+  if (err)
+    return err;
+
+  child->lines_in_file = *((int *) child->shmem_thank_you);
+  /* 'read the number of lines' */
+  sem_post(child->sem_i_want);
+
+  return 0;
 }
 
 void child_free(Child *child) {

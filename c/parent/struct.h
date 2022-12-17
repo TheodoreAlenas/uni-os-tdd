@@ -10,8 +10,9 @@ typedef struct parent {
   const ParentParams *pp;
   sem_t *sem_yes_please;
   sem_t **sems_youre_ready;
-  void *shmem_yes_please;
-  void *shmem_youre_ready;
+  char *shmem_yes_please;
+  char *shmem_youre_ready;
+  int lines_in_file;
 } Parent;
 
 

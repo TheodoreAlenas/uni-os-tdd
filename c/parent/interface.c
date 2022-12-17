@@ -14,6 +14,7 @@
 
 sem_t *init_sem_and_broadcast(const Parent *r);
 sem_t **open_child_created_sems(const Parent *r, char **sem_names);
+int count_lines_in_file(char *file_name);
 
 Parent *parent_create(const ParentParams *pp, char **sem_names) {
   int i;
@@ -26,10 +27,19 @@ Parent *parent_create(const ParentParams *pp, char **sem_names) {
   r->shmem_yes_please = shmem_create_i_want(r->pp->shmem_name_yes_please, r->pp->num_of_children);
   r->shmem_youre_ready = shmem_create_thank_you(r->pp->shmem_name_youre_ready, r->pp->file_segment_length);
 
+  r->lines_in_file = count_lines_in_file(r->pp->file_name);
+  if (r->lines_in_file == -1)
+    return NULL;
+  *( (int *) r->shmem_youre_ready ) = r->lines_in_file;
+
   r->sems_youre_ready = open_child_created_sems(r, sem_names);
   r->sem_yes_please = init_sem_and_broadcast(r);
   if (r->sem_yes_please == NULL)
     return NULL;
+
+  /* waiting the children to read the number of lines */
+  for (i = 0; i < r->pp->num_of_children; i++)
+    sem_wait(r->sem_yes_please);
 
   return r;
 }
@@ -91,6 +101,22 @@ sem_t *init_sem_and_broadcast(const Parent *r) {
   return s;
 }
 
+int count_lines_in_file(char *file_name) {
+  FILE *file;
+  int n = 1, c;
+
+  file = fopen(file_name, "r");
+
+  if (!file)
+    return -1;
+
+  for (c = fgetc(file); c != EOF; c = fgetc(file))
+    if (c == '\n')
+      n++;
+  fclose(file);
+
+  return n;
+}
 
 int parent_loop(Parent *r) {
   return parent_loop_backend(r);  /* sorry */

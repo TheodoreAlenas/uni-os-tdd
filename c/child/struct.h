@@ -19,8 +19,9 @@ typedef struct child_arguments {
 typedef struct child {
   sem_t *sem_i_want;
   sem_t *sem_thank_you;
-  void *shmem_i_want;
-  void *shmem_thank_you;
+  char *shmem_i_want;
+  char *shmem_thank_you;
+  int lines_in_file;
   const ChildArgs *names;
 } Child;
 

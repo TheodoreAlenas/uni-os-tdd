@@ -16,6 +16,9 @@
 
 ##TODO
 
+- file length
+- random requests
+
 - less malloc
 - parent parameters for eveyone
 - consistent types
