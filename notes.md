@@ -27,13 +27,5 @@
 
 - test on SSH
 
-- child time arg
-
 - tell about the backwards writing
 
-## Mocks
-
-- reading file segments
-- semaphore actions
-- writing answers
-- reading requests

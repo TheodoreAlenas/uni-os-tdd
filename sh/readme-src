@@ -1,20 +1,23 @@
-1115 2019 00048 Theodoros (more at the bottom)
-
 cd build
-make
+make          # or 'make dev', for verbose
 ./rlr --help
-./rlr  # [...]
+./rlr         # ./rlr -c 2 [...]
 ls ../output
-make clean
+make clean    # cleans the ../output too
 
 ./test  # recommended
+
+1115 2019 00048 Theodoros (more at the bottom)
+
 
 
           - N POSIX semaphores
 
           - 2 POSIX shared memory segments
 
-          - mostly heap allocations
+          - Writing requests end to start
+
+          - An improvised priority-stack
 
 
      ____  ____   ___   ____ _____ ____ ____
@@ -30,11 +33,15 @@ make clean
                           < I want
                 ready >
                             < read
+                ok >
                           < I want
                 ready >
                             < read
-                          < I want
+                ok >
                        ...
+                ok >
+                        $
+
 
 The child leaves its message at a specific part
 of the segment, and notifies.
@@ -46,6 +53,22 @@ children's segments, reading one message per
 notification.
 
 SNIPPET:parent-loop
+
+The request is written back-to-front.
+Before writing it, it is guaranteed that there was
+a null character at position 0. That character
+should be overriden last, because while the parent
+does wait for a semaphore, he doesn't know the
+source of the semaphore post, and he will pick up
+the first child request he finds to be non-empty.
+
+SNIPPET:back-to-front-writing
+
+A request might also be an 'I read it' message.
+
+SNIPPET:req-send-done
+
+From the child's perspective:
 
 SNIPPET:do-a-cycle
 
@@ -71,12 +94,14 @@ Naming:
 
 SHM_I_WANT, sem_thank_you, and so on.
 
-'const' isn't used much because C allows casts
-to non-const, and insentivises them with readline
-and other standard functions. Plus I follow a
-retro style. The long names aren't retro but the
-comments are old school and the declarations are
-at the top.
+'const' isn't used much because data eventually
+reaches a standard function such as readline,
+which doesn't declare any arguments constant. So
+it feels awkward.
+
+Plus I follow a retro style. The long names
+aren't retro but the comments are old school and
+the declarations are at the top.
 
 There are tiny functions because I'm trying out
 the "Uncle Bob" principles of clean coding.
@@ -124,7 +149,6 @@ they never deallocate.
 
 Children:
 - wait for the parent to initialize the resources
-- don't know what their order is
 - can't modify the shared memory segment for reading
 - don't know the recipe for file names,
     semaphore names or shared memory segment names.

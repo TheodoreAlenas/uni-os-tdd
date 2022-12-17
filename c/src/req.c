@@ -7,14 +7,16 @@
 
 int chop(char *dest, const char *str, int start, char end_char);
 
+/* for README, req-send-done */
 void req_send_done(char *shm) {
-  shm[0] = '$';
   shm[1] = '\0';
+  shm[0] = '$';
 }
 
 int req_says_got_it(char *msg) {
   return msg[0] == '$';
 }
+/* end of snippet */
 
 int req_parse(const char *msg) {
   int comma_pos, gt_pos, length, i;
