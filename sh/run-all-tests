@@ -6,12 +6,14 @@ alias make='make -s'
 cd build || exit 1
 make clean
 
-make test
+test_one 'make test'
+sleep 0.5
 test_one -v ./test
 make clean
 
-make
+test_one make
 test_one ../sh/test-args
+test_one './rlr --microsecond-delay 0'
 make clean
 
 test_one 'make dev'

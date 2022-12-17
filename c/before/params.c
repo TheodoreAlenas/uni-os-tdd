@@ -30,14 +30,28 @@ void parameters_print(Params *p) {
 
 void parameters_help() {
   /* TODO ouch oh my God */
-  printf("-c  --children              number of children\n");
-  printf("-r  --loops                 loops per child\n");
-  printf("-i  --input                 input file\n");
-  printf("-o  --output                output directory\n");
-  printf("-w  --shm-i-want            'I want' shared memory name\n");
-  printf("-t  --shm-thank-you         'thank you' shared memory name\n");
-  printf("-l  --file-segment-length   lines in file segment\n");
-  printf("-m  --microsecond-delay     children's fake delay\n");
+  printf(
+  " Useage: ./rlr [options] [in-file]                             \n"
+  " where options may be:                                         \n"
+  "                                                               \n"
+  " --help          print this help                               \n"
+  " --print         print defaults, plus overrides (see example)  \n"
+  " -c  --children              number of children                \n"
+  " -r  --loops                 loops per child                   \n"
+  " -i  --input                 input file                        \n"
+  " -o  --output                output directory                  \n"
+  " -w  --shm-i-want            'I want' shared memory name       \n"
+  " -t  --shm-thank-you         'thank you' shared memory name    \n"
+  " -l  --file-segment-length   lines in file segment             \n"
+  " -m  --microsecond-delay     children's fake delay             \n"
+  "                                                               \n"
+  " Example:   ./rlr -c 2 --output /tmp                           \n"
+  " Example:   ./rlr input-file.txt                               \n"
+  " Example:   ./rlr -l 100 input-file.txt                        \n"
+  " Example:   ./rlr --microsecond-delay 0                        \n"
+  " Example:   ./rlr --print        # prints defaults             \n"
+  " Example:   ./rlr -c 2 --print   # almost prints defaults      \n"
+  ) ;
 }
 
 #define IF_ITS(SHORT_FLAG, LONG_FLAG) else if (strcmp(SHORT_FLAG, flag) == 0 || strcmp(LONG_FLAG, flag) == 0)

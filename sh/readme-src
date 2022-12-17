@@ -2,8 +2,8 @@ cd build
 make          # or 'make dev', for verbose
 ./rlr --help
 ./rlr         # ./rlr -c 2 [...]
-ls ../output
-make clean    # cleans the ../output too
+ls output
+make clean    # cleans the output/ too
 
 ./test  # recommended
 
