@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
@@ -15,7 +16,8 @@ typedef struct {
   struct timespec res_end;
 } ThreeTimespecs;
 void post_and_wait(const Child *child, ThreeTimespecs * t);
-SegmAndLine write_a_request(const Child *child);
+SegmAndLine write_a_request(const Child *child, int *prev_line);
+int little_offset(const Child *child, int prev_line);
 void print_isolate_line_error(const Child *child, SegmAndLine d);
 void tell_you_got_the_message(const Child *child);
 void record_and_wait(const Child *child,
@@ -24,13 +26,13 @@ void record_and_wait(const Child *child,
 
 
 /* for README, do-a-cycle */
-void do_a_cycle(const Child *child) {
+void do_a_cycle(const Child *child, int *prev_line) {
   char isolated_line[MAX_LINE_LEN];
   int err, i;
   SegmAndLine req;
   ThreeTimespecs time_data;
 
-  req = write_a_request(child);
+  req = write_a_request(child, prev_line);
   post_and_wait(child, &time_data);
   err = !isolate_line(isolated_line,
       child->shmem_thank_you, req.line_in_segment);
@@ -46,24 +48,43 @@ void do_a_cycle(const Child *child) {
 
 
 int child_loop_backend(const Child *child) {
-  int i;
+  int i, prev_line;
 
   WELLL(printf("%s", child->names->file_name));
+  srand(getpid());
+  prev_line = rand() % child->lines_in_file;
 
   for (i = 0; i < child->names->loops; i++)
-    do_a_cycle(child);
+    do_a_cycle(child, &prev_line);
 
   WELL("loop done");
   return 0;
 }
 
-SegmAndLine write_a_request(const Child *child) {
+int little_offset(const Child *child, int prev_line) {
+  int len, random, shuffled, normalized;
+
+  len = child->names->file_segment_length;
+  random = rand() % len;
+  shuffled = prev_line + random - len / 2;
+  normalized = shuffled % child->lines_in_file;
+
+  return normalized;
+}
+
+SegmAndLine write_a_request(const Child *child, int *prev_line) {
   char req_str[MAX_REQUEST_LEN];
-  int i;
-  static int bullshit = 0;  /* TODO rename */
+  int i, line_in_file, random;
   SegmAndLine d;
-  d.file_segment = (getpid() + !((bullshit++) % 4)) % 3;
-  d.line_in_segment = child->names->id; //getpid() % 7;
+
+  if (rand() % 8 == 0)
+    line_in_file = rand() % child->lines_in_file;
+  else
+    line_in_file = little_offset(child, *prev_line);
+
+  d.file_segment = line_in_file / child->names->file_segment_length;
+  d.line_in_segment = line_in_file % child->names->file_segment_length;
+
 
   sprintf(req_str, "<%d,%d>", d.file_segment, d.line_in_segment);
   /* for README, back-to-front-writing */

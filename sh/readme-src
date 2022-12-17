@@ -28,6 +28,7 @@ make clean    # cleans the output/ too
     Parent       Child
     ------------------
     init >
+             < saw num
               < I want
     ready >
                 < read
@@ -40,6 +41,9 @@ make clean    # cleans the output/ too
     ok >
             $
 
+
+The parent creates the resounces and counts the lines of the file. He won't
+start the loop until all the children have read the total number of lines.
 
 The child leaves its message at a specific part of the segment, and notifies.
 
