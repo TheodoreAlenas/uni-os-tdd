@@ -10,7 +10,7 @@
 #include "parent_params.h"
 #include "parent_loop.h"
 #include "shmem.h"
-#include "req.h"
+#include "after/req.h"
 
 sem_t *init_sem_and_broadcast(const Parent *r);
 sem_t **open_child_created_sems(const Parent *r, char **sem_names);

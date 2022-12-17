@@ -5,7 +5,7 @@ PRIMARY_FILES := parent.o child.o
 TESTABLE_FILES := be_yourself.o parent_loop.o
 # end of snippet
 SECONDARY_FILES := params.o parent_params.o get_names.o child_loop.o
-TERTIARY_FILES := stack.o child_res.o file_segment.o msg_cycler.o req.o
+TERTIARY_FILES := stack.o child_res.o file_segment.o msg_cycler.o after-req.o
 TRICKY_FILES := fork.o shmem.o
 TEST_NAMED_FILES := test-util.o test-stack.o test-get-names.o test-fork.o test-msg-cycler.o test-req.o test-parent.o
 
@@ -32,7 +32,10 @@ test: $(TEST_FILES) test-main.o.test.o main.o.test.o
 	gcc $(TEST_FILES) main.o.test.o -o rlr
 
 %.o: $(SRC)/%.c
-	gcc -c $(SRC)/$(@:.o=.c) -o $@
+	gcc -c $(SRC)/$(subst -,/,$(@:.o=.c)) -o $@
+
+after-%.o: $(SRC)/after/%.c
+	gcc -c $(SRC)/$(subst -,/,$(@:.o=.c)) -o $@
 
 %.o.dev.o: $(SRC)/%.c
 	gcc -c -D DEV $(SRC)/$(@:.o.dev.o=.c) -o $@
