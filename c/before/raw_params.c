@@ -73,9 +73,7 @@ void raw_params_parse(Params *p, int argc, char **argv) {
 void raw_params_callback(Params *p, int argc, char **argv,
     void (*callback) (char *params, int argc, char **argv)) {
 
-#define VAL_BUF "0123456789" "0123456789" "0123456789" \
-  "0123456789" "0123456789" "0123456789" "012\0"
-
+  /*                                                              123456789 123456789 123456789 123456789 123456789 123456789 1234*/
   char params[] =
     " f\0 F\0                   h\0                              b\0                                                             e\0"
     " h\0 help\0                print this help\0                n\0                                                              \0"
@@ -90,8 +88,6 @@ void raw_params_callback(Params *p, int argc, char **argv,
     " m\0 microsecond-delay\0   children's fake delay\0          |20000\0                                                         \0"
     "$"
     ;
-
-#undef VAL_BUF
 
   callback(params, argc, argv);
 
