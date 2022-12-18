@@ -26,10 +26,16 @@ void cb2(char *params, int argc, char **argv) {
 
 void cb3(char *params, int argc, char **argv) {
   int pos;
+
   pos = find_short_matching(params, "c", &pp);
   announce("c_flag_exists", pos > 0);
   announce("c_flag_placed_right", 0 ==
       strcmp(params + pos + pp.short_flag, "c"));
+
+  pos = find_long_matching(params, "help", &pp);
+  announce("help_flag_exists", pos > 0);
+  announce("help_flag_placed_right", 0 ==
+      strcmp(params + pos + pp.long_flag, "help"));
 }
 
 void test_params() {

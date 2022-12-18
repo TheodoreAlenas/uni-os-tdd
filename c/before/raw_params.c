@@ -34,6 +34,16 @@ void param_pos_init(ParamPos *pp, char *p) {
   pp->len = pp->end + 1;
 }
 
+int find_long_matching(char *p, char *flag, ParamPos *pp) {
+  int i;
+
+  for (i = pp->len; p[i] != '$'; i += pp->len)
+    if (0 == strcmp(p + i + pp->long_flag, flag))
+      return i;
+
+  return -1;
+}
+
 int find_short_matching(char *p, char *flag, ParamPos *pp) {
   int i;
 

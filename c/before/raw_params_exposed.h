@@ -46,5 +46,6 @@ void fill_them(char *p, int argc, char **argv);
 void raw_params_callback(Params *p, int argc, char **argv,
     void (*callback) (char *params, int argc, char **argv));
 int find_short_matching(char *p, char *flag, ParamPos *pp);
+int find_long_matching(char *p, char *flag, ParamPos *pp);
 
 #endif
