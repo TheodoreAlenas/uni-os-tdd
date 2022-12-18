@@ -36,7 +36,12 @@ void param_pos_init(ParamPos *pp, char *p) {
 
 int find_short_matching(char *p, char *flag, ParamPos *pp) {
   int i;
-  return 0;
+
+  for (i = pp->len; p[i] != '$'; i += pp->len)
+    if (0 == strcmp(p + i + pp->short_flag, flag))
+      return i;
+
+  return -1;
 }
 
 int fill_one_silent(char *p, char *arg, ParamPos *pp) {
