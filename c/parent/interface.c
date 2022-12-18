@@ -20,7 +20,6 @@ int parent_init(Parent *r, const ParentParams *pp, char **sem_names) {
   int i;
 
   r->pp = pp;
-  r->requests = stack_create(r->pp->num_of_children);
 
   WELLL(printf("%s, %s", r->pp->shmem_name_yes_please, r->pp->shmem_name_youre_ready));
   r->shmem_yes_please = shmem_create_i_want(r->pp->shmem_name_yes_please, r->pp->num_of_children);
@@ -50,7 +49,6 @@ int parent_init(Parent *r, const ParentParams *pp, char **sem_names) {
 void parent_free(Parent *r) {
   int i;
   WELL("(not freeing ParentParams)");
-  stack_free(r->requests);
 
   if (r->sem_yes_please) {
     sem_unlink(r->pp->sem_name_yes_please);

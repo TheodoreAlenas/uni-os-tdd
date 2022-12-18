@@ -6,7 +6,6 @@
 #include "params.h"
 
 typedef struct parent {
-  Stack *requests;
   const ParentParams *pp;
   sem_t *sem_yes_please;
   sem_t **sems_youre_ready;
