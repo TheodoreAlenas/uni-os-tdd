@@ -44,15 +44,40 @@ make clean    # cleans the output/ too
             $
 
 
-The parent creates the resounces and counts the lines of the file. He won't
-start the loop until all the children have read the total number of lines.
+The parent creates the resounces and counts the lines of the file.
 
+     71 | void opening_ceremony(Parent *r) {
+     72 |   *( (int *) r->shmem_youre_ready ) = r->lines_in_file;
+     73 |
+     74 |   WELL("broadcasting the total lines of the file");
+     75 |   post_all(r);
+     76 |
+     77 |   WELL("waiting until they read the number of lines");
+     78 |   wait_all(r);
+     79 |
+     80 |   WELL("signaling that they may start requesting");
+     81 |   post_all(r);
+     82 | }
+    [ file c/parent/interface.c ]
+
+Then, the request loop may begin.
 The child leaves its message at a specific part of the segment, and notifies.
 
-     31 |   child->shmem_i_want = shmem_open_i_want(
-     32 |       args->shmem_name_i_want,
-     33 |       args->num_of_children) + args->id * MAX_REQUEST_LEN;
+     33 |   offset = child->id * MAX_REQUEST_LEN;
+     34 |   child->shmem_i_want = shm + offset;
     [ file c/child/interface.c ]
+
+     35 |   req = write_a_request(child, prev_line);
+     36 |   post_and_wait(child, &time_data);
+     37 |   err = !isolate_line(isolated_line,
+     38 |       child->shmem_thank_you, req.line_in_segment);
+     39 |   tell_you_got_the_message(child);
+     40 |
+     41 |   if (err)
+     42 |     print_isolate_line_error(child, req);
+     43 |   else
+     44 |     record_and_wait(child, &time_data, req, isolated_line);
+    [ file c/child/loop.c ]
 
 The parent cycles through the "rows" of the children's segments, reading one
 message per notification.
@@ -69,8 +94,8 @@ message per notification.
 
 The request is written back-to-front.
 
-     95 |   for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
-     96 |     child->shmem_i_want[i] = req_str[i];
+     94 |   for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
+     95 |     child->shmem_i_want[i] = req_str[i];
     [ file c/child/loop.c ]
 
 Before writing it, it is guaranteed that there was a null character at
@@ -117,29 +142,7 @@ interested is notified once the segment changes.
 
     151 |   stack_for_all_of_segment(s->r->requests,
     152 |       update_readers_and_tell_child, &a);
-    153 |   WELLL(stack_print_inline(s->r->requests));
     [ file c/parent/loop.c ]
-
-From the child's perspective:
-
-     29 | void do_a_cycle(const Child *child, int *prev_line) {
-     30 |   char isolated_line[MAX_LINE_LEN];
-     31 |   int err, i;
-     32 |   SegmAndLine req;
-     33 |   ThreeTimespecs time_data;
-     34 |
-     35 |   req = write_a_request(child, prev_line);
-     36 |   post_and_wait(child, &time_data);
-     37 |   err = !isolate_line(isolated_line,
-     38 |       child->shmem_thank_you, req.line_in_segment);
-     39 |   tell_you_got_the_message(child);
-     40 |
-     41 |   if (err)
-     42 |     print_isolate_line_error(child, req);
-     43 |   else
-     44 |     record_and_wait(child, &time_data, req, isolated_line);
-     45 | }
-    [ file c/child/loop.c ]
 
      83 |   if (rand() % 8 == 0)
      84 |     line_in_file = rand() % child->lines_in_file;
@@ -222,5 +225,12 @@ never deallocate.
 
 
 
+Code that has to do with the loops of the parent and child is spread out in
+multiple files. I'm sorry about it, it evolved gradually this way. Most of it,
+however, is in the files called interface and loop. Some is in the be_yourself
+files in the before folder. The main reasons are, for one, to separate the
+pre-fork parent, the post-fork parent and the children as much as possible, and
+secondly to help with testing.
 
-Last update: Sun Dec 18 00:20:43 EET 2022
+
+Last update: Mon Dec 19 01:29:50 EET 2022

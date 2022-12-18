@@ -44,12 +44,16 @@ make clean    # cleans the output/ too
             $
 
 
-The parent creates the resounces and counts the lines of the file. He won't
-start the loop until all the children have read the total number of lines.
+The parent creates the resounces and counts the lines of the file.
 
+SNIPPET:opening-ceremony
+
+Then, the request loop may begin.
 The child leaves its message at a specific part of the segment, and notifies.
 
 SNIPPET:child-shmem-offset
+
+SNIPPET:do-a-cycle
 
 The parent cycles through the "rows" of the children's segments, reading one
 message per notification.
@@ -79,10 +83,6 @@ Then, multiple requests are popped and everyone
 interested is notified once the segment changes.
 
 SNIPPET:pop-requests
-
-From the child's perspective:
-
-SNIPPET:do-a-cycle
 
 SNIPPET:rand
 
@@ -141,4 +141,11 @@ never deallocate.
 SNIPPET:announce
 
 
+
+Code that has to do with the loops of the parent and child is spread out in
+multiple files. I'm sorry about it, it evolved gradually this way. Most of it,
+however, is in the files called interface and loop. Some is in the be_yourself
+files in the before folder. The main reasons are, for one, to separate the
+pre-fork parent, the post-fork parent and the children as much as possible, and
+secondly to help with testing.
 

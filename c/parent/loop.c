@@ -150,8 +150,8 @@ void pop_requests(LoopState *s) {
   /* for README, pop-requests */
   stack_for_all_of_segment(s->r->requests,
       update_readers_and_tell_child, &a);
-  WELLL(stack_print_inline(s->r->requests));
   /* end of snippet */
+  WELLL(stack_print_inline(s->r->requests));
 }
 
 void swap_segment(LoopState *s, int new_segment) {

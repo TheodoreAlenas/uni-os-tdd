@@ -12,9 +12,10 @@
 #include "../both/shmem.h"
 #include "../both/req.h"
 
-sem_t *init_sem_and_broadcast(const Parent *r);
+sem_t *init_sem(const Parent *r);
 sem_t **open_child_created_sems(const Parent *r);
 int count_lines_in_file(char *file_name);
+void opening_ceremony(Parent *r);
 
 int parent_init(Parent *r) {
   int i;
@@ -26,20 +27,13 @@ int parent_init(Parent *r) {
   r->lines_in_file = count_lines_in_file(r->input_file);
   if (r->lines_in_file == -1)
     return -1;
-  *( (int *) r->shmem_youre_ready ) = r->lines_in_file;
 
   r->sems_youre_ready = open_child_created_sems(r);
-  r->sem_yes_please = init_sem_and_broadcast(r);
+  r->sem_yes_please = init_sem(r);
   if (r->sem_yes_please == NULL)
     return -1;
 
-  /* waiting the children to read the number of lines */
-  for (i = 0; i < r->num_of_children; i++) {
-    WELLL(printf("child %d also knows now", i));
-    sem_wait(r->sem_yes_please);
-    sem_post(r->sems_youre_ready[i]);
-  }
-  WELL("All the children read the number of lines");
+  opening_ceremony(r);
 
   return 0;
 }
@@ -60,6 +54,33 @@ void parent_free(Parent *r) {
   shmem_free(r->shmem_name_yes_please);
   shmem_free(r->shmem_name_youre_ready);
 }
+
+void post_all(Parent *r) {
+  int i;
+  for (i = 0; i < r->num_of_children; i++)
+    sem_post(r->sems_youre_ready[i]);
+}
+
+void wait_all(Parent *r) {
+  int i;
+  for (i = 0; i < r->num_of_children; i++)
+    sem_wait(r->sem_yes_please);
+}
+
+/* for README, opening-ceremony */
+void opening_ceremony(Parent *r) {
+  *( (int *) r->shmem_youre_ready ) = r->lines_in_file;
+
+  WELL("broadcasting the total lines of the file");
+  post_all(r);
+
+  WELL("waiting until they read the number of lines");
+  wait_all(r);
+
+  WELL("signaling that they may start requesting");
+  post_all(r);
+}
+/* end of snippet */
 
 sem_t **open_child_created_sems(const Parent *r) {
   int i;
@@ -84,7 +105,7 @@ sem_t **open_child_created_sems(const Parent *r) {
   return to_return;
 }
 
-sem_t *init_sem_and_broadcast(const Parent *r) {
+sem_t *init_sem(const Parent *r) {
   sem_t *s;
   unsigned i;
 
@@ -93,10 +114,6 @@ sem_t *init_sem_and_broadcast(const Parent *r) {
     perror("parent's 'yes please' semaphore");
     return NULL;
   }
-
-  WELL("signaling that the semaphore is ready");
-  for (i = 0; i < r->num_of_children; i++)
-    sem_post(r->sems_youre_ready[i]);
 
   return s;
 }

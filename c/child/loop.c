@@ -25,13 +25,13 @@ void record_and_wait(const Child *child,
 
 
 
-/* for README, do-a-cycle */
 void do_a_cycle(const Child *child, int *prev_line) {
   char isolated_line[MAX_LINE_LEN];
   int err, i;
   SegmAndLine req;
   ThreeTimespecs time_data;
 
+  /* for README, do-a-cycle */
   req = write_a_request(child, prev_line);
   post_and_wait(child, &time_data);
   err = !isolate_line(isolated_line,
@@ -42,8 +42,8 @@ void do_a_cycle(const Child *child, int *prev_line) {
     print_isolate_line_error(child, req);
   else
     record_and_wait(child, &time_data, req, isolated_line);
+  /* end of snippet */
 }
-/* end of snippet */
 
 
 
@@ -88,7 +88,6 @@ SegmAndLine write_a_request(const Child *child, int *prev_line) {
 
   d.file_segment = line_in_file / child->file_segment_length;
   d.line_in_segment = line_in_file % child->file_segment_length;
-
 
   sprintf(req_str, "<%d,%d>", d.file_segment, d.line_in_segment);
   /* for README, back-to-front-writing */

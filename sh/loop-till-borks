@@ -9,7 +9,7 @@ do
   rm ../output/*
   echo ""
   echo "========================"
-  timeout 5s ./rlr -c 4 --loops 1
+  timeout 5s ./rlr -m 0
   [ $? = 0 ] || break
 done
 

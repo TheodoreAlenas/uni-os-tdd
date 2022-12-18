@@ -12,9 +12,8 @@
 int try_opening_sem_i_want(Child *child);
 
 int child_init(Child *child) {
-  int err;
-
-  WELLL(printf("%s", child->sem_thank_you));
+  int err, offset;
+  char *shm;
 
   child->sem_thank_you = sem_open(child->sem_name_thank_you, O_CREAT | O_RDONLY, 0666, 0);
   if (child->sem_thank_you == NULL) {
@@ -26,10 +25,13 @@ int child_init(Child *child) {
   sem_wait(child->sem_thank_you);
   WELL("able to read the lines");
 
-  /* for README, child-shmem-offset */
-  child->shmem_i_want = shmem_open_i_want(
+  shm = shmem_open_i_want(
       child->shmem_name_i_want,
-      child->num_of_children) + child->id * MAX_REQUEST_LEN;
+      child->num_of_children);
+
+  /* for README, child-shmem-offset */
+  offset = child->id * MAX_REQUEST_LEN;
+  child->shmem_i_want = shm + offset;
   /* end of snippet */
 
   child->shmem_thank_you = shmem_open_thank_you(
