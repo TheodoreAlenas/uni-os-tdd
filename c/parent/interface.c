@@ -16,9 +16,8 @@ sem_t *init_sem_and_broadcast(const Parent *r);
 sem_t **open_child_created_sems(const Parent *r, char **sem_names);
 int count_lines_in_file(char *file_name);
 
-Parent *parent_create(const ParentParams *pp, char **sem_names) {
+int parent_init(Parent *r, const ParentParams *pp, char **sem_names) {
   int i;
-  Parent *r = malloc(sizeof(Parent));
 
   r->pp = pp;
   r->requests = stack_create(r->pp->num_of_children);
@@ -29,13 +28,13 @@ Parent *parent_create(const ParentParams *pp, char **sem_names) {
 
   r->lines_in_file = count_lines_in_file(r->pp->file_name);
   if (r->lines_in_file == -1)
-    return NULL;
+    return -1;
   *( (int *) r->shmem_youre_ready ) = r->lines_in_file;
 
   r->sems_youre_ready = open_child_created_sems(r, sem_names);
   r->sem_yes_please = init_sem_and_broadcast(r);
   if (r->sem_yes_please == NULL)
-    return NULL;
+    return -1;
 
   /* waiting the children to read the number of lines */
   for (i = 0; i < r->pp->num_of_children; i++) {
@@ -45,13 +44,14 @@ Parent *parent_create(const ParentParams *pp, char **sem_names) {
   }
   WELL("All the children read the number of lines");
 
-  return r;
+  return 0;
 }
 
 void parent_free(Parent *r) {
   int i;
   WELL("(not freeing ParentParams)");
   stack_free(r->requests);
+
   if (r->sem_yes_please) {
     sem_unlink(r->pp->sem_name_yes_please);
     sem_close(r->sem_yes_please);
@@ -60,10 +60,9 @@ void parent_free(Parent *r) {
     if (r->sems_youre_ready[i])
       sem_close(r->sems_youre_ready[i]);
   }
+
   shmem_free(r->pp->shmem_name_yes_please);
   shmem_free(r->pp->shmem_name_youre_ready);
-
-  free(r);
 }
 
 sem_t **open_child_created_sems(const Parent *r, char **sem_names) {
