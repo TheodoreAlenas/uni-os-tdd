@@ -1,45 +1,42 @@
 #include "test.h"
 #include "../before/raw_params_exposed.h"
 
-static ParamPos pp;
-
-void cb1(char *params, int argc, char **argv) {
-  param_pos_init(&pp, params);
+void cb1(ParamPos *p, Params *params, int argc, char **argv) {
   announce("param_pos_init",
-      0 <= pp.short_flag &&
-      pp.short_flag < pp.long_flag &&
-      pp.long_flag < pp.help &&
-      pp.help < pp.takes_value &&
-      pp.takes_value < pp.value_buffer &&
-      pp.value_buffer < pp.end &&
-      pp.end < 164
+      0 <= p->short_flag &&
+      p->short_flag < p->long_flag &&
+      p->long_flag < p->help &&
+      p->help < p->takes_value &&
+      p->takes_value < p->value_buffer &&
+      p->value_buffer < p->end &&
+      p->end < 164
       );
 }
 
-void cb2(char *params, int argc, char **argv) {
+void cb2(ParamPos *p, Params *params, int argc, char **argv) {
   int i = 0;
 
-  while (params[i] != '$')
+  while (p->p[i] != '$')
     i++;
 
-  announce("param_dollar_is_right", i % pp.len == 0);
+  announce("param_dollar_is_right", i % p->len == 0);
 }
 
-void cb3(char *params, int argc, char **argv) {
+void cb3(ParamPos *p, Params *params, int argc, char **argv) {
   int pos;
 
-  pos = find_short_matching(params, "-c", &pp);
+  pos = find_short_matching(p, "-c");
   announce("c_flag_exists", pos > 0);
   announce("c_flag_placed_right", 0 ==
-      strcmp(params + pos + pp.short_flag, "c"));
+      strcmp(p->p + pos + p->short_flag, "c"));
 
-  pos = find_long_matching(params, "--help", &pp);
+  pos = find_long_matching(p, "--help");
   announce("help_flag_exists", pos > 0);
   announce("help_flag_placed_right", 0 ==
-      strcmp(params + pos + pp.long_flag, "help"));
+      strcmp(p->p + pos + p->long_flag, "help"));
 }
 
-void cb4(char *params, int argc, char **argv) {
+void cb4(ParamPos *p, Params *params, int argc, char **argv) {
   int i;
   char
     a1[] = "path/to/file",
@@ -52,19 +49,19 @@ void cb4(char *params, int argc, char **argv) {
   int c = 6;
   char *v[] = {a1, a2, a3, a4, a5, a6};
 
-  fill_them(params, c, v);
+  fill_them(p, c, v);
 
-  i = find_short_matching(params, "-c", &pp);
-  announce("c_flag_passed", 0 == strcmp("2", params + i + pp.value_buffer));
+  i = find_short_matching(p, "-c");
+  announce("c_flag_passed", 0 == strcmp("2", p->p + i + p->value_buffer));
 
-  i = find_short_matching(params, "-r", &pp);
-  announce("loops_flag_passed", 0 == strcmp("4", params + i + pp.value_buffer));
+  i = find_short_matching(p, "-r");
+  announce("loops_flag_passed", 0 == strcmp("4", p->p + i + p->value_buffer));
 
-  i = find_short_matching(params, "-h", &pp);
-  announce("help_flag_passed", 0 == strcmp("on", params + i + pp.takes_value));
+  i = find_short_matching(p, "-h");
+  announce("help_flag_passed", 0 == strcmp("on", p->p + i + p->takes_value));
 
-  i = find_short_matching(params, "-i", &pp);
-  announce("input_file_passed", 0 == strcmp("in", params + i + pp.value_buffer));
+  i = find_short_matching(p, "-i");
+  announce("input_file_passed", 0 == strcmp("in", p->p + i + p->value_buffer));
 }
 
 void test_params() {
