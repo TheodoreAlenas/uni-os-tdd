@@ -38,6 +38,7 @@ typedef struct {
   int help;
   int value_buffer;
   int end;
+  int takes_value;
   int len;
 } ParamPos;
 

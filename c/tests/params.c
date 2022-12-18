@@ -9,7 +9,8 @@ void cb1(char *params, int argc, char **argv) {
       0 <= pp.short_flag &&
       pp.short_flag < pp.long_flag &&
       pp.long_flag < pp.help &&
-      pp.help < pp.value_buffer &&
+      pp.help < pp.takes_value &&
+      pp.takes_value < pp.value_buffer &&
       pp.value_buffer < pp.end &&
       pp.end < 164
       );

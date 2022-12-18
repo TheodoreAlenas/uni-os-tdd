@@ -25,13 +25,15 @@ void param_pos_init(ParamPos *pp, char *p) {
   while (p[i] != 'h') i++;
   pp->help = i;
 
-  while (p[i] != '0') i++;
-  pp->value_buffer = i;
+  while (p[i] != 'b') i++;
+  pp->takes_value = i;
 
-  while (p[i] != '\0') i++;
+  pp->value_buffer = ++i;
+
+  while (p[i] != 'e') i++;
   pp->end = i;
 
-  pp->len = pp->end + 1;
+  pp->len = pp->end + 2;
 }
 
 int find_long_matching(char *p, char *flag, ParamPos *pp) {
@@ -54,31 +56,14 @@ int find_short_matching(char *p, char *flag, ParamPos *pp) {
   return -1;
 }
 
-int fill_one_silent(char *p, char *arg, ParamPos *pp) {
-
-  if (strlen(arg) > MAX_PARAM_LEN)
-    return -1;
-
-  return 0;
-}
-
-void fill_one_complaining(char *p, char *arg, ParamPos *pp) {
-  int err;
-  err = fill_one_silent(p, arg, pp);
-  if (err)
-    fprintf(stderr, "couldn't assign %s to -%s/--%s (%s)\n",
-        arg, p + pp->short_flag, p + pp->long_flag, p + pp->help
-        );
-}
-
 void fill_them(char *p, int argc, char **argv) {
   ParamPos pp;
   int i;
 
-  /* TODO not at all how it works */
+  /* TODO */
   param_pos_init(&pp, p);
   for (i = 1; i < argc; i++)
-    fill_one_complaining(p, argv[i], &pp);
+    return;
 }
 
 void raw_params_parse(Params *p, int argc, char **argv) {
@@ -92,18 +77,17 @@ void raw_params_callback(Params *p, int argc, char **argv,
   "0123456789" "0123456789" "0123456789" "012\0"
 
   char params[] =
-    " f\0 F\0                   h\0                             " VAL_BUF
-    " h\0 help\0                print this help\0               " VAL_BUF
-    " h\0 help\0                print this help\0               " VAL_BUF
-    " p\0 print\0               print defaults, plus overrides\0" VAL_BUF
-    " c\0 children\0            number of children\0            " VAL_BUF
-    " r\0 loops\0               loops per child\0               " VAL_BUF
-    " i\0 input\0               input file\0                    " VAL_BUF
-    " o\0 output\0              output directory\0              " VAL_BUF
-    " w\0 shm-i-want\0          'I want' shared memory name\0   " VAL_BUF
-    " t\0 shm-thank-you\0       'thank you' shared memory name\0" VAL_BUF
-    " l\0 file-segment-length\0 lines in file segment\0         " VAL_BUF
-    " m\0 microsecond-delay\0   children's fake delay\0         " VAL_BUF
+    " f\0 F\0                   h\0                              b\0                                                             e\0"
+    " h\0 help\0                print this help\0                n\0                                                              \0"
+    " p\0 print\0               print defaults, plus overrides\0 n\0                                                              \0"
+    " c\0 children\0            number of children\0             |8\0                                                             \0"
+    " r\0 loops\0               loops per child\0                |1024\0                                                          \0"
+    " i\0 input\0               input file\0                     |../data/1001-line-numbers.dat\0                                 \0"
+    " o\0 output\0              output directory\0               |output\0                                                        \0"
+    " w\0 shm-i-want\0          'I want' shared memory name\0    |shm_i_want\0                                                    \0"
+    " t\0 shm-thank-you\0       'thank you' shared memory name\0 |shm_thank_you\0                                                 \0"
+    " l\0 file-segment-length\0 lines in file segment\0          |128\0                                                           \0"
+    " m\0 microsecond-delay\0   children's fake delay\0          |20000\0                                                         \0"
     "$"
     ;
 
