@@ -38,6 +38,7 @@ typedef struct {
   int help;
   int value_buffer;
   int end;
+  int len;
 } ParamPos;
 
 void param_pos_init(ParamPos *pp, char *p);

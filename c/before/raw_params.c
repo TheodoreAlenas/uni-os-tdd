@@ -30,12 +30,40 @@ void param_pos_init(ParamPos *pp, char *p) {
 
   while (p[i] != '\0') i++;
   pp->end = i;
+
+  pp->len = pp->end + 1;
+}
+
+int find_short_matching(char *p, char *flag, ParamPos *pp) {
+  int i;
+  return 0;
+}
+
+int fill_one_silent(char *p, char *arg, ParamPos *pp) {
+
+  if (strlen(arg) > MAX_PARAM_LEN)
+    return -1;
+
+  return 0;
+}
+
+void fill_one_complaining(char *p, char *arg, ParamPos *pp) {
+  int err;
+  err = fill_one_silent(p, arg, pp);
+  if (err)
+    fprintf(stderr, "couldn't assign %s to -%s/--%s (%s)\n",
+        arg, p + pp->short_flag, p + pp->long_flag, p + pp->help
+        );
 }
 
 void fill_them(char *p, int argc, char **argv) {
   ParamPos pp;
+  int i;
 
+  /* TODO not at all how it works */
   param_pos_init(&pp, p);
+  for (i = 1; i < argc; i++)
+    fill_one_complaining(p, argv[i], &pp);
 }
 
 void raw_params_parse(Params *p, int argc, char **argv) {
