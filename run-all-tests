@@ -12,8 +12,8 @@ test_one -v ./test
 make clean
 
 test_one make
-test_one ../sh/test-args
-test_one './rlr --microsecond-delay 0'
+test_one 'timeout 0.01s ./rlr --help'
+test_one './rlr --microsecond-delay=0'
 make clean
 
 test_one 'make dev'

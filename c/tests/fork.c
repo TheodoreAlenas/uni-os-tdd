@@ -1,5 +1,5 @@
 #include "test.h"
-#include "../before/params.h"
+#include "../before/raw_params.h"
 #include "../before/fork.h"
 #include "../before/be_yourself.h"
 
@@ -13,11 +13,11 @@ int testable_fork() {
 }
 /* end of snippet */
 
-int be_parent(Params *p, char **sem_names) {
+int be_parent(Params *p) {
   return 0;
 }
 
-int be_child(Params *p, unsigned child_index, char *sem_name) {
+int be_child(Params *p, unsigned child_index) {
   return 0;
 }
 
@@ -29,7 +29,8 @@ int one_test(char *argv[3], int num, char *msg) {
   start_pid = getpid();
   num_of_forks = 0;
 
-  handle_forks(parameters_parse(&p, 3, argv));
+  raw_params_parse(&p, 3, argv);
+  handle_forks(&p);
 
   /* this is meant to happen.
    * Any resources created before handle_forks

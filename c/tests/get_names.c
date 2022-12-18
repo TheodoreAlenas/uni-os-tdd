@@ -3,13 +3,13 @@
 #include "test.h"
 
 void test_get_names() {
-  char *s, *expected, *pid;
+  char *s, *expected, *pid, buf[1024];
 
   expected = malloc(732);
 
   sprintf(expected, "sem10%u", getpid());
 
-  s = get_semaphore_name(10);
+  s = get_semaphore_name(buf, 10);
   announce("get_semaphore_name_says_10_for_10",
       strcmp(s, expected));
 
