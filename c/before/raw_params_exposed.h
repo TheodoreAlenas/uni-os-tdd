@@ -36,9 +36,10 @@ typedef struct {
   int short_flag;
   int long_flag;
   int help;
+  int value_type;
+  int takes_value;
   int value_buffer;
   int end;
-  int takes_value;
   int len;
 } ParamPos;
 
@@ -57,5 +58,6 @@ void set_input_file(char *p, char *name, ParamPos *pp);
 void set_output_dir(char *p, char *name, ParamPos *pp);
 
 void raw_params_help(char *p, ParamPos *pp);
+void raw_params_print(char *p, ParamPos *pp);
 
 #endif

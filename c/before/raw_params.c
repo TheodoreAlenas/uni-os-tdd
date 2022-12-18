@@ -1,17 +1,7 @@
 #include <stdio.h>
+#include <ctype.h>
 #include "raw_params.h"
 #include "raw_params_exposed.h"
-
-void dont_run(Params *p) {
-  printf("number of children: %d\n", p->parent_params->num_of_children);
-  printf("'I want' shared memory name: '%s'\n", p->parent_params->shmem_name_yes_please);
-  printf("'thank you' shared memory name: '%s'\n", p->parent_params->shmem_name_youre_ready);
-  printf("loops per child: %d\n", p->parent_params->loops_per_child);
-  printf("output directory: '%s'\n", p->output_dir);
-  printf("input file: '%s'\n", p->parent_params->file_name);
-  printf("lines in file segment: %lu\n", p->parent_params->file_segment_length);
-  printf("child's delay in microseconds: %u\n", p->microsecond_delay);
-}
 
 void param_pos_init(ParamPos *pp, char *p) {
   int i = 0;
@@ -26,7 +16,9 @@ void param_pos_init(ParamPos *pp, char *p) {
   pp->help = i;
 
   while (p[i] != 'b') i++;
-  pp->takes_value = i;
+  pp->value_type = i;
+
+  pp->takes_value = ++i;
 
   pp->value_buffer = ++i;
 
@@ -85,6 +77,24 @@ int find_short_matching(char *p, char *flag, ParamPos *pp) {
 int get_is_long_flag(char *s) { return s[0] == '-' && s[1] == '-'; }
 int get_is_short_flag(char *s) { return s[0] == '-' && s[1] != '-'; }
 
+int check_value_type(char *p, char *s, int row, ParamPos *pp) {
+  int i;
+
+  if (p[row + pp->value_type] == 's')
+    return 1;
+
+  if (p[row + pp->value_type] != 'u')
+    return 1;
+
+  while (*s != '\0')
+    if (*s <= '9' && *s >= '0')
+      s++;
+    else
+      return 0;
+
+  return 1;
+}
+
 void set_long_flag(char *p, char *s, ParamPos *pp) {
   int pos, eq;
   pos = find_long_matching(p, s, pp);
@@ -95,7 +105,11 @@ void set_long_flag(char *p, char *s, ParamPos *pp) {
   }
 
   for (eq = 0; s[eq] != '='; eq++) {}
-  strcpy(p + pos + pp->value_buffer, s + eq + 1);
+  eq++;
+  if (check_value_type(p, s + eq, pos, pp))
+    strcpy(p + pos + pp->value_buffer, s + eq);
+  else
+    fprintf(stderr, "'%s' is an invalid value for %s\n", s + eq, s);
 }
 
 void set_short_flag(char *p, int argc, char **argv, int *i, ParamPos *pp) {
@@ -178,6 +192,14 @@ void fill_them(char *p, int argc, char **argv) {
     set_output_dir(p, argv[i++], &pp);
 }
 
+void translate(Params *params, char *str, ParamPos *pp) {
+  /* TODO nope */
+  params->microsecond_delay = atoi(str + pp->value_buffer + find_short_matching(str, "-m", pp));
+}
+
+void fill_and_translate(Params *p, int argc, char **argv) {
+}
+
 void raw_params_parse(Params *p, int argc, char **argv) {
   raw_params_callback(p, argc, argv, fill_them);
 }
@@ -185,34 +207,32 @@ void raw_params_parse(Params *p, int argc, char **argv) {
 void raw_params_callback(Params *p, int argc, char **argv,
     void (*callback) (char *params, int argc, char **argv)) {
 
-  /*                                                              123456789 123456789 123456789 123456789 123456789 123456789 1234*/
+  /*                                                               123456789 123456789 123456789 123456789 123456789 123456789 1234*/
   char params[] =
     " f\0 F\0                   h\0                              b\0                                                             e\0"
-    " h\0 help\0                print this help\0                off\0                                                            \0"
-    " p\0 print\0               print defaults, plus overrides\0 off\0                                                            \0"
-    " c\0 children\0            number of children\0             |8\0                                                             \0"
-    " r\0 loops\0               loops per child\0                |1024\0                                                          \0"
-    " i\0 input\0               input file\0                     |../data/1001-line-numbers.dat\0                                 \0"
-    " o\0 output\0              output directory\0               |output\0                                                        \0"
-    " w\0 shm-i-want\0          'I want' shared memory name\0    |shm_i_want\0                                                    \0"
-    " t\0 shm-thank-you\0       'thank you' shared memory name\0 |shm_thank_you\0                                                 \0"
-    " l\0 file-segment-length\0 lines in file segment\0          |128\0                                                           \0"
-    " m\0 microsecond-delay\0   children's fake delay\0          |20000\0                                                         \0"
+    " h\0 help\0                print this help\0                |off\0                                                           \0"
+    " p\0 print\0               print defaults, plus overrides\0 |off\0                                                           \0"
+    " c\0 children\0            number of children\0             u|8\0                                                            \0"
+    " r\0 loops\0               loops per child\0                u|1024\0                                                         \0"
+    " i\0 input\0               input file\0                     s|../data/1001-line-numbers.dat\0                                \0"
+    " o\0 output\0              output directory\0               s|output\0                                                       \0"
+    " w\0 shm-i-want\0          'I want' shared memory name\0    s|shm_i_want\0                                                   \0"
+    " t\0 shm-thank-you\0       'thank you' shared memory name\0 s|shm_thank_you\0                                                \0"
+    " l\0 file-segment-length\0 lines in file segment\0          u|128\0                                                          \0"
+    " m\0 microsecond-delay\0   children's fake delay\0          u|20000\0                                                        \0"
     "$"
     ;
 
   callback(params, argc, argv);
 }
 
-void raw_params_help(char *p, ParamPos *pp) {
+void raw_params_print(char *p, ParamPos *pp) {
   int row;
-
-  printf("\n  Useage: ./rlr [options] [input [output]]\n\n");
 
   for (row = pp->len; p[row] != '$'; row += pp->len) {
 
     if (p[row + pp->takes_value] == '|')
-      printf("-%s VALUE , --%s=VALUE  %10s (%s now)\n",
+      printf("-%s VALUE , --%s=VALUE     %s (%s now)\n",
           p + row + pp->short_flag,
           p + row + pp->long_flag,
           p + row + pp->help,
@@ -220,13 +240,20 @@ void raw_params_help(char *p, ParamPos *pp) {
           );
 
     else
-      printf("-%s , --%s   %10s (%s now)\n",
+      printf("-%s , --%s         %s (%s now)\n",
           p + row + pp->short_flag,
           p + row + pp->long_flag,
           p + row + pp->help,
           p + row + pp->takes_value
           );
   }
+}
+
+void raw_params_help(char *p, ParamPos *pp) {
+
+  printf("\n  Useage: ./rlr [options] [input [output]]\n\n");
+
+  raw_params_print(p, pp);
 
   printf(
       "\n  Examples:\n"
