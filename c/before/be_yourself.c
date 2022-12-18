@@ -59,12 +59,20 @@ int be_child(Params *p, unsigned child_index, char *sem_name) {
   child.sem_name_thank_you = sem_name;
   child.shmem_name_i_want = p->shmem_name_i_want;
   child.shmem_name_thank_you = p->shmem_name_thank_you;
-  child.file_name = get_output_file_name(p->output_dir, child_index);
-  child.loops = p->loops_per_child;
+
+  child.output_file = get_output_file_name(p->output_dir, child_index);
   child.file_segment_length = p->file_segment_length;
+  child.loops = p->loops_per_child;
+  child.microsecond_delay = p->microsecond_delay;
+
   child.id = child_index;
   child.num_of_children = p->num_of_children;
-  child.microsecond_delay = p->microsecond_delay;
+
+  child.lines_in_file = -1;
+  child.sem_i_want = NULL;
+  child.sem_thank_you = NULL;
+  child.shmem_i_want = NULL;
+  child.shmem_thank_you = NULL;
 
   args.sem_name_i_want = p->parent_params->sem_name_yes_please;
   args.sem_name_thank_you = sem_name;

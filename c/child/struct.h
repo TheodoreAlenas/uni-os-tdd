@@ -21,7 +21,7 @@ typedef struct child {
   char *sem_name_thank_you;
   char *shmem_name_i_want;
   char *shmem_name_thank_you;
-  char *file_name;
+  char *output_file;
   unsigned loops;
   unsigned id;
   unsigned num_of_children;
