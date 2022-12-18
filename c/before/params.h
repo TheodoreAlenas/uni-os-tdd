@@ -6,7 +6,6 @@
 #include <stdlib.h>
 
 #include "../both/constants.h"
-#include "../parent/params.h"
 
 typedef struct parameters {
   bool show_help;
@@ -17,10 +16,11 @@ typedef struct parameters {
   unsigned file_segment_length;
   char output_dir[MAX_FILE_NAME_LEN];
   char input_file[MAX_FILE_NAME_LEN];
-  ParentParams *parent_params;
-  char *sem_name_i_want;
-  char *shmem_name_i_want;
-  char *shmem_name_thank_you;
+
+  char sem_name_i_want[MAX_FILE_NAME_LEN];
+  char sem_name_thank_you[MAX_FILE_NAME_LEN];
+  char shmem_name_i_want[MAX_FILE_NAME_LEN];
+  char shmem_name_thank_you[MAX_FILE_NAME_LEN];
 } Params;
 
 Params *parameters_parse(Params *p, int argc, char **argv);

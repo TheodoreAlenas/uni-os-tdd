@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <ctype.h>
 #include "raw_params.h"
 #include "raw_params_exposed.h"
+#include "../both/dev_mode.h"
 
 void param_pos_init(ParamPos *p) {
   int i = 0;
@@ -190,16 +192,42 @@ void fill_them(ParamPos *p, int argc, char **argv) {
 }
 
 void translate(ParamPos *p, Params *params) {
+
+  params->show_help = 'n' == *(p->p + p->takes_value + 1 + find_short_matching(p, "-h"));
+  params->show_params = 'n' == *(p->p + p->takes_value + 1 + find_short_matching(p, "-p"));
+
+  params->num_of_children = atoi(p->p + p->value_buffer + find_short_matching(p, "-c"));;
+  params->loops_per_child = atoi(p->p + p->value_buffer + find_short_matching(p, "-r"));;
   params->microsecond_delay = atoi(p->p + p->value_buffer + find_short_matching(p, "-m"));
+  params->file_segment_length = atoi(p->p + p->value_buffer + find_short_matching(p, "-l"));
+
+  strcpy(params->output_dir, p->p + p->value_buffer + find_short_matching(p, "-o"));
+  strcpy(params->input_file, p->p + p->value_buffer + find_short_matching(p, "-i"));
+
+  strcpy(params->sem_name_i_want, p->p + p->value_buffer + find_short_matching(p, "-W"));
+  strcpy(params->sem_name_thank_you, p->p + p->value_buffer + find_short_matching(p, "-T"));
+  strcpy(params->shmem_name_i_want, p->p + p->value_buffer + find_short_matching(p, "-w"));
+  strcpy(params->shmem_name_thank_you, p->p + p->value_buffer + find_short_matching(p, "-t"));
 }
 
 void fill_and_translate(ParamPos *p, Params *params, int argc, char **argv) {
   fill_them(p, argc, argv);
   translate(p, params);
+  if (params->show_params)
+    raw_params_print(p);
+  else if (params->show_help)
+    raw_params_help(p);
 }
 
 void raw_params_parse(Params *p, int argc, char **argv) {
   raw_params_callback(p, argc, argv, fill_and_translate);
+}
+
+void append_to_value(ParamPos *p, char *flag, char *tail) {
+  int point, end;
+  point = p->value_buffer + find_short_matching(p, flag);
+  end = point + strlen(p->p + point);
+  strcpy(p->p + end, tail);
 }
 
 void raw_params_callback(Params *p, int argc, char **argv,
@@ -214,16 +242,27 @@ void raw_params_callback(Params *p, int argc, char **argv,
     " r\0 loops\0               loops per child\0                u|1024\0                                                         \0"
     " i\0 input\0               input file\0                     s|../data/1001-line-numbers.dat\0                                \0"
     " o\0 output\0              output directory\0               s|output\0                                                       \0"
-    " w\0 shm-i-want\0          'I want' shared memory name\0    s|shm_i_want\0                                                   \0"
-    " t\0 shm-thank-you\0       'thank you' shared memory name\0 s|shm_thank_you\0                                                \0"
+    " W\0 sem-i-want\0          'I want' semaphore\0             s|sem_i_want-\0                                                  \0"
+    " T\0 sem-thank-you\0       'thank you' semaphore\0          s|sem_thank_you-\0                                               \0"
+    " w\0 shm-i-want\0          'I want' shared memory name\0    s|shm_i_want-\0                                                  \0"
+    " t\0 shm-thank-you\0       'thank you' shared memory name\0 s|shm_thank_you-\0                                               \0"
     " l\0 file-segment-length\0 lines in file segment\0          u|128\0                                                          \0"
     " m\0 microsecond-delay\0   children's fake delay\0          u|20000\0                                                        \0"
     "$"
     ;
 
   ParamPos param_pos;
+  char pid[32];
+
   param_pos.p = str;
   param_pos_init(&param_pos);
+
+  sprintf(pid, "%d", getpid());
+  append_to_value(&param_pos, "-W", pid);
+  append_to_value(&param_pos, "-T", pid);
+  append_to_value(&param_pos, "-w", pid);
+  append_to_value(&param_pos, "-t", pid);
+
   callback(&param_pos, p, argc, argv);
 }
 

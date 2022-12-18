@@ -2,10 +2,11 @@
 #define CHILD_STRUCT_H
 
 #include <semaphore.h>
+#include "../both/constants.h"
 
 typedef struct child {
   char *sem_name_i_want;
-  char *sem_name_thank_you;
+  char sem_name_thank_you[MAX_FILE_NAME_LEN];
   char *shmem_name_i_want;
   char *shmem_name_thank_you;
   char *output_file;

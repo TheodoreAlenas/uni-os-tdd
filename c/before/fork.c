@@ -11,13 +11,13 @@
 
 
 int give_birth(Params *p);
-int be_child_and_free(Params *p, unsigned child_index, char *sem_name);
+int be_child_and_free(Params *p, unsigned child_index);
 
 int handle_forks(Params *p) {
   unsigned n;
   int err;
 
-  n = p->parent_params->num_of_children;  /* copying for safety */
+  n = p->num_of_children;  /* copying for safety */
 
   err = give_birth(p);
 
@@ -27,17 +27,12 @@ int handle_forks(Params *p) {
 int give_birth(Params *p) {
   unsigned child_index;
   pid_t pid, is_parent;
-  char *sem_name, **sem_names;
 
-  sem_names = malloc(p->parent_params->num_of_children * sizeof(char*));
-
-  for (child_index = 0; child_index < p->parent_params->num_of_children; child_index++) {
-    sem_name = get_semaphore_name(child_index);
-    sem_names[child_index] = sem_name;
+  for (child_index = 0; child_index < p->num_of_children; child_index++) {
     pid = is_parent = testable_fork();
 
     if (pid == 0)
-      return be_child_and_free(p, child_index, sem_name);  /* TODO free sem_names */
+      return be_child_and_free(p, child_index);
 
     else if (pid < 0) {
       perror("fork failed");
@@ -45,17 +40,14 @@ int give_birth(Params *p) {
     }
   }
   WELL("forks done");
-  return be_parent(p, sem_names);
+  return be_parent(p);
 }
 
-int be_child_and_free(Params *p, unsigned child_index, char *sem_name) {
+int be_child_and_free(Params *p, unsigned child_index) {
   int err;
 
-  err = be_child(p, child_index, sem_name);
-
-  if (sem_name)
-    free(sem_name);
-
+  /* TODO remove function */
+  err = be_child(p, child_index);
   return err;
 }
 

@@ -14,7 +14,7 @@ int try_opening_sem_i_want(Child *child);
 int child_init(Child *child) {
   int err;
 
-  WELLL(printf("file name: %s", child->output_file));
+  WELLL(printf("%s", child->sem_thank_you));
 
   child->sem_thank_you = sem_open(child->sem_name_thank_you, O_CREAT | O_RDONLY, 0666, 0);
   if (child->sem_thank_you == NULL) {

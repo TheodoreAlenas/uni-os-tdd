@@ -4,8 +4,8 @@
 #include "params.h"
 
 int testable_fork();
-int be_parent(Params *p, char **sem_names);
-int be_child(Params *p, unsigned child_index, char *sem_name);
+int be_parent(Params *p);
+int be_child(Params *p, unsigned child_index);
 
 
 #endif

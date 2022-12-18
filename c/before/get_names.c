@@ -6,11 +6,9 @@
 #include "../both/constants.h"
 #include "get_names.h"
 
-char *get_semaphore_name(unsigned child_index) {
-  char *ans;
-  ans = malloc(256);
-  sprintf(ans, "sem%u-%d", child_index, getpid());
-  return ans;
+char *get_semaphore_name(char *buf, unsigned child_index) {
+  sprintf(buf + strlen(buf), "-%u", child_index);
+  return buf;
 }
 
 char *get_output_file_name(char *output_dir, unsigned child_index) {

@@ -3,10 +3,8 @@
 
 #include <semaphore.h>
 #include "stack.h"
-#include "params.h"
 
 typedef struct parent {
-  const ParentParams *pp;
 
   unsigned num_of_children;
   unsigned loops_per_child;
@@ -14,6 +12,7 @@ typedef struct parent {
   unsigned long file_segment_length;
 
   char *sem_name_yes_please;
+  char *sem_name_youre_ready_template;
   char *shmem_name_yes_please;
   char *shmem_name_youre_ready;
 

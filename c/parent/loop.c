@@ -64,7 +64,7 @@ int parent_loop_backend(Parent *r) {
   Stack requests;
   int j, total_notifications;
 
-  stack_init(&requests, r->pp->num_of_children);
+  stack_init(&requests, r->num_of_children);
 
   p.sem_yes_please = r->sem_yes_please;
   p.sems_youre_ready = r->sems_youre_ready;
@@ -79,9 +79,9 @@ int parent_loop_backend(Parent *r) {
 
   msg_cycler.head = 0;
   msg_cycler.messages = r->shmem_yes_please;
-  msg_cycler.size = r->pp->num_of_children;
+  msg_cycler.size = r->num_of_children;
 
-  total_notifications = 2 * r->pp->num_of_children * r->pp->loops_per_child;
+  total_notifications = 2 * r->num_of_children * r->loops_per_child;
 
   for (j = 0; j < total_notifications; j++) {
     single_loop(&s, &msg_cycler);
