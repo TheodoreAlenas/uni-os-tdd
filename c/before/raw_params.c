@@ -268,24 +268,33 @@ void raw_params_callback(Params *p, int argc, char **argv,
 
 void raw_params_print(ParamPos *p) {
   int row;
+  char buf[1024];
 
   for (row = p->len; p->p[row] != '$'; row += p->len) {
 
-    if (p->p[row + p->takes_value] == '|')
-      printf("-%s VALUE , --%s=VALUE     %s (%s now)\n",
+    if (p->p[row + p->takes_value] == '|') {
+      sprintf(buf, "-%s VALUE , --%s=VALUE",
           p->p + row + p->short_flag,
-          p->p + row + p->long_flag,
+          p->p + row + p->long_flag
+          );
+      printf("%-40s   %s (%s now)\n",
+          buf,
           p->p + row + p->help,
           p->p + row + p->value_buffer
           );
-
-    else
-      printf("-%s , --%s         %s (%s now)\n",
+    }
+    else {
+      sprintf(buf, "-%s , --%s",
           p->p + row + p->short_flag,
-          p->p + row + p->long_flag,
+          p->p + row + p->long_flag
+          );
+      printf("%-40s   %s (%s now)\n",
+          buf,
           p->p + row + p->help,
           p->p + row + p->takes_value
           );
+    }
+
   }
 }
 
