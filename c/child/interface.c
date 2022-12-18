@@ -9,15 +9,14 @@
 #include "loop.h"
 #include "../both/shmem.h"
 
-int try_opening_sem_i_want(Child *child, const ChildArgs *args);
+int try_opening_sem_i_want(Child *child);
 
-int child_init(Child *child, const ChildArgs *args) {
+int child_init(Child *child) {
   int err;
 
-  child->names = args;
-  WELLL(printf("file name: %s", child->names->file_name));
+  WELLL(printf("file name: %s", child->output_file));
 
-  child->sem_thank_you = sem_open(args->sem_name_thank_you, O_CREAT | O_RDONLY, 0666, 0);
+  child->sem_thank_you = sem_open(child->sem_name_thank_you, O_CREAT | O_RDONLY, 0666, 0);
   if (child->sem_thank_you == NULL) {
     perror("child's thank you semaphore");
     return -1;
@@ -29,15 +28,15 @@ int child_init(Child *child, const ChildArgs *args) {
 
   /* for README, child-shmem-offset */
   child->shmem_i_want = shmem_open_i_want(
-      args->shmem_name_i_want,
-      args->num_of_children) + args->id * MAX_REQUEST_LEN;
+      child->shmem_name_i_want,
+      child->num_of_children) + child->id * MAX_REQUEST_LEN;
   /* end of snippet */
 
   child->shmem_thank_you = shmem_open_thank_you(
-      args->shmem_name_thank_you,
-      args->file_segment_length);
+      child->shmem_name_thank_you,
+      child->file_segment_length);
 
-  err = try_opening_sem_i_want(child, args);
+  err = try_opening_sem_i_want(child);
   if (err)
     return err;
 
@@ -52,19 +51,19 @@ int child_init(Child *child, const ChildArgs *args) {
 
 void child_free(Child *child) {
 
-  sem_unlink(child->names->sem_name_thank_you);
+  sem_unlink(child->sem_name_thank_you);
   sem_close(child->sem_i_want);
   sem_close(child->sem_thank_you);
-  shmem_free(child->names->shmem_name_i_want);
-  shmem_free(child->names->shmem_name_thank_you);
+  shmem_free(child->shmem_name_i_want);
+  shmem_free(child->shmem_name_thank_you);
 }
 
-int try_opening_sem_i_want(Child *child, const ChildArgs *args) {
+int try_opening_sem_i_want(Child *child) {
 
-  child->sem_i_want = sem_open(args->sem_name_i_want, O_WRONLY, 0666, 0);
+  child->sem_i_want = sem_open(child->sem_name_i_want, O_WRONLY, 0666, 0);
   if (child->sem_i_want == NULL) {
     perror("child's 'I want' semaphore");
-    sem_unlink(args->sem_name_thank_you);
+    sem_unlink(child->sem_name_thank_you);
     sem_close(child->sem_thank_you);
     return -1;
   }

@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "struct.h"
 
-int child_init(Child *child, const ChildArgs *args);
+int child_init(Child *child);
 void child_free(Child *child);
 int child_loop(const Child *child);
 

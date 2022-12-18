@@ -50,23 +50,23 @@ int be_parent(Params *p, char **sem_names) {
 
 int be_child(Params *p, unsigned child_index, char *sem_name) {
   Child child;
-  ChildArgs args;
   int err;
 
   WELL("");
 
-  child.sem_name_i_want = p->sem_name_i_want;
+  /* TODO change */
+  child.sem_name_i_want = p->parent_params->sem_name_yes_please;
   child.sem_name_thank_you = sem_name;
-  child.shmem_name_i_want = p->shmem_name_i_want;
-  child.shmem_name_thank_you = p->shmem_name_thank_you;
+  child.shmem_name_i_want = p->parent_params->shmem_name_yes_please;
+  child.shmem_name_thank_you = p->parent_params->shmem_name_youre_ready;
 
   child.output_file = get_output_file_name(p->output_dir, child_index);
-  child.file_segment_length = p->file_segment_length;
-  child.loops = p->loops_per_child;
+  child.file_segment_length = p->parent_params->file_segment_length;
+  child.loops = p->parent_params->loops_per_child;
   child.microsecond_delay = p->microsecond_delay;
 
   child.id = child_index;
-  child.num_of_children = p->num_of_children;
+  child.num_of_children = p->parent_params->num_of_children;
 
   child.lines_in_file = -1;
   child.sem_i_want = NULL;
@@ -74,20 +74,9 @@ int be_child(Params *p, unsigned child_index, char *sem_name) {
   child.shmem_i_want = NULL;
   child.shmem_thank_you = NULL;
 
-  args.sem_name_i_want = p->parent_params->sem_name_yes_please;
-  args.sem_name_thank_you = sem_name;
-  args.shmem_name_i_want = p->parent_params->shmem_name_yes_please;
-  args.shmem_name_thank_you = p->parent_params->shmem_name_youre_ready;
-  args.file_name = get_output_file_name(p->output_dir, child_index);
-  args.loops = p->parent_params->loops_per_child;
-  args.file_segment_length = p->parent_params->file_segment_length;
-  args.id = child_index;
-  args.num_of_children = p->parent_params->num_of_children;
-  args.microsecond_delay = p->microsecond_delay;
+  WELL(child.output_file);
 
-  WELL(args.file_name);
-
-  child_init(&child, &args);
+  child_init(&child);
   err = child_loop(&child);
   child_free(&child);
   return err;
