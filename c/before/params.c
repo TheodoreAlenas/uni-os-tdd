@@ -10,7 +10,7 @@
 Params *parameters_init(Params *p) {
   p->parent_params = parent_params_create();
   strcpy(p->output_dir, DEFAULT_OUTPUT_DIR);
-  p->operations_of_each_worker = 1024;
+  p->loops_per_child = 1024;
   p->show_help = false;
   p->microsecond_delay = 20000;
 
