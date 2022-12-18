@@ -49,4 +49,13 @@ void raw_params_callback(Params *p, int argc, char **argv,
 int find_short_matching(char *p, char *flag, ParamPos *pp);
 int find_long_matching(char *p, char *flag, ParamPos *pp);
 
+int get_is_long_flag(char *s);
+int get_is_short_flag(char *s);
+void set_long_flag(char *p, char *s, ParamPos *pp);
+void set_short_flag(char *p, int argc, char **argv, int *i, ParamPos *pp);
+void set_input_file(char *p, char *name, ParamPos *pp);
+void set_output_dir(char *p, char *name, ParamPos *pp);
+
+void raw_params_help(char *p, ParamPos *pp);
+
 #endif
