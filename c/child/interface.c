@@ -57,8 +57,7 @@ void child_free(Child *child) {
   sem_unlink(child->sem_name_thank_you);
   sem_close(child->sem_i_want);
   sem_close(child->sem_thank_you);
-  shm_unlink(child->shmem_name_i_want);
-  shm_unlink(child->shmem_name_thank_you);
+  /* the parent will unlink the shmem */
 }
 
 int try_opening_sem_i_want(Child *child) {
@@ -74,7 +73,7 @@ int try_opening_sem_i_want(Child *child) {
   return 0;
 }
 
-int child_loop(const Child *child) {
+int child_loop(const Child *child) { /* TODO */
   return child_loop_backend(child);  /* sorry */
 }
 
