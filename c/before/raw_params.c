@@ -192,22 +192,24 @@ void fill_them(ParamPos *p, int argc, char **argv) {
 }
 
 void translate(ParamPos *p, Params *params) {
+  char *v;
+  v = p->p + p->value_buffer;
 
   params->show_help = 'n' == *(p->p + p->takes_value + 1 + find_short_matching(p, "-h"));
   params->show_params = 'n' == *(p->p + p->takes_value + 1 + find_short_matching(p, "-p"));
 
-  params->num_of_children = atoi(p->p + p->value_buffer + find_short_matching(p, "-c"));;
-  params->loops_per_child = atoi(p->p + p->value_buffer + find_short_matching(p, "-r"));;
-  params->microsecond_delay = atoi(p->p + p->value_buffer + find_short_matching(p, "-m"));
-  params->file_segment_length = atoi(p->p + p->value_buffer + find_short_matching(p, "-l"));
+  params->num_of_children = atoi(v + find_short_matching(p, "-c"));;
+  params->loops_per_child = atoi(v + find_short_matching(p, "-r"));;
+  params->microsecond_delay = atoi(v + find_short_matching(p, "-m"));
+  params->file_segment_length = atoi(v + find_short_matching(p, "-l"));
 
-  strcpy(params->output_dir, p->p + p->value_buffer + find_short_matching(p, "-o"));
-  strcpy(params->input_file, p->p + p->value_buffer + find_short_matching(p, "-i"));
+  strcpy(params->output_dir, v + find_short_matching(p, "-o"));
+  strcpy(params->input_file, v + find_short_matching(p, "-i"));
 
-  strcpy(params->sem_name_i_want, p->p + p->value_buffer + find_short_matching(p, "-W"));
-  strcpy(params->sem_name_thank_you, p->p + p->value_buffer + find_short_matching(p, "-T"));
-  strcpy(params->shmem_name_i_want, p->p + p->value_buffer + find_short_matching(p, "-w"));
-  strcpy(params->shmem_name_thank_you, p->p + p->value_buffer + find_short_matching(p, "-t"));
+  strcpy(params->sem_name_i_want, v + find_short_matching(p, "-W"));
+  strcpy(params->sem_name_thank_you_template, v + find_short_matching(p, "-T"));
+  strcpy(params->shmem_name_i_want, v + find_short_matching(p, "-w"));
+  strcpy(params->shmem_name_thank_you, v + find_short_matching(p, "-t"));
 }
 
 void fill_and_translate(ParamPos *p, Params *params, int argc, char **argv) {
@@ -243,7 +245,7 @@ void raw_params_callback(Params *p, int argc, char **argv,
     " i\0 input\0               input file\0                     s|../data/1001-line-numbers.dat\0                                \0"
     " o\0 output\0              output directory\0               s|output\0                                                       \0"
     " W\0 sem-i-want\0          'I want' semaphore\0             s|sem_i_want-\0                                                  \0"
-    " T\0 sem-thank-you\0       'thank you' semaphore\0          s|sem_thank_you-\0                                               \0"
+    " T\0 sem-thank-you\0       'thank you' semaphore prefix\0   s|sem_thank_you-\0                                               \0"
     " w\0 shm-i-want\0          'I want' shared memory name\0    s|shm_i_want-\0                                                  \0"
     " t\0 shm-thank-you\0       'thank you' shared memory name\0 s|shm_thank_you-\0                                               \0"
     " l\0 file-segment-length\0 lines in file segment\0          u|128\0                                                          \0"
@@ -310,7 +312,7 @@ void raw_params_help(ParamPos *p) {
       "./rlr -c 2\n"
       "./rlr --children=2\n"
       "./rlr --children=2 input-file\n"
-      "./rlr --children=2 input-file output-file\n"
+      "./rlr --children=2 input-file output-dir\n"
       "./rlr --children=2 --help  # displays parameters and exits\n"
       "./rlr -m 0    # fast run\n"
       );

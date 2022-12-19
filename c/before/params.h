@@ -18,7 +18,7 @@ typedef struct parameters {
   char input_file[MAX_FILE_NAME_LEN];
 
   char sem_name_i_want[MAX_FILE_NAME_LEN];
-  char sem_name_thank_you[MAX_FILE_NAME_LEN];
+  char sem_name_thank_you_template[MAX_FILE_NAME_LEN];
   char shmem_name_i_want[MAX_FILE_NAME_LEN];
   char shmem_name_thank_you[MAX_FILE_NAME_LEN];
 } Params;

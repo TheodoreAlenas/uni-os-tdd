@@ -27,7 +27,7 @@ int be_parent(Params *p) {
   r.file_segment_length = p->file_segment_length;
 
   r.sem_name_yes_please = p->sem_name_i_want;
-  r.sem_name_youre_ready_template = p->sem_name_thank_you;
+  r.sem_name_youre_ready_template = p->sem_name_thank_you_template;
   r.shmem_name_yes_please = p->shmem_name_i_want;
   r.shmem_name_youre_ready = p->shmem_name_thank_you;
 
@@ -56,7 +56,8 @@ int be_child(Params *p, unsigned child_index) {
   WELL("");
 
   child.sem_name_i_want = p->sem_name_i_want;
-  sprintf(child.sem_name_thank_you, "%s-%d", p->sem_name_thank_you, child_index);
+  sprintf(child.sem_name_thank_you, "%s-%d",
+      p->sem_name_thank_you_template, child_index);
   child.shmem_name_i_want = p->shmem_name_i_want;
   child.shmem_name_thank_you = p->shmem_name_thank_you;
 
