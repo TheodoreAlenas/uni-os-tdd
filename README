@@ -25,77 +25,80 @@ make clean    # cleans the output/ too
     |_|   |_| \_\\___/ \____|_____|____/____/
 
 
-    Parent       Child
-    ------------------
+    Parent                Child
+    ---------------------------
     init >
-             < saw num
-    nice >
+                      < saw num
 
-              < I want
-    ready >
-                < read
-    ok >
-              < I want
-    ready >
-                < read
-    ok >
+    yes please >
+                       < I want
+    you're ready >
+                    < thank you
+    yes please >
+                       < I want
+    you're ready >
+                    < thank you
+
            ...
-    ok >
-            $
+
+                    < thank you
+
+            waitpid
 
 
 The parent creates the resounces and counts the lines of the file.
 
-     71 | void opening_ceremony(Parent *r) {
-     72 |   *( (int *) r->shmem_youre_ready ) = r->lines_in_file;
-     73 |
-     74 |   WELL("broadcasting the total lines of the file");
-     75 |   post_all(r);
-     76 |
-     77 |   WELL("waiting until they read the number of lines");
-     78 |   wait_all(r);
-     79 |
-     80 |   WELL("signaling that they may start requesting");
-     81 |   post_all(r);
-     82 | }
+     72 | void opening_ceremony(Parent *r) {
+     73 |   *( (int *) r->shmem_youre_ready ) = r->lines_in_file;
+     74 |
+     75 |   WELL("broadcasting the total lines of the file");
+     76 |   post_all(r);
+     77 |
+     78 |   WELL("waiting until they read the number of lines");
+     79 |   wait_all(r);
+     80 |
+     81 |   WELL("signaling that they may start requesting");
+     82 |   post_all(r);
+     83 | }
     [ file c/parent/interface.c ]
 
 Then, the request loop may begin.
 The child leaves its message at a specific part of the segment, and notifies.
 
-     33 |   offset = child->id * MAX_REQUEST_LEN;
-     34 |   child->shmem_i_want = shm + offset;
-    [ file c/child/interface.c ]
+     50 |   offset = child->id * MAX_REQUEST_LEN;
+     51 |   return shm + offset;
+    [ file c/both/shmem.c ]
 
-     35 |   req = write_a_request(child, prev_line);
-     36 |   post_and_wait(child, &time_data);
-     37 |   err = !isolate_line(isolated_line,
-     38 |       child->shmem_thank_you, req.line_in_segment);
-     39 |   tell_you_got_the_message(child);
-     40 |
-     41 |   if (err)
-     42 |     print_isolate_line_error(child, req);
-     43 |   else
-     44 |     record_and_wait(child, &time_data, req, isolated_line);
+     36 |   req = write_a_request(child, prev_line);
+     37 |   post_and_wait(child, &time_data);
+     38 |
+     39 |   err = !isolate_line(isolated_line,
+     40 |       child->shmem_thank_you, req.line_in_segment);
+     41 |   tell_you_got_the_message(child);
+     42 |
+     43 |   if (err)
+     44 |     print_isolate_line_error(child, req);
+     45 |   else
+     46 |     record_and_wait(child, &time_data, req, isolated_line);
     [ file c/child/loop.c ]
 
 The parent cycles through the "rows" of the children's segments, reading one
 message per notification.
 
-     32 |   _sem_wait(s->r->sem_yes_please);
-     33 |
-     34 |   s->child = copy_and_clear_req(msg_cycler, req_str);
-     35 |
-     36 |   if (req_says_got_it(req_str))
-     37 |     handle_req_saying_got_it(s);
-     38 |   else
-     39 |     handle_req_saying_i_want(s, req_str);
+     31 |   _sem_wait(s->r->sem_yes_please);
+     32 |
+     33 |   s->child = copy_and_clear_req(msg_cycler, req_str);
+     34 |
+     35 |   if (req_says_got_it(req_str))
+     36 |     handle_req_saying_got_it(s);
+     37 |   else
+     38 |     handle_req_saying_i_want(s, req_str);
     [ file c/parent/loop.c ]
 
 The request is written back-to-front.
 
-     94 |   for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
-     95 |     child->shmem_i_want[i] = req_str[i];
+     96 |   for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
+     97 |     child->shmem_i_want_offset[i] = req_str[i];
     [ file c/child/loop.c ]
 
 Before writing it, it is guaranteed that there was a null character at
@@ -105,7 +108,7 @@ and he will pick up the first child request he finds to be non-empty.
 
 A request might also be an 'I read it' message.
 
-     11 | void req_send_done(char *shm) {
+     11 | void req_send_got_it(char *shm) {
      12 |   shm[1] = '\0';
      13 |   shm[0] = '$';
      14 | }
@@ -140,14 +143,14 @@ is stacked, but with priority. It's called
 Then, multiple requests are popped and everyone
 interested is notified once the segment changes.
 
-    151 |   stack_for_all_of_segment(s->r->requests,
-    152 |       update_readers_and_tell_child, &a);
+    150 |   stack_for_all_of_segment(s->r->requests,
+    151 |       update_readers_and_tell_child, &a);
     [ file c/parent/loop.c ]
 
-     83 |   if (rand() % 8 == 0)
-     84 |     line_in_file = rand() % child->lines_in_file;
-     85 |   else
-     86 |     line_in_file = little_offset(child, *prev_line);
+     85 |   if (rand() % 8 == 0)
+     86 |     line_in_file = rand() % child->lines_in_file;
+     87 |   else
+     88 |     line_in_file = little_offset(child, *prev_line);
     [ file c/child/loop.c ]
 
 
@@ -233,4 +236,4 @@ pre-fork parent, the post-fork parent and the children as much as possible, and
 secondly to help with testing.
 
 
-Last update: Mon Dec 19 01:29:50 EET 2022
+Last update: Mon Dec 19 10:09:44 EET 2022

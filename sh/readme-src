@@ -25,23 +25,25 @@ make clean    # cleans the output/ too
     |_|   |_| \_\\___/ \____|_____|____/____/
 
 
-    Parent       Child
-    ------------------
+    Parent                Child
+    ---------------------------
     init >
-             < saw num
-    nice >
+                      < saw num
 
-              < I want
-    ready >
-                < read
-    ok >
-              < I want
-    ready >
-                < read
-    ok >
+    yes please >
+                       < I want
+    you're ready >
+                    < thank you
+    yes please >
+                       < I want
+    you're ready >
+                    < thank you
+
            ...
-    ok >
-            $
+
+                    < thank you
+
+            waitpid
 
 
 The parent creates the resounces and counts the lines of the file.

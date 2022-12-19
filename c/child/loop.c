@@ -135,7 +135,7 @@ void post_and_wait(const Child *child, ThreeTimespecs * t) {
 
 void tell_you_got_the_message(const Child *child) {
   WELL("sending 'got the message'");
-  req_send_done(child->shmem_i_want_offset);
+  req_send_got_it(child->shmem_i_want_offset);
   sem_post(child->sem_i_want);
 }
 

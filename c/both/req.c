@@ -8,7 +8,7 @@
 int chop(char *dest, const char *str, int start, char end_char);
 
 /* for README, req-send-done */
-void req_send_done(char *shm) {
+void req_send_got_it(char *shm) {
   shm[1] = '\0';
   shm[0] = '$';
 }
