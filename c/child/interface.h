@@ -1,8 +1,6 @@
 #ifndef CHILD_H
 #define CHILD_H
 
-#include <stdio.h>
-#include <unistd.h>
 #include "struct.h"
 
 #include "loop.h"

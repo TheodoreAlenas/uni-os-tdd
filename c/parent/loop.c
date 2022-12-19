@@ -7,7 +7,6 @@
 #include "../both/req.h"
 #include "loop.h"
 #include "loop_exposed.h"
-#include "stack.h"
 
 int copy_and_clear_req(MsgCycler *msg_cycler, char *req_str);
 

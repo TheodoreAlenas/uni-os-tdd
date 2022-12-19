@@ -2,6 +2,8 @@
 #define PARENT_LOOP_EXPOSED_H
 
 #include "loop.h"
+#include "msg_cycler.h"
+#include "stack.h"
 
 typedef struct {
   sem_t *sem_yes_please;

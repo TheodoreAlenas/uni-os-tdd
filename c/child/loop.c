@@ -3,10 +3,10 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
-#include "loop.h"
 #include "../both/constants.h"
 #include "../both/dev_mode.h"
 #include "../both/req.h"
+#include "loop.h"
 #include "res.h"
 
 typedef struct { int file_segment; int line_in_segment; } SegmAndLine;

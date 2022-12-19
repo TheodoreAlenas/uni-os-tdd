@@ -4,11 +4,10 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 
-#include "interface.h"
 #include "../both/constants.h"
 #include "../both/dev_mode.h"
-#include "loop.h"
 #include "../both/shmem.h"
+#include "interface.h"
 
 int try_opening_sem_i_want(Child *child);
 

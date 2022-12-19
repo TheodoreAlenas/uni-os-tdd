@@ -6,12 +6,11 @@
 #include <sys/wait.h>
 #include <sys/mman.h>
 
-#include "interface.h"
 #include "../both/dev_mode.h"
 #include "../both/constants.h"
-#include "loop.h"
 #include "../both/shmem.h"
-#include "../both/req.h"
+#include "interface.h"
+#include "loop.h"
 
 sem_t *init_sem(const Parent *r);
 sem_t **open_child_created_sems(const Parent *r);
