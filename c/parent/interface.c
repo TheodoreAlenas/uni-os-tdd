@@ -22,8 +22,8 @@ int parent_init(Parent *r) {
   int i;
 
   WELLL(printf("%s, %s", r->shmem_name_yes_please, r->shmem_name_youre_ready));
-  r->shmem_yes_please = shmem_create_i_want(r->shmem_name_yes_please, r->num_of_children);
-  r->shmem_youre_ready = shmem_create_thank_you(r->shmem_name_youre_ready, r->file_segment_length);
+  r->shmem_yes_please = shmem_create_i_want(r);
+  r->shmem_youre_ready = shmem_create_thank_you(r);
 
   r->lines_in_file = count_lines_in_file(r->input_file);
   if (r->lines_in_file == -1)
@@ -51,6 +51,7 @@ void parent_free(Parent *r) {
     if (r->sems_youre_ready[i])
       sem_close(r->sems_youre_ready[i]);
   }
+  free(r->sems_youre_ready);
 
   shm_unlink(r->shmem_name_yes_please);
   shm_unlink(r->shmem_name_youre_ready);

@@ -72,7 +72,7 @@ int be_child(Params *p, unsigned child_index) {
   child.lines_in_file = -1;
   child.sem_i_want = NULL;
   child.sem_thank_you = NULL;
-  child.shmem_i_want = NULL;
+  child.shmem_i_want_offset = NULL;
   child.shmem_thank_you = NULL;
 
   child_init(&child);

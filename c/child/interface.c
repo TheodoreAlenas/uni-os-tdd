@@ -26,18 +26,8 @@ int child_init(Child *child) {
   sem_wait(child->sem_thank_you);
   WELL("able to read the lines");
 
-  shm = shmem_open_i_want(
-      child->shmem_name_i_want,
-      child->num_of_children);
-
-  /* for README, child-shmem-offset */
-  offset = child->id * MAX_REQUEST_LEN;
-  child->shmem_i_want = shm + offset;
-  /* end of snippet */
-
-  child->shmem_thank_you = shmem_open_thank_you(
-      child->shmem_name_thank_you,
-      child->file_segment_length);
+  child->shmem_i_want_offset = shmem_open_i_want_with_offset(child);
+  child->shmem_thank_you = shmem_open_thank_you(child);
 
   err = try_opening_sem_i_want(child);
   if (err)

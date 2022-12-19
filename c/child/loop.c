@@ -92,7 +92,7 @@ SegmAndLine write_a_request(const Child *child, int *prev_line) {
   sprintf(req_str, "<%d,%d>", d.file_segment, d.line_in_segment);
   /* for README, back-to-front-writing */
   for (i = MAX_REQUEST_LEN - 1; i >= 0; i--)
-    child->shmem_i_want[i] = req_str[i];
+    child->shmem_i_want_offset[i] = req_str[i];
   /* end of snippet */
 
   return d;
@@ -133,7 +133,7 @@ void post_and_wait(const Child *child, ThreeTimespecs * t) {
 
 void tell_you_got_the_message(const Child *child) {
   WELL("sending 'got the message'");
-  req_send_done(child->shmem_i_want);
+  req_send_done(child->shmem_i_want_offset);
   sem_post(child->sem_i_want);
 }
 

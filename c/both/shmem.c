@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
+#include "shmem.h"
 #include "dev_mode.h"
 #include "constants.h"
 
@@ -23,16 +24,37 @@ void *shmem_backend(const char *name, const unsigned long size, int oflag, int p
   return ptr;
 }
 
-void *shmem_create_i_want(const char *name, unsigned long max_lines) {
-  return shmem_backend(name, max_lines * MAX_REQUEST_LEN, O_CREAT | O_RDWR, PROT_WRITE);
+char *shmem_create_i_want(const Parent *parent) {
+  return shmem_backend(
+      parent->shmem_name_yes_please,
+      parent->num_of_children * MAX_REQUEST_LEN,
+      O_CREAT | O_RDWR, PROT_WRITE);
 }
-void *shmem_create_thank_you(const char *name, unsigned long max_lines) {
-  return shmem_backend(name, max_lines * MAX_LINE_LEN, O_CREAT | O_RDWR, PROT_WRITE);
+char *shmem_create_thank_you(const Parent *parent) {
+  return shmem_backend(
+      parent->shmem_name_youre_ready,
+      parent->file_segment_length * MAX_LINE_LEN,
+      O_CREAT | O_RDWR, PROT_WRITE);
 }
-void *shmem_open_i_want(const char *name, unsigned long max_lines) {
-  return shmem_backend(name, max_lines * MAX_REQUEST_LEN, O_RDWR, PROT_WRITE);
+
+char *shmem_open_i_want_with_offset(const Child *child) {
+  char *shm;
+  int offset;
+
+  shm = shmem_backend(
+      child->shmem_name_i_want,
+      child->num_of_children * MAX_REQUEST_LEN,
+      O_RDWR, PROT_WRITE);
+
+  /* for README, child-shmem-offset */
+  offset = child->id * MAX_REQUEST_LEN;
+  return shm + offset;
+  /* end of snippet */
 }
-void *shmem_open_thank_you(const char *name, unsigned long max_lines) {
-  return shmem_backend(name, max_lines * MAX_LINE_LEN, O_RDWR, PROT_READ);
+char *shmem_open_thank_you(const Child *child) {
+  return shmem_backend(
+      child->shmem_name_thank_you,
+      child->file_segment_length * MAX_LINE_LEN,
+      O_RDWR, PROT_READ);
 }
 
