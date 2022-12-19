@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <sys/mman.h>
 
 #include "interface.h"
 #include "../both/dev_mode.h"
@@ -51,8 +52,8 @@ void parent_free(Parent *r) {
       sem_close(r->sems_youre_ready[i]);
   }
 
-  shmem_free(r->shmem_name_yes_please);
-  shmem_free(r->shmem_name_youre_ready);
+  shm_unlink(r->shmem_name_yes_please);
+  shm_unlink(r->shmem_name_youre_ready);
 }
 
 void post_all(Parent *r) {

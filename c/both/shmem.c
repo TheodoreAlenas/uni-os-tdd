@@ -36,7 +36,3 @@ void *shmem_open_thank_you(const char *name, unsigned long max_lines) {
   return shmem_backend(name, max_lines * MAX_LINE_LEN, O_RDWR, PROT_READ);
 }
 
-void shmem_free(const char *name) {
-  shm_unlink(name);
-}
-

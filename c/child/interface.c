@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <semaphore.h>
+#include <sys/mman.h>
 #include <fcntl.h>
 
 #include "interface.h"
@@ -56,8 +57,8 @@ void child_free(Child *child) {
   sem_unlink(child->sem_name_thank_you);
   sem_close(child->sem_i_want);
   sem_close(child->sem_thank_you);
-  shmem_free(child->shmem_name_i_want);
-  shmem_free(child->shmem_name_thank_you);
+  shm_unlink(child->shmem_name_i_want);
+  shm_unlink(child->shmem_name_thank_you);
 }
 
 int try_opening_sem_i_want(Child *child) {
