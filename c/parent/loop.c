@@ -57,7 +57,7 @@ int _sem_post(sem_t **sems, int child) {
 #endif
 
 
-int parent_loop_backend(Parent *r) {
+int parent_loop(Parent *r) {
   ParentLoopParams p;
   LoopState s;
   MsgCycler msg_cycler;

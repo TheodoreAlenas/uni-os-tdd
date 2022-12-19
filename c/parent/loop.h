@@ -14,6 +14,6 @@ typedef struct {
 } ParentLoopArgs;
 
 
-int parent_loop_backend(Parent *r);
+int parent_loop(Parent *r);
 
 #endif

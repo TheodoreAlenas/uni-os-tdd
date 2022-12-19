@@ -137,10 +137,6 @@ int count_lines_in_file(char *file_name) {
   return n;
 }
 
-int parent_loop(Parent *r) {
-  return parent_loop_backend(r);  /* sorry */
-}
-
 int parent_waitpid(const Parent *r) {
   int i, status;
 

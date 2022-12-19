@@ -15,6 +15,7 @@ typedef struct {
   struct timespec res_start;
   struct timespec res_end;
 } ThreeTimespecs;
+void do_a_cycle(const Child *child, int *prev_line);
 void post_and_wait(const Child *child, ThreeTimespecs * t);
 SegmAndLine write_a_request(const Child *child, int *prev_line);
 int little_offset(const Child *child, int prev_line);
@@ -34,6 +35,7 @@ void do_a_cycle(const Child *child, int *prev_line) {
   /* for README, do-a-cycle */
   req = write_a_request(child, prev_line);
   post_and_wait(child, &time_data);
+
   err = !isolate_line(isolated_line,
       child->shmem_thank_you, req.line_in_segment);
   tell_you_got_the_message(child);
@@ -47,7 +49,7 @@ void do_a_cycle(const Child *child, int *prev_line) {
 
 
 
-int child_loop_backend(const Child *child) {
+int child_loop(const Child *child) {
   int i, prev_line;
 
   WELLL(printf("%s", child->output_file));

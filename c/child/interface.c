@@ -63,7 +63,3 @@ int try_opening_sem_i_want(Child *child) {
   return 0;
 }
 
-int child_loop(const Child *child) { /* TODO */
-  return child_loop_backend(child);  /* sorry */
-}
-
