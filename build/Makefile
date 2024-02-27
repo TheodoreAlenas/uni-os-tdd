@@ -1,6 +1,5 @@
 SRC := ../c
 TMP := /tmp/alenas-rlr-makefile
-FLAGS :=
 
 PARENT_O := $(foreach f, $(wildcard $(SRC)/parent/*.c), parent-$(notdir $(f:.c=.o)))
 CHILD_O := $(foreach f, $(wildcard $(SRC)/child/*.c), child-$(notdir $(f:.c=.o)))
@@ -18,18 +17,18 @@ clean:
 	find output -type f -exec rm {} ';'
 
 rlr: $(RLR_MAIN_O) main.o
-	gcc $(RLR_MAIN_O) main.o -o rlr
+	gcc -lrt -lpthread $(RLR_MAIN_O) main.o -o rlr -lrt -lpthread
 
 # for README, make-dev
 dev: FLAGS = -DDEV
 dev: $(RLR_MAIN_O) main.o
-	gcc $(RLR_MAIN_O) main.o -o rlr
+	gcc $(FLAGS) $(RLR_MAIN_O) main.o -o rlr -lrt -lpthread
 # end of snippet
 
 test: FLAGS = -DTEST
 test: $(TEST_O) $(RLR_MAIN_O) test.o
-	gcc $(TEST_O) $(RLR_MAIN_O) test.o -o test
+	gcc $(FLAGS) $(TEST_O) $(RLR_MAIN_O) test.o -o test -lrt -lpthread
 
 %.o:
-	gcc $(FLAGS) -c $(SRC)/$(subst -,/,$(@:.o=.c)) -o $@
+	gcc $(FLAGS) -c $(SRC)/$(subst -,/,$(@:.o=.c)) -o $@ -lrt -lpthread
 
